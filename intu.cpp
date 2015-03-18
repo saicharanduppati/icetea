@@ -1,13 +1,18 @@
 #include "intu.hpp"
-std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>();
-std::map<std::string, SymbolTableEntry*> *currentTable = globalTable;
-DataType currentType;
-int currentOffset = 0;
-std::string name;
-std::string functionName;
-std::list<int> indexList;
+std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>(); //this holds the pointer to the global symbol table. GST contains only functions in our language.
+std::map<std::string, SymbolTableEntry*> *currentTable = globalTable; //this holds the pointer to the symbol table corresponding to the current scope. 
+DataType currentType; //this is the most recently seen DataType.
+int currentOffset = 0; //offset of the next to-be-seen variable.
+std::string name; //name of the last seen variable.
+std::string functionName; //name of the last seen function.
+std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
 
 
+/********************************************************************************
+INPUT: A pointer to symbol table
+FUNCTION: Prints each entry of a symbol table using call to print function of symbol table entry and prints a new line after every row.
+OUTPUT: none(void).
+********************************************************************************/
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
 		std::cout << iter->first << "\n       ";

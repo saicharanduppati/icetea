@@ -28,6 +28,10 @@ struct DataType{
 //	DataType
 	DataType(){} //a default constructor
 
+	/********************************************************************************
+	INPUT: This is a member function. 
+	RETURN VALUE: Returns the size occupied by the data type on which this function is called. Size occupied by Int, Float is 4 and that of Void is 0. Size occupied by an array is calculated depending on the length and type of array.
+	********************************************************************************/
 	int size(){
 		if(tag == Error || tag == Ok){
 			std::cout << "wrong usage of size" << std::endl;
@@ -71,6 +75,11 @@ struct SymbolTableEntry{
 	Scope scope;
 	std::map<std::string, SymbolTableEntry*> *pointer;
 
+	/********************************************************************************
+	INPUT: This is a member function
+	FUNCTION: Prints the type, scope, size, offset fields of the object
+	OUTPUT: none (void).
+	********************************************************************************/
 	void print(){
 		std::cout << "type: " << ((type == VAR) ? "VAR" : "FUNC") << "\n";
 		std::cout << "scope: " << ((scope == PARAM) ? "PARAM" : "LOCAL") << "\n";
