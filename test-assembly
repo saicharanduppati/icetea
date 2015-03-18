@@ -1,0 +1,9 @@
+int f(){
+	int a;
+	a = 1;
+}
+
+int g(){
+	int b,c,d;
+	c = 1;
+}

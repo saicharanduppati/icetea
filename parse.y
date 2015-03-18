@@ -13,14 +13,18 @@
 %%
 translation_unit:
 	function_definition
+{
+	printSymbolTable(globalTable);
+}
 	| translation_unit function_definition
 	;
 
 function_definition:
 	type_specifier fun_declarator compound_statement
 {
-	$3->print();
-	std::cout << std::endl;
+//	std::cout << "function def\n";
+//	$3->print();
+//	std::cout << std::endl;
 	currentTable = new std::map<std::string, SymbolTableEntry* >(); 
 	currentOffset = -4;
 
@@ -49,6 +53,7 @@ type_specifier:
 }
 	| INT
 {
+//	std::cout << "saw int\n";
 	currentType = DataType(DataType::Int);
 }
 	| FLOAT
@@ -65,6 +70,7 @@ fun_declarator:
 }
 	| IDENTIFIER '(' ')'
 {
+//	std::cout << "declarator done\n";
 	functionName = $1;
 	currentOffset = 0;
 }
@@ -78,6 +84,7 @@ parameter_list:
 parameter_declaration:
 	 type_specifier declarator
 {
+//	std::cout << "param\n";
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::VAR;
 	temp->scope = SymbolTableEntry::PARAM;
@@ -93,7 +100,9 @@ parameter_declaration:
 declarator:
 	 IDENTIFIER
 {
+//	std::cout << "name is seen\n";
 	name = $1;
+//	std::cout << "put in list\n";
 }
 	| declarator '[' constant_expression ']'
 {
@@ -323,6 +332,9 @@ l_expression:
 {
 	$$ = new identifierAST($1);
 	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
+	std::cout << "--------------------------------\n";
+	printSymbolTable(currentTable);
+	std::cout << "--------------------------------\n";
 	if(it == currentTable->end()){
 		std::cout << $1 << " doesn't name a type\n";
 		std::exit(1);
@@ -397,4 +409,15 @@ declarator_list:
 	(*currentTable)[name]=temp; 
 }
 | declarator_list ',' declarator
+{
+	SymbolTableEntry* temp = new SymbolTableEntry();
+	temp->type = SymbolTableEntry::VAR;
+	temp->scope = SymbolTableEntry::LOCAL;
+	temp->dataType = constructDT(currentType, indexList);
+	temp->size = temp->dataType->size();
+	temp->offset = currentOffset;
+	currentOffset+=temp->size;
+	indexList.clear();
+	(*currentTable)[name]=temp; 
+}
 	;

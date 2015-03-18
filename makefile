@@ -1,7 +1,7 @@
 all:    one two main.cc Scanner.h Scannerbase.h Scanner.ih Parser.h Parserbase.h Parser.ih
 	./sedscript
-	g++   --std=c++11 lex.cc parse.cc main.cc intu.cpp;
-	./a.out < test-assembly > junk;
+	g++ -g  --std=c++11 lex.cc parse.cc main.cc intu.cpp;
+	./a.out < test-assembly
 #	sed -e '1s/^/digraph G{ordering=out;\n/' -e '$$s/$$/}/' -i junk
 #	sed 's/^\([^-]*\)->\([^;]*\);/\2->\1;/' -i junk
 #	dot -Tps junk -o graph1.ps

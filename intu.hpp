@@ -70,6 +70,13 @@ struct SymbolTableEntry{
 	int offset; //since offset too is an integer number of bytes
 	Scope scope;
 	std::map<std::string, SymbolTableEntry*> *pointer;
+
+	void print(){
+		std::cout << "type: " << ((type == VAR) ? "VAR" : "FUNC") << "\n";
+		std::cout << "scope: " << ((scope == PARAM) ? "PARAM" : "LOCAL") << "\n";
+		std::cout << "size: " << size << "\n";
+		std::cout << "offset: " << offset << "\n";
+	}
 };	
 
 
@@ -399,4 +406,5 @@ extern std::map<std::string, SymbolTableEntry*> *currentTable;
 extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;
 DataType *constructDT(DataType a, std::list<int> list);
+void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument);
 #endif

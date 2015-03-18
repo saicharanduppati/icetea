@@ -1,11 +1,22 @@
 #include "intu.hpp"
-std::map<std::string, SymbolTableEntry*> *currentTable;
-std::map<std::string, SymbolTableEntry*> *globalTable;
+std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>();
+std::map<std::string, SymbolTableEntry*> *currentTable = globalTable;
 DataType currentType;
 int currentOffset = 0;
 std::string name;
 std::string functionName;
 std::list<int> indexList;
+
+
+void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
+	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
+		std::cout << iter->first << "\n       ";
+		iter->second->print();
+	}
+}
+	
+
+
 void blockAST::print(std::string format){
 	std::cout << format << "(Block [" << std::endl;
 	std::list<abstractAST*>::iterator iter = first.begin();
