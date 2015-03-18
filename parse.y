@@ -21,6 +21,24 @@ function_definition:
 {
 	$3->print();
 	std::cout << std::endl;
+	currentTable = new std::map<std::string, SymbolTableEntry* >(); 
+	currentOffset = -4;
+
+
+	SymbolTableEntry* temp = new SymbolTableEntry();
+	temp->type = SymbolTableEntry::FUNC;
+	temp->scope = SymbolTableEntry::LOCAL;
+	if(!indexList.empty()){
+		std::cout << "thou shall not return arrays from function\n";
+		std::exit(1);
+	}
+	temp->dataType = constructDT(currentType,indexList);
+	temp->size = temp->dataType->size();
+	temp->pointer = currentTable;
+	//temp->offset = urrentOffset;
+	//currentOffset-=temp->size;
+	//indexList.clear();
+	(*globalTable)[name]=temp; 
 }
 	;
 
@@ -38,20 +56,39 @@ type_specifier:
 	currentType = DataType(DataType::Float);
 }
 	;
+
 fun_declarator:
 	 IDENTIFIER '(' parameter_list ')'
+{
+	functionName = $1;
+	currentOffset = 0;
+}
 	| IDENTIFIER '(' ')'
+{
+	functionName = $1;
+	currentOffset = 0;
+}
 	;
 
 parameter_list:
-	 parameter_declaration
+	 parameter_declaration	
 	| parameter_list ',' parameter_declaration
 	;
 
 parameter_declaration:
 	 type_specifier declarator
+{
+	SymbolTableEntry* temp = new SymbolTableEntry();
+	temp->type = SymbolTableEntry::VAR;
+	temp->scope = SymbolTableEntry::PARAM;
+	temp->dataType = constructDT(currentType, indexList);
+	temp->size = temp->dataType->size();
+	temp->offset = currentOffset;
+	currentOffset-=temp->size;
+	indexList.clear();
+	(*currentTable)[name]=temp; 
+}	
 	;
-
 
 declarator:
 	 IDENTIFIER
@@ -103,9 +140,9 @@ statement_list:
 	;
 
 statement:
-	 compound_statement
+	'{' statement_list '}'		 
 {
-	$$ = $1;
+	$$ = new blockAST($2);
 }
 	| selection_statement
 {
@@ -285,6 +322,11 @@ l_expression:
 	 IDENTIFIER
 {
 	$$ = new identifierAST($1);
+	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
+	if(it == currentTable->end()){
+		std::cout << $1 << " doesn't name a type\n";
+		std::exit(1);
+	}
 }
         | l_expression '[' expression ']' 
 {
@@ -352,6 +394,7 @@ declarator_list:
 	temp->offset = currentOffset;
 	currentOffset+=temp->size;
 	indexList.clear();
+	(*currentTable)[name]=temp; 
 }
 | declarator_list ',' declarator
 	;

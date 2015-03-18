@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <cstdlib>
 struct DataType{
 	enum Kind{
 		Base, Array, Error, Ok
@@ -392,9 +393,10 @@ class indexAST : public arrayrefAST{
 /**************************************************************************************/
 extern int currentOffset;
 extern std::string name;
+extern std::string functionName;
 extern DataType currentType;
-extern std::map<std::string, SymbolTableEntry*> currentTable;
-extern std::map<std::string, SymbolTableEntry*> globalTable;
+extern std::map<std::string, SymbolTableEntry*> *currentTable;
+extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;
-	DataType *constructDT(DataType a, std::list<int> list);
+DataType *constructDT(DataType a, std::list<int> list);
 #endif

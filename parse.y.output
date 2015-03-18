@@ -1,4 +1,4 @@
-[[parse.y (info)] Line 358: 
+[[parse.y (info)] Line 401: 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: translation_unit ->  function_definition
@@ -21,7 +21,7 @@ Production Rules
 18: compound_statement ('{') ->  '{' declaration_list statement_list '}'
 19: statement_list ->  statement
 20: statement_list ->  statement_list statement
-21: statement ->  compound_statement
+21: statement ('{') ->  '{' statement_list '}'
 22: statement ->  selection_statement
 23: statement ->  iteration_statement
 24: statement ->  assignment_statement
@@ -157,7 +157,7 @@ FOLLOW sets:
    parameter_declaration: { ')' ',' }
    declarator: { ')' ',' '[' ';' }
    constant_expression: { ']' }
-   compound_statement: { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }
+   compound_statement: { INT VOID FLOAT <EOF> }
    declaration_list: { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }
    statement_list: { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }
    statement: { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }
@@ -295,53 +295,49 @@ State 10:
 
 
 State 11:
-0: [P16 1] compound_statement -> '{'  . '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, () 0
-1: [P17 1] compound_statement -> '{'  . statement_list '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, (3 4 ) 1
-2: [P18 1] compound_statement -> '{'  . declaration_list statement_list '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, (5 6 ) 2
+0: [P16 1] compound_statement -> '{'  . '}'   { INT VOID FLOAT <EOF> }  0, () 0
+1: [P17 1] compound_statement -> '{'  . statement_list '}'   { INT VOID FLOAT <EOF> }  0, (3 4 ) 1
+2: [P18 1] compound_statement -> '{'  . declaration_list statement_list '}'   { INT VOID FLOAT <EOF> }  0, (5 6 ) 2
 3: [P19 0] statement_list ->  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 9 10 11 ) 3
 4: [P20 0] statement_list ->  . statement_list statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (3 4 ) 1
 5: [P67 0] declaration_list ->  . declaration   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (12 ) 4
 6: [P68 0] declaration_list ->  . declaration_list declaration   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (5 6 ) 2
-7: [P21 0] statement ->  . compound_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 14 15 ) 5
-8: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (16 ) 6
-9: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (17 18 ) 7
-10: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (19 20 ) 8
+7: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 5
+8: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 ) 6
+9: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (14 15 ) 7
+10: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (16 17 ) 8
 11: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P69 0] declaration ->  . type_specifier declarator_list ';'   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (21 22 23 ) 10
-13: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
-14: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
-15: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
-16: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
-17: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 13
-18: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 14
-19: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 15
-20: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (24 25 ) 16
-21: [P4 0] type_specifier ->  . VOID   { IDENTIFIER }  0, () 17
-22: [P5 0] type_specifier ->  . INT   { IDENTIFIER }  0, () 18
-23: [P6 0] type_specifier ->  . FLOAT   { IDENTIFIER }  0, () 19
-24: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 20
-25: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (24 25 ) 16
+12: [P69 0] declaration ->  . type_specifier declarator_list ';'   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (18 19 20 ) 10
+13: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
+14: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
+15: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 13
+16: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 14
+17: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (21 22 ) 15
+18: [P4 0] type_specifier ->  . VOID   { IDENTIFIER }  0, () 16
+19: [P5 0] type_specifier ->  . INT   { IDENTIFIER }  0, () 17
+20: [P6 0] type_specifier ->  . FLOAT   { IDENTIFIER }  0, () 18
+21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 19
+22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (21 22 ) 15
   0:   On '}' to state 13 with (0 )
   1:   On statement_list to state 14 with (1 4 )
   2:   On declaration_list to state 15 with (2 6 )
   3:   On statement to state 16 with (3 )
   4:   On declaration to state 17 with (5 )
-  5:   On compound_statement to state 18 with (7 )
+  5:   On '{' to state 18 with (7 )
   6:   On selection_statement to state 19 with (8 )
   7:   On iteration_statement to state 20 with (9 )
   8:   On assignment_statement to state 21 with (10 )
   9:   On RETURN to state 22 with (11 )
   10:   On type_specifier to state 23 with (12 )
-  11:   On '{' to state 11 with (13 14 15 )
-  12:   On IF to state 24 with (16 )
-  13:   On WHILE to state 25 with (17 )
-  14:   On FOR to state 26 with (18 )
-  15:   On ';' to state 27 with (19 )
-  16:   On l_expression to state 28 with (20 25 )
-  17:   On VOID to state 4 with (21 )
-  18:   On INT to state 5 with (22 )
-  19:   On FLOAT to state 6 with (23 )
-  20:   On IDENTIFIER to state 29 with (24 )
+  11:   On IF to state 24 with (13 )
+  12:   On WHILE to state 25 with (14 )
+  13:   On FOR to state 26 with (15 )
+  14:   On ';' to state 27 with (16 )
+  15:   On l_expression to state 28 with (17 22 )
+  16:   On VOID to state 4 with (18 )
+  17:   On INT to state 5 with (19 )
+  18:   On FLOAT to state 6 with (20 )
+  19:   On IDENTIFIER to state 29 with (21 )
 
 
 State 12:
@@ -363,73 +359,66 @@ State 12:
 
 
 State 13:
-0: [P16 2] compound_statement -> '{' '}'  .   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  1, () -1
+0: [P16 2] compound_statement -> '{' '}'  .   { INT VOID FLOAT <EOF> }  1, () -1
   Reduce item(s): 0 
 
 
 State 14:
-0: [P17 2] compound_statement -> '{' statement_list  . '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, () 0
+0: [P17 2] compound_statement -> '{' statement_list  . '}'   { INT VOID FLOAT <EOF> }  0, () 0
 1: [P20 1] statement_list -> statement_list  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (2 3 4 5 6 ) 1
-2: [P21 0] statement ->  . compound_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 9 ) 2
-3: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (10 ) 3
-4: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 4
-5: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 14 ) 5
+2: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 2
+3: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 ) 3
+4: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (8 9 ) 4
+5: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 5
 6: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-7: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-8: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-9: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-10: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
-11: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
-13: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
-14: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (15 16 ) 12
-15: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 13
-16: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (15 16 ) 12
+7: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
+11: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 11
+12: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
+13: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (12 13 ) 11
   0:   On '}' to state 34 with (0 )
   1:   On statement to state 35 with (1 )
-  2:   On compound_statement to state 18 with (2 )
+  2:   On '{' to state 18 with (2 )
   3:   On selection_statement to state 19 with (3 )
   4:   On iteration_statement to state 20 with (4 )
   5:   On assignment_statement to state 21 with (5 )
   6:   On RETURN to state 22 with (6 )
-  7:   On '{' to state 11 with (7 8 9 )
-  8:   On IF to state 24 with (10 )
-  9:   On WHILE to state 25 with (11 )
-  10:   On FOR to state 26 with (12 )
-  11:   On ';' to state 27 with (13 )
-  12:   On l_expression to state 28 with (14 16 )
-  13:   On IDENTIFIER to state 29 with (15 )
+  7:   On IF to state 24 with (7 )
+  8:   On WHILE to state 25 with (8 )
+  9:   On FOR to state 26 with (9 )
+  10:   On ';' to state 27 with (10 )
+  11:   On l_expression to state 28 with (11 13 )
+  12:   On IDENTIFIER to state 29 with (12 )
 
 
 State 15:
-0: [P18 2] compound_statement -> '{' declaration_list  . statement_list '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, (2 3 ) 0
+0: [P18 2] compound_statement -> '{' declaration_list  . statement_list '}'   { INT VOID FLOAT <EOF> }  0, (2 3 ) 0
 1: [P68 1] declaration_list -> declaration_list  . declaration   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (4 ) 1
 2: [P19 0] statement_list ->  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (5 6 7 8 9 ) 2
 3: [P20 0] statement_list ->  . statement_list statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (2 3 ) 0
 4: [P69 0] declaration ->  . type_specifier declarator_list ';'   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, (10 11 12 ) 3
-5: [P21 0] statement ->  . compound_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 14 15 ) 4
-6: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (16 ) 5
-7: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (17 18 ) 6
-8: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (19 20 ) 7
+5: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 4
+6: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 ) 5
+7: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (14 15 ) 6
+8: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (16 17 ) 7
 9: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
 10: [P4 0] type_specifier ->  . VOID   { IDENTIFIER }  0, () 9
 11: [P5 0] type_specifier ->  . INT   { IDENTIFIER }  0, () 10
 12: [P6 0] type_specifier ->  . FLOAT   { IDENTIFIER }  0, () 11
-13: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
-14: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
-15: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
-16: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 13
-17: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 14
-18: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 15
-19: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 16
-20: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (21 22 ) 17
-21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 18
-22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (21 22 ) 17
+13: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 12
+14: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 13
+15: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 14
+16: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 15
+17: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (18 19 ) 16
+18: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 17
+19: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (18 19 ) 16
   0:   On statement_list to state 36 with (0 3 )
   1:   On declaration to state 37 with (1 )
   2:   On statement to state 16 with (2 )
   3:   On type_specifier to state 23 with (4 )
-  4:   On compound_statement to state 18 with (5 )
+  4:   On '{' to state 18 with (5 )
   5:   On selection_statement to state 19 with (6 )
   6:   On iteration_statement to state 20 with (7 )
   7:   On assignment_statement to state 21 with (8 )
@@ -437,13 +426,12 @@ State 15:
   9:   On VOID to state 4 with (10 )
   10:   On INT to state 5 with (11 )
   11:   On FLOAT to state 6 with (12 )
-  12:   On '{' to state 11 with (13 14 15 )
-  13:   On IF to state 24 with (16 )
-  14:   On WHILE to state 25 with (17 )
-  15:   On FOR to state 26 with (18 )
-  16:   On ';' to state 27 with (19 )
-  17:   On l_expression to state 28 with (20 22 )
-  18:   On IDENTIFIER to state 29 with (21 )
+  12:   On IF to state 24 with (13 )
+  13:   On WHILE to state 25 with (14 )
+  14:   On FOR to state 26 with (15 )
+  15:   On ';' to state 27 with (16 )
+  16:   On l_expression to state 28 with (17 19 )
+  17:   On IDENTIFIER to state 29 with (18 )
 
 
 State 16:
@@ -457,8 +445,34 @@ State 17:
 
 
 State 18:
-0: [P21 1] statement -> compound_statement  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
-  Reduce item(s): 0 
+0: [P21 1] statement -> '{'  . statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
+1: [P19 0] statement_list ->  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (3 4 5 6 7 ) 1
+2: [P20 0] statement_list ->  . statement_list statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
+3: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 2
+4: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (8 ) 3
+5: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (9 10 ) 4
+6: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 5
+7: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
+8: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+9: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+10: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+11: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
+12: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 14 ) 11
+13: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
+14: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (13 14 ) 11
+  0:   On statement_list to state 38 with (0 2 )
+  1:   On statement to state 16 with (1 )
+  2:   On '{' to state 18 with (3 )
+  3:   On selection_statement to state 19 with (4 )
+  4:   On iteration_statement to state 20 with (5 )
+  5:   On assignment_statement to state 21 with (6 )
+  6:   On RETURN to state 22 with (7 )
+  7:   On IF to state 24 with (8 )
+  8:   On WHILE to state 25 with (9 )
+  9:   On FOR to state 26 with (10 )
+  10:   On ';' to state 27 with (11 )
+  11:   On l_expression to state 28 with (12 14 )
+  12:   On IDENTIFIER to state 29 with (13 )
 
 
 State 19:
@@ -512,24 +526,24 @@ State 22:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 38 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 39 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
 State 23:
@@ -538,24 +552,24 @@ State 23:
 2: [P71 0] declarator_list ->  . declarator_list ',' declarator   { ',' ';' }  0, (1 2 ) 0
 3: [P12 0] declarator ->  . IDENTIFIER   { ',' '[' ';' }  0, () 2
 4: [P13 0] declarator ->  . declarator '[' constant_expression ']'   { ',' '[' ';' }  0, (3 4 ) 1
-  0:   On declarator_list to state 56 with (0 2 )
-  1:   On declarator to state 57 with (1 4 )
-  2:   On IDENTIFIER to state 58 with (3 )
+  0:   On declarator_list to state 57 with (0 2 )
+  1:   On declarator to state 58 with (1 4 )
+  2:   On IDENTIFIER to state 59 with (3 )
 
 
 State 24:
 0: [P64 1] selection_statement -> IF  . '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-  0:   On '(' to state 59 with (0 )
+  0:   On '(' to state 60 with (0 )
 
 
 State 25:
 0: [P65 1] iteration_statement -> WHILE  . '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-  0:   On '(' to state 60 with (0 )
+  0:   On '(' to state 61 with (0 )
 
 
 State 26:
 0: [P66 1] iteration_statement -> FOR  . '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-  0:   On '(' to state 61 with (0 )
+  0:   On '(' to state 62 with (0 )
 
 
 State 27:
@@ -566,8 +580,8 @@ State 27:
 State 28:
 0: [P27 1] assignment_statement -> l_expression  . ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
 1: [P59 1] l_expression -> l_expression  . '[' expression ']'   { ASSIGN_OP '[' }  0, () 1
-  0:   On ASSIGN_OP to state 62 with (0 )
-  1:   On '[' to state 63 with (1 )
+  0:   On ASSIGN_OP to state 63 with (0 )
+  1:   On '[' to state 64 with (1 )
 
 
 State 29:
@@ -578,8 +592,8 @@ State 29:
 State 30:
 0: [P7 3] fun_declarator -> IDENTIFIER '(' parameter_list  . ')'   { '{' }  0, () 0
 1: [P10 1] parameter_list -> parameter_list  . ',' parameter_declaration   { ')' ',' }  0, () 1
-  0:   On ')' to state 64 with (0 )
-  1:   On ',' to state 65 with (1 )
+  0:   On ')' to state 65 with (0 )
+  1:   On ',' to state 66 with (1 )
 
 
 State 31:
@@ -596,12 +610,12 @@ State 33:
 0: [P11 1] parameter_declaration -> type_specifier  . declarator   { ')' ',' }  0, (1 2 ) 0
 1: [P12 0] declarator ->  . IDENTIFIER   { ')' ',' '[' }  0, () 1
 2: [P13 0] declarator ->  . declarator '[' constant_expression ']'   { ')' ',' '[' }  0, (1 2 ) 0
-  0:   On declarator to state 66 with (0 2 )
-  1:   On IDENTIFIER to state 58 with (1 )
+  0:   On declarator to state 67 with (0 2 )
+  1:   On IDENTIFIER to state 59 with (1 )
 
 
 State 34:
-0: [P17 3] compound_statement -> '{' statement_list '}'  .   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  1, () -1
+0: [P17 3] compound_statement -> '{' statement_list '}'  .   { INT VOID FLOAT <EOF> }  1, () -1
   Reduce item(s): 0 
 
 
@@ -611,37 +625,33 @@ State 35:
 
 
 State 36:
-0: [P18 3] compound_statement -> '{' declaration_list statement_list  . '}'   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  0, () 0
+0: [P18 3] compound_statement -> '{' declaration_list statement_list  . '}'   { INT VOID FLOAT <EOF> }  0, () 0
 1: [P20 1] statement_list -> statement_list  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (2 3 4 5 6 ) 1
-2: [P21 0] statement ->  . compound_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 9 ) 2
-3: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (10 ) 3
-4: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 4
-5: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (13 14 ) 5
+2: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 2
+3: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 ) 3
+4: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (8 9 ) 4
+5: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 5
 6: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-7: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-8: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-9: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-10: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
-11: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
-13: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 11
-14: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (15 16 ) 12
-15: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 13
-16: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (15 16 ) 12
-  0:   On '}' to state 67 with (0 )
+7: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
+11: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 11
+12: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
+13: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (12 13 ) 11
+  0:   On '}' to state 68 with (0 )
   1:   On statement to state 35 with (1 )
-  2:   On compound_statement to state 18 with (2 )
+  2:   On '{' to state 18 with (2 )
   3:   On selection_statement to state 19 with (3 )
   4:   On iteration_statement to state 20 with (4 )
   5:   On assignment_statement to state 21 with (5 )
   6:   On RETURN to state 22 with (6 )
-  7:   On '{' to state 11 with (7 8 9 )
-  8:   On IF to state 24 with (10 )
-  9:   On WHILE to state 25 with (11 )
-  10:   On FOR to state 26 with (12 )
-  11:   On ';' to state 27 with (13 )
-  12:   On l_expression to state 28 with (14 16 )
-  13:   On IDENTIFIER to state 29 with (15 )
+  7:   On IF to state 24 with (7 )
+  8:   On WHILE to state 25 with (8 )
+  9:   On FOR to state 26 with (9 )
+  10:   On ';' to state 27 with (10 )
+  11:   On l_expression to state 28 with (11 13 )
+  12:   On IDENTIFIER to state 29 with (12 )
 
 
 State 37:
@@ -650,92 +660,122 @@ State 37:
 
 
 State 38:
-0: [P25 2] statement -> RETURN expression  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
-  0:   On ';' to state 68 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+0: [P21 2] statement -> '{' statement_list  . '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P20 1] statement_list -> statement_list  . statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (2 3 4 5 6 ) 1
+2: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 2
+3: [P22 0] statement ->  . selection_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (7 ) 3
+4: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (8 9 ) 4
+5: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 5
+6: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
+7: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
+11: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 11
+12: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
+13: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (12 13 ) 11
+  0:   On '}' to state 69 with (0 )
+  1:   On statement to state 35 with (1 )
+  2:   On '{' to state 18 with (2 )
+  3:   On selection_statement to state 19 with (3 )
+  4:   On iteration_statement to state 20 with (4 )
+  5:   On assignment_statement to state 21 with (5 )
+  6:   On RETURN to state 22 with (6 )
+  7:   On IF to state 24 with (7 )
+  8:   On WHILE to state 25 with (8 )
+  9:   On FOR to state 26 with (9 )
+  10:   On ';' to state 27 with (10 )
+  11:   On l_expression to state 28 with (11 13 )
+  12:   On IDENTIFIER to state 29 with (12 )
 
 
 State 39:
-0: [P28 1] expression -> logical_and_expression  .   { OR_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
-1: [P31 1] logical_and_expression -> logical_and_expression  . AND_OP equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-  0:   On AND_OP to state 70 with (1 )
-  Reduce item(s): 0 
-Solved SR CONFLICT on AND_OP:
-	shift to state 70, removed AND_OP from LA-set of rule 28)
+0: [P25 2] statement -> RETURN expression  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
+  0:   On ';' to state 70 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
 State 40:
-0: [P30 1] logical_and_expression -> equality_expression  .   { OR_OP AND_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
-1: [P33 1] equality_expression -> equality_expression  . EQ_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P34 1] equality_expression -> equality_expression  . NE_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On EQ_OP to state 71 with (1 )
-  1:   On NE_OP to state 72 with (2 )
+0: [P28 1] expression -> logical_and_expression  .   { OR_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
+1: [P31 1] logical_and_expression -> logical_and_expression  . AND_OP equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+  0:   On AND_OP to state 72 with (1 )
   Reduce item(s): 0 
-Solved SR CONFLICT on EQ_OP:
-	shift to state 71, removed EQ_OP from LA-set of rule 30)
-Solved SR CONFLICT on NE_OP:
-	shift to state 72, removed NE_OP from LA-set of rule 30)
+Solved SR CONFLICT on AND_OP:
+	shift to state 72, removed AND_OP from LA-set of rule 28)
 
 
 State 41:
+0: [P30 1] logical_and_expression -> equality_expression  .   { OR_OP AND_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
+1: [P33 1] equality_expression -> equality_expression  . EQ_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P34 1] equality_expression -> equality_expression  . NE_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On EQ_OP to state 73 with (1 )
+  1:   On NE_OP to state 74 with (2 )
+  Reduce item(s): 0 
+Solved SR CONFLICT on EQ_OP:
+	shift to state 73, removed EQ_OP from LA-set of rule 30)
+Solved SR CONFLICT on NE_OP:
+	shift to state 74, removed NE_OP from LA-set of rule 30)
+
+
+State 42:
 0: [P32 1] equality_expression -> relational_expression  .   { OR_OP AND_OP EQ_OP NE_OP ')' ',' ']' ';' '+' '-' '*' '/' }  1, () -1
 1: [P36 1] relational_expression -> relational_expression  . '<' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P37 1] relational_expression -> relational_expression  . '>' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
 3: [P38 1] relational_expression -> relational_expression  . LE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
 4: [P39 1] relational_expression -> relational_expression  . GE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 3
-  0:   On '<' to state 73 with (1 )
-  1:   On '>' to state 74 with (2 )
-  2:   On LE_OP to state 75 with (3 )
-  3:   On GE_OP to state 76 with (4 )
+  0:   On '<' to state 75 with (1 )
+  1:   On '>' to state 76 with (2 )
+  2:   On LE_OP to state 77 with (3 )
+  3:   On GE_OP to state 78 with (4 )
   Reduce item(s): 0 
 Solved SR CONFLICT on '<':
-	shift to state 73, removed '<' from LA-set of rule 32)
+	shift to state 75, removed '<' from LA-set of rule 32)
 Solved SR CONFLICT on '>':
-	shift to state 74, removed '>' from LA-set of rule 32)
+	shift to state 76, removed '>' from LA-set of rule 32)
 Solved SR CONFLICT on LE_OP:
-	shift to state 75, removed LE_OP from LA-set of rule 32)
+	shift to state 77, removed LE_OP from LA-set of rule 32)
 Solved SR CONFLICT on GE_OP:
-	shift to state 76, removed GE_OP from LA-set of rule 32)
-
-
-State 42:
-0: [P35 1] relational_expression -> additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
-1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '+' to state 77 with (1 )
-  1:   On '-' to state 78 with (2 )
-  Reduce item(s): 0 
-Solved SR CONFLICT on '+':
-	shift to state 77, removed '+' from LA-set of rule 35)
-Solved SR CONFLICT on '-':
-	shift to state 78, removed '-' from LA-set of rule 35)
+	shift to state 78, removed GE_OP from LA-set of rule 32)
 
 
 State 43:
-0: [P40 1] additive_expression -> multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
-1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '*' to state 79 with (1 )
-  1:   On '/' to state 80 with (2 )
+0: [P35 1] relational_expression -> additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
+1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '+' to state 79 with (1 )
+  1:   On '-' to state 80 with (2 )
   Reduce item(s): 0 
-Solved SR CONFLICT on '*':
-	shift to state 79, removed '*' from LA-set of rule 40)
-Solved SR CONFLICT on '/':
-	shift to state 80, removed '/' from LA-set of rule 40)
+Solved SR CONFLICT on '+':
+	shift to state 79, removed '+' from LA-set of rule 35)
+Solved SR CONFLICT on '-':
+	shift to state 80, removed '-' from LA-set of rule 35)
 
 
 State 44:
+0: [P40 1] additive_expression -> multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
+1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '*' to state 81 with (1 )
+  1:   On '/' to state 82 with (2 )
+  Reduce item(s): 0 
+Solved SR CONFLICT on '*':
+	shift to state 81, removed '*' from LA-set of rule 40)
+Solved SR CONFLICT on '/':
+	shift to state 82, removed '/' from LA-set of rule 40)
+
+
+State 45:
 0: [P43 1] multiplicative_expression -> unary_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 45:
+State 46:
 0: [P46 1] unary_expression -> postfix_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 46:
+State 47:
 0: [P47 1] unary_expression -> unary_operator  . postfix_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 4 ) 0
 1: [P48 0] postfix_expression ->  . primary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (5 6 7 8 9 10 ) 1
 2: [P49 0] postfix_expression ->  . IDENTIFIER '(' ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
@@ -749,66 +789,66 @@ State 46:
 10: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 7
 11: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
 12: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (11 12 ) 3
-  0:   On postfix_expression to state 81 with (0 )
-  1:   On primary_expression to state 47 with (1 )
-  2:   On IDENTIFIER to state 48 with (2 3 11 )
-  3:   On l_expression to state 49 with (4 5 6 12 )
-  4:   On INT_CONSTANT to state 52 with (7 )
-  5:   On FLOAT_CONSTANT to state 53 with (8 )
-  6:   On STRING_LITERAL to state 54 with (9 )
-  7:   On '(' to state 55 with (10 )
+  0:   On postfix_expression to state 83 with (0 )
+  1:   On primary_expression to state 48 with (1 )
+  2:   On IDENTIFIER to state 49 with (2 3 11 )
+  3:   On l_expression to state 50 with (4 5 6 12 )
+  4:   On INT_CONSTANT to state 53 with (7 )
+  5:   On FLOAT_CONSTANT to state 54 with (8 )
+  6:   On STRING_LITERAL to state 55 with (9 )
+  7:   On '(' to state 56 with (10 )
 
 
-State 47:
+State 48:
 0: [P48 1] postfix_expression -> primary_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 48:
+State 49:
 0: [P49 1] postfix_expression -> IDENTIFIER  . '(' ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 1: [P50 1] postfix_expression -> IDENTIFIER  . '(' expression_list ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P58 1] l_expression -> IDENTIFIER  .   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
-  0:   On '(' to state 82 with (0 1 )
+  0:   On '(' to state 84 with (0 1 )
   Reduce item(s): 2 
 
 
-State 49:
+State 50:
 0: [P51 1] postfix_expression -> l_expression  . INC_OP   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 1: [P52 1] primary_expression -> l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
 2: [P53 1] primary_expression -> l_expression  . ASSIGN_OP expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
 3: [P59 1] l_expression -> l_expression  . '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
-  0:   On INC_OP to state 83 with (0 )
-  1:   On ASSIGN_OP to state 84 with (2 )
-  2:   On '[' to state 63 with (3 )
+  0:   On INC_OP to state 85 with (0 )
+  1:   On ASSIGN_OP to state 86 with (2 )
+  2:   On '[' to state 64 with (3 )
   Reduce item(s): 1 
 
 
-State 50:
+State 51:
 0: [P62 1] unary_operator -> '-'  .   { STRING_LITERAL INT_CONSTANT FLOAT_CONSTANT IDENTIFIER '(' }  1, () -1
   Reduce item(s): 0 
 
 
-State 51:
+State 52:
 0: [P63 1] unary_operator -> NOT_OP  .   { STRING_LITERAL INT_CONSTANT FLOAT_CONSTANT IDENTIFIER '(' }  1, () -1
   Reduce item(s): 0 
 
 
-State 52:
+State 53:
 0: [P54 1] primary_expression -> INT_CONSTANT  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 53:
+State 54:
 0: [P55 1] primary_expression -> FLOAT_CONSTANT  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 54:
+State 55:
 0: [P56 1] primary_expression -> STRING_LITERAL  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 55:
+State 56:
 0: [P57 1] primary_expression -> '('  . expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ')' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ')' }  0, (1 2 ) 0
@@ -844,46 +884,46 @@ State 55:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 85 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
-
-
-State 56:
-0: [P69 2] declaration -> type_specifier declarator_list  . ';'   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, () 0
-1: [P71 1] declarator_list -> declarator_list  . ',' declarator   { ',' ';' }  0, () 1
-  0:   On ';' to state 86 with (0 )
-  1:   On ',' to state 87 with (1 )
+  0:   On expression to state 87 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
 State 57:
-0: [P70 1] declarator_list -> declarator  .   { ',' ';' }  1, () -1
-1: [P13 1] declarator -> declarator  . '[' constant_expression ']'   { ',' '[' ';' }  0, () 0
-  0:   On '[' to state 88 with (1 )
-  Reduce item(s): 0 
+0: [P69 2] declaration -> type_specifier declarator_list  . ';'   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  0, () 0
+1: [P71 1] declarator_list -> declarator_list  . ',' declarator   { ',' ';' }  0, () 1
+  0:   On ';' to state 88 with (0 )
+  1:   On ',' to state 89 with (1 )
 
 
 State 58:
-0: [P12 1] declarator -> IDENTIFIER  .   { ')' ',' '[' ';' }  1, () -1
+0: [P70 1] declarator_list -> declarator  .   { ',' ';' }  1, () -1
+1: [P13 1] declarator -> declarator  . '[' constant_expression ']'   { ',' '[' ';' }  0, () 0
+  0:   On '[' to state 90 with (1 )
   Reduce item(s): 0 
 
 
 State 59:
+0: [P12 1] declarator -> IDENTIFIER  .   { ')' ',' '[' ';' }  1, () -1
+  Reduce item(s): 0 
+
+
+State 60:
 0: [P64 2] selection_statement -> IF '('  . expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ')' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ')' }  0, (1 2 ) 0
@@ -919,27 +959,27 @@ State 59:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 89 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 91 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 60:
+State 61:
 0: [P65 2] iteration_statement -> WHILE '('  . expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ')' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ')' }  0, (1 2 ) 0
@@ -975,27 +1015,27 @@ State 60:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 90 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 92 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 61:
+State 62:
 0: [P66 2] iteration_statement -> FOR '('  . expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ';' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ';' }  0, (1 2 ) 0
@@ -1031,27 +1071,27 @@ State 61:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 91 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 93 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 62:
+State 63:
 0: [P27 2] assignment_statement -> l_expression ASSIGN_OP  . expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ';' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ';' }  0, (1 2 ) 0
@@ -1087,27 +1127,27 @@ State 62:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 92 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 94 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 63:
+State 64:
 0: [P59 2] l_expression -> l_expression '['  . expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ']' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ']' }  0, (1 2 ) 0
@@ -1143,62 +1183,67 @@ State 63:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ']' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ']' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ']' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 93 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 95 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 64:
+State 65:
 0: [P7 4] fun_declarator -> IDENTIFIER '(' parameter_list ')'  .   { '{' }  1, () -1
   Reduce item(s): 0 
 
 
-State 65:
+State 66:
 0: [P10 2] parameter_list -> parameter_list ','  . parameter_declaration   { ')' ',' }  0, (1 ) 0
 1: [P11 0] parameter_declaration ->  . type_specifier declarator   { ')' ',' }  0, (2 3 4 ) 1
 2: [P4 0] type_specifier ->  . VOID   { IDENTIFIER }  0, () 2
 3: [P5 0] type_specifier ->  . INT   { IDENTIFIER }  0, () 3
 4: [P6 0] type_specifier ->  . FLOAT   { IDENTIFIER }  0, () 4
-  0:   On parameter_declaration to state 94 with (0 )
+  0:   On parameter_declaration to state 96 with (0 )
   1:   On type_specifier to state 33 with (1 )
   2:   On VOID to state 4 with (2 )
   3:   On INT to state 5 with (3 )
   4:   On FLOAT to state 6 with (4 )
 
 
-State 66:
+State 67:
 0: [P11 2] parameter_declaration -> type_specifier declarator  .   { ')' ',' }  1, () -1
 1: [P13 1] declarator -> declarator  . '[' constant_expression ']'   { ')' ',' '[' }  0, () 0
-  0:   On '[' to state 88 with (1 )
-  Reduce item(s): 0 
-
-
-State 67:
-0: [P18 4] compound_statement -> '{' declaration_list statement_list '}'  .   { FOR INT VOID FLOAT IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' <EOF> }  1, () -1
+  0:   On '[' to state 90 with (1 )
   Reduce item(s): 0 
 
 
 State 68:
-0: [P25 3] statement -> RETURN expression ';'  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
+0: [P18 4] compound_statement -> '{' declaration_list statement_list '}'  .   { INT VOID FLOAT <EOF> }  1, () -1
   Reduce item(s): 0 
 
 
 State 69:
+0: [P21 3] statement -> '{' statement_list '}'  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
+  Reduce item(s): 0 
+
+
+State 70:
+0: [P25 3] statement -> RETURN expression ';'  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
+  Reduce item(s): 0 
+
+
+State 71:
 0: [P29 2] expression -> expression OR_OP  . logical_and_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P30 0] logical_and_expression ->  . equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (3 4 5 ) 1
 2: [P31 0] logical_and_expression ->  . logical_and_expression AND_OP equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
@@ -1232,26 +1277,26 @@ State 69:
 30: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 16
 31: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 9
 32: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (31 32 ) 10
-  0:   On logical_and_expression to state 95 with (0 2 )
-  1:   On equality_expression to state 40 with (1 4 5 )
-  2:   On relational_expression to state 41 with (3 7 8 9 10 )
-  3:   On additive_expression to state 42 with (6 12 13 )
-  4:   On multiplicative_expression to state 43 with (11 15 16 )
-  5:   On unary_expression to state 44 with (14 )
-  6:   On postfix_expression to state 45 with (17 )
-  7:   On unary_operator to state 46 with (18 )
-  8:   On primary_expression to state 47 with (19 )
-  9:   On IDENTIFIER to state 48 with (20 21 31 )
-  10:   On l_expression to state 49 with (22 25 26 32 )
-  11:   On '-' to state 50 with (23 )
-  12:   On NOT_OP to state 51 with (24 )
-  13:   On INT_CONSTANT to state 52 with (27 )
-  14:   On FLOAT_CONSTANT to state 53 with (28 )
-  15:   On STRING_LITERAL to state 54 with (29 )
-  16:   On '(' to state 55 with (30 )
+  0:   On logical_and_expression to state 97 with (0 2 )
+  1:   On equality_expression to state 41 with (1 4 5 )
+  2:   On relational_expression to state 42 with (3 7 8 9 10 )
+  3:   On additive_expression to state 43 with (6 12 13 )
+  4:   On multiplicative_expression to state 44 with (11 15 16 )
+  5:   On unary_expression to state 45 with (14 )
+  6:   On postfix_expression to state 46 with (17 )
+  7:   On unary_operator to state 47 with (18 )
+  8:   On primary_expression to state 48 with (19 )
+  9:   On IDENTIFIER to state 49 with (20 21 31 )
+  10:   On l_expression to state 50 with (22 25 26 32 )
+  11:   On '-' to state 51 with (23 )
+  12:   On NOT_OP to state 52 with (24 )
+  13:   On INT_CONSTANT to state 53 with (27 )
+  14:   On FLOAT_CONSTANT to state 54 with (28 )
+  15:   On STRING_LITERAL to state 55 with (29 )
+  16:   On '(' to state 56 with (30 )
 
 
-State 70:
+State 72:
 0: [P31 2] logical_and_expression -> logical_and_expression AND_OP  . equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P32 0] equality_expression ->  . relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 6 7 8 ) 1
 2: [P33 0] equality_expression ->  . equality_expression EQ_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1283,25 +1328,25 @@ State 70:
 28: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 15
 29: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 8
 30: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (29 30 ) 9
-  0:   On equality_expression to state 96 with (0 2 3 )
-  1:   On relational_expression to state 41 with (1 5 6 7 8 )
-  2:   On additive_expression to state 42 with (4 10 11 )
-  3:   On multiplicative_expression to state 43 with (9 13 14 )
-  4:   On unary_expression to state 44 with (12 )
-  5:   On postfix_expression to state 45 with (15 )
-  6:   On unary_operator to state 46 with (16 )
-  7:   On primary_expression to state 47 with (17 )
-  8:   On IDENTIFIER to state 48 with (18 19 29 )
-  9:   On l_expression to state 49 with (20 23 24 30 )
-  10:   On '-' to state 50 with (21 )
-  11:   On NOT_OP to state 51 with (22 )
-  12:   On INT_CONSTANT to state 52 with (25 )
-  13:   On FLOAT_CONSTANT to state 53 with (26 )
-  14:   On STRING_LITERAL to state 54 with (27 )
-  15:   On '(' to state 55 with (28 )
+  0:   On equality_expression to state 98 with (0 2 3 )
+  1:   On relational_expression to state 42 with (1 5 6 7 8 )
+  2:   On additive_expression to state 43 with (4 10 11 )
+  3:   On multiplicative_expression to state 44 with (9 13 14 )
+  4:   On unary_expression to state 45 with (12 )
+  5:   On postfix_expression to state 46 with (15 )
+  6:   On unary_operator to state 47 with (16 )
+  7:   On primary_expression to state 48 with (17 )
+  8:   On IDENTIFIER to state 49 with (18 19 29 )
+  9:   On l_expression to state 50 with (20 23 24 30 )
+  10:   On '-' to state 51 with (21 )
+  11:   On NOT_OP to state 52 with (22 )
+  12:   On INT_CONSTANT to state 53 with (25 )
+  13:   On FLOAT_CONSTANT to state 54 with (26 )
+  14:   On STRING_LITERAL to state 55 with (27 )
+  15:   On '(' to state 56 with (28 )
 
 
-State 71:
+State 73:
 0: [P33 2] equality_expression -> equality_expression EQ_OP  . relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 4 5 ) 0
 1: [P35 0] relational_expression ->  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (6 7 8 ) 1
 2: [P36 0] relational_expression ->  . relational_expression '<' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 4 5 ) 0
@@ -1330,24 +1375,24 @@ State 71:
 25: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 14
 26: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 7
 27: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (26 27 ) 8
-  0:   On relational_expression to state 97 with (0 2 3 4 5 )
-  1:   On additive_expression to state 42 with (1 7 8 )
-  2:   On multiplicative_expression to state 43 with (6 10 11 )
-  3:   On unary_expression to state 44 with (9 )
-  4:   On postfix_expression to state 45 with (12 )
-  5:   On unary_operator to state 46 with (13 )
-  6:   On primary_expression to state 47 with (14 )
-  7:   On IDENTIFIER to state 48 with (15 16 26 )
-  8:   On l_expression to state 49 with (17 20 21 27 )
-  9:   On '-' to state 50 with (18 )
-  10:   On NOT_OP to state 51 with (19 )
-  11:   On INT_CONSTANT to state 52 with (22 )
-  12:   On FLOAT_CONSTANT to state 53 with (23 )
-  13:   On STRING_LITERAL to state 54 with (24 )
-  14:   On '(' to state 55 with (25 )
+  0:   On relational_expression to state 99 with (0 2 3 4 5 )
+  1:   On additive_expression to state 43 with (1 7 8 )
+  2:   On multiplicative_expression to state 44 with (6 10 11 )
+  3:   On unary_expression to state 45 with (9 )
+  4:   On postfix_expression to state 46 with (12 )
+  5:   On unary_operator to state 47 with (13 )
+  6:   On primary_expression to state 48 with (14 )
+  7:   On IDENTIFIER to state 49 with (15 16 26 )
+  8:   On l_expression to state 50 with (17 20 21 27 )
+  9:   On '-' to state 51 with (18 )
+  10:   On NOT_OP to state 52 with (19 )
+  11:   On INT_CONSTANT to state 53 with (22 )
+  12:   On FLOAT_CONSTANT to state 54 with (23 )
+  13:   On STRING_LITERAL to state 55 with (24 )
+  14:   On '(' to state 56 with (25 )
 
 
-State 72:
+State 74:
 0: [P34 2] equality_expression -> equality_expression NE_OP  . relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 4 5 ) 0
 1: [P35 0] relational_expression ->  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (6 7 8 ) 1
 2: [P36 0] relational_expression ->  . relational_expression '<' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 4 5 ) 0
@@ -1376,24 +1421,24 @@ State 72:
 25: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 14
 26: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 7
 27: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (26 27 ) 8
-  0:   On relational_expression to state 98 with (0 2 3 4 5 )
-  1:   On additive_expression to state 42 with (1 7 8 )
-  2:   On multiplicative_expression to state 43 with (6 10 11 )
-  3:   On unary_expression to state 44 with (9 )
-  4:   On postfix_expression to state 45 with (12 )
-  5:   On unary_operator to state 46 with (13 )
-  6:   On primary_expression to state 47 with (14 )
-  7:   On IDENTIFIER to state 48 with (15 16 26 )
-  8:   On l_expression to state 49 with (17 20 21 27 )
-  9:   On '-' to state 50 with (18 )
-  10:   On NOT_OP to state 51 with (19 )
-  11:   On INT_CONSTANT to state 52 with (22 )
-  12:   On FLOAT_CONSTANT to state 53 with (23 )
-  13:   On STRING_LITERAL to state 54 with (24 )
-  14:   On '(' to state 55 with (25 )
+  0:   On relational_expression to state 100 with (0 2 3 4 5 )
+  1:   On additive_expression to state 43 with (1 7 8 )
+  2:   On multiplicative_expression to state 44 with (6 10 11 )
+  3:   On unary_expression to state 45 with (9 )
+  4:   On postfix_expression to state 46 with (12 )
+  5:   On unary_operator to state 47 with (13 )
+  6:   On primary_expression to state 48 with (14 )
+  7:   On IDENTIFIER to state 49 with (15 16 26 )
+  8:   On l_expression to state 50 with (17 20 21 27 )
+  9:   On '-' to state 51 with (18 )
+  10:   On NOT_OP to state 52 with (19 )
+  11:   On INT_CONSTANT to state 53 with (22 )
+  12:   On FLOAT_CONSTANT to state 54 with (23 )
+  13:   On STRING_LITERAL to state 55 with (24 )
+  14:   On '(' to state 56 with (25 )
 
 
-State 73:
+State 75:
 0: [P36 2] relational_expression -> relational_expression '<'  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P40 0] additive_expression ->  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 6 ) 1
 2: [P41 0] additive_expression ->  . additive_expression '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1417,23 +1462,23 @@ State 73:
 20: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 13
 21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 6
 22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (21 22 ) 7
-  0:   On additive_expression to state 99 with (0 2 3 )
-  1:   On multiplicative_expression to state 43 with (1 5 6 )
-  2:   On unary_expression to state 44 with (4 )
-  3:   On postfix_expression to state 45 with (7 )
-  4:   On unary_operator to state 46 with (8 )
-  5:   On primary_expression to state 47 with (9 )
-  6:   On IDENTIFIER to state 48 with (10 11 21 )
-  7:   On l_expression to state 49 with (12 15 16 22 )
-  8:   On '-' to state 50 with (13 )
-  9:   On NOT_OP to state 51 with (14 )
-  10:   On INT_CONSTANT to state 52 with (17 )
-  11:   On FLOAT_CONSTANT to state 53 with (18 )
-  12:   On STRING_LITERAL to state 54 with (19 )
-  13:   On '(' to state 55 with (20 )
+  0:   On additive_expression to state 101 with (0 2 3 )
+  1:   On multiplicative_expression to state 44 with (1 5 6 )
+  2:   On unary_expression to state 45 with (4 )
+  3:   On postfix_expression to state 46 with (7 )
+  4:   On unary_operator to state 47 with (8 )
+  5:   On primary_expression to state 48 with (9 )
+  6:   On IDENTIFIER to state 49 with (10 11 21 )
+  7:   On l_expression to state 50 with (12 15 16 22 )
+  8:   On '-' to state 51 with (13 )
+  9:   On NOT_OP to state 52 with (14 )
+  10:   On INT_CONSTANT to state 53 with (17 )
+  11:   On FLOAT_CONSTANT to state 54 with (18 )
+  12:   On STRING_LITERAL to state 55 with (19 )
+  13:   On '(' to state 56 with (20 )
 
 
-State 74:
+State 76:
 0: [P37 2] relational_expression -> relational_expression '>'  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P40 0] additive_expression ->  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 6 ) 1
 2: [P41 0] additive_expression ->  . additive_expression '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1457,23 +1502,23 @@ State 74:
 20: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 13
 21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 6
 22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (21 22 ) 7
-  0:   On additive_expression to state 100 with (0 2 3 )
-  1:   On multiplicative_expression to state 43 with (1 5 6 )
-  2:   On unary_expression to state 44 with (4 )
-  3:   On postfix_expression to state 45 with (7 )
-  4:   On unary_operator to state 46 with (8 )
-  5:   On primary_expression to state 47 with (9 )
-  6:   On IDENTIFIER to state 48 with (10 11 21 )
-  7:   On l_expression to state 49 with (12 15 16 22 )
-  8:   On '-' to state 50 with (13 )
-  9:   On NOT_OP to state 51 with (14 )
-  10:   On INT_CONSTANT to state 52 with (17 )
-  11:   On FLOAT_CONSTANT to state 53 with (18 )
-  12:   On STRING_LITERAL to state 54 with (19 )
-  13:   On '(' to state 55 with (20 )
+  0:   On additive_expression to state 102 with (0 2 3 )
+  1:   On multiplicative_expression to state 44 with (1 5 6 )
+  2:   On unary_expression to state 45 with (4 )
+  3:   On postfix_expression to state 46 with (7 )
+  4:   On unary_operator to state 47 with (8 )
+  5:   On primary_expression to state 48 with (9 )
+  6:   On IDENTIFIER to state 49 with (10 11 21 )
+  7:   On l_expression to state 50 with (12 15 16 22 )
+  8:   On '-' to state 51 with (13 )
+  9:   On NOT_OP to state 52 with (14 )
+  10:   On INT_CONSTANT to state 53 with (17 )
+  11:   On FLOAT_CONSTANT to state 54 with (18 )
+  12:   On STRING_LITERAL to state 55 with (19 )
+  13:   On '(' to state 56 with (20 )
 
 
-State 75:
+State 77:
 0: [P38 2] relational_expression -> relational_expression LE_OP  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P40 0] additive_expression ->  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 6 ) 1
 2: [P41 0] additive_expression ->  . additive_expression '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1497,23 +1542,23 @@ State 75:
 20: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 13
 21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 6
 22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (21 22 ) 7
-  0:   On additive_expression to state 101 with (0 2 3 )
-  1:   On multiplicative_expression to state 43 with (1 5 6 )
-  2:   On unary_expression to state 44 with (4 )
-  3:   On postfix_expression to state 45 with (7 )
-  4:   On unary_operator to state 46 with (8 )
-  5:   On primary_expression to state 47 with (9 )
-  6:   On IDENTIFIER to state 48 with (10 11 21 )
-  7:   On l_expression to state 49 with (12 15 16 22 )
-  8:   On '-' to state 50 with (13 )
-  9:   On NOT_OP to state 51 with (14 )
-  10:   On INT_CONSTANT to state 52 with (17 )
-  11:   On FLOAT_CONSTANT to state 53 with (18 )
-  12:   On STRING_LITERAL to state 54 with (19 )
-  13:   On '(' to state 55 with (20 )
+  0:   On additive_expression to state 103 with (0 2 3 )
+  1:   On multiplicative_expression to state 44 with (1 5 6 )
+  2:   On unary_expression to state 45 with (4 )
+  3:   On postfix_expression to state 46 with (7 )
+  4:   On unary_operator to state 47 with (8 )
+  5:   On primary_expression to state 48 with (9 )
+  6:   On IDENTIFIER to state 49 with (10 11 21 )
+  7:   On l_expression to state 50 with (12 15 16 22 )
+  8:   On '-' to state 51 with (13 )
+  9:   On NOT_OP to state 52 with (14 )
+  10:   On INT_CONSTANT to state 53 with (17 )
+  11:   On FLOAT_CONSTANT to state 54 with (18 )
+  12:   On STRING_LITERAL to state 55 with (19 )
+  13:   On '(' to state 56 with (20 )
 
 
-State 76:
+State 78:
 0: [P39 2] relational_expression -> relational_expression GE_OP  . additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P40 0] additive_expression ->  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 6 ) 1
 2: [P41 0] additive_expression ->  . additive_expression '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1537,23 +1582,23 @@ State 76:
 20: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 13
 21: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 6
 22: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (21 22 ) 7
-  0:   On additive_expression to state 102 with (0 2 3 )
-  1:   On multiplicative_expression to state 43 with (1 5 6 )
-  2:   On unary_expression to state 44 with (4 )
-  3:   On postfix_expression to state 45 with (7 )
-  4:   On unary_operator to state 46 with (8 )
-  5:   On primary_expression to state 47 with (9 )
-  6:   On IDENTIFIER to state 48 with (10 11 21 )
-  7:   On l_expression to state 49 with (12 15 16 22 )
-  8:   On '-' to state 50 with (13 )
-  9:   On NOT_OP to state 51 with (14 )
-  10:   On INT_CONSTANT to state 52 with (17 )
-  11:   On FLOAT_CONSTANT to state 53 with (18 )
-  12:   On STRING_LITERAL to state 54 with (19 )
-  13:   On '(' to state 55 with (20 )
+  0:   On additive_expression to state 104 with (0 2 3 )
+  1:   On multiplicative_expression to state 44 with (1 5 6 )
+  2:   On unary_expression to state 45 with (4 )
+  3:   On postfix_expression to state 46 with (7 )
+  4:   On unary_operator to state 47 with (8 )
+  5:   On primary_expression to state 48 with (9 )
+  6:   On IDENTIFIER to state 49 with (10 11 21 )
+  7:   On l_expression to state 50 with (12 15 16 22 )
+  8:   On '-' to state 51 with (13 )
+  9:   On NOT_OP to state 52 with (14 )
+  10:   On INT_CONSTANT to state 53 with (17 )
+  11:   On FLOAT_CONSTANT to state 54 with (18 )
+  12:   On STRING_LITERAL to state 55 with (19 )
+  13:   On '(' to state 56 with (20 )
 
 
-State 77:
+State 79:
 0: [P41 2] additive_expression -> additive_expression '+'  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P43 0] multiplicative_expression ->  . unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 ) 1
 2: [P44 0] multiplicative_expression ->  . multiplicative_expression '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1574,22 +1619,22 @@ State 77:
 17: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 12
 18: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 5
 19: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (18 19 ) 6
-  0:   On multiplicative_expression to state 103 with (0 2 3 )
-  1:   On unary_expression to state 44 with (1 )
-  2:   On postfix_expression to state 45 with (4 )
-  3:   On unary_operator to state 46 with (5 )
-  4:   On primary_expression to state 47 with (6 )
-  5:   On IDENTIFIER to state 48 with (7 8 18 )
-  6:   On l_expression to state 49 with (9 12 13 19 )
-  7:   On '-' to state 50 with (10 )
-  8:   On NOT_OP to state 51 with (11 )
-  9:   On INT_CONSTANT to state 52 with (14 )
-  10:   On FLOAT_CONSTANT to state 53 with (15 )
-  11:   On STRING_LITERAL to state 54 with (16 )
-  12:   On '(' to state 55 with (17 )
+  0:   On multiplicative_expression to state 105 with (0 2 3 )
+  1:   On unary_expression to state 45 with (1 )
+  2:   On postfix_expression to state 46 with (4 )
+  3:   On unary_operator to state 47 with (5 )
+  4:   On primary_expression to state 48 with (6 )
+  5:   On IDENTIFIER to state 49 with (7 8 18 )
+  6:   On l_expression to state 50 with (9 12 13 19 )
+  7:   On '-' to state 51 with (10 )
+  8:   On NOT_OP to state 52 with (11 )
+  9:   On INT_CONSTANT to state 53 with (14 )
+  10:   On FLOAT_CONSTANT to state 54 with (15 )
+  11:   On STRING_LITERAL to state 55 with (16 )
+  12:   On '(' to state 56 with (17 )
 
 
-State 78:
+State 80:
 0: [P42 2] additive_expression -> additive_expression '-'  . multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
 1: [P43 0] multiplicative_expression ->  . unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (4 5 ) 1
 2: [P44 0] multiplicative_expression ->  . multiplicative_expression '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 3 ) 0
@@ -1610,22 +1655,22 @@ State 78:
 17: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 12
 18: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 5
 19: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (18 19 ) 6
-  0:   On multiplicative_expression to state 104 with (0 2 3 )
-  1:   On unary_expression to state 44 with (1 )
-  2:   On postfix_expression to state 45 with (4 )
-  3:   On unary_operator to state 46 with (5 )
-  4:   On primary_expression to state 47 with (6 )
-  5:   On IDENTIFIER to state 48 with (7 8 18 )
-  6:   On l_expression to state 49 with (9 12 13 19 )
-  7:   On '-' to state 50 with (10 )
-  8:   On NOT_OP to state 51 with (11 )
-  9:   On INT_CONSTANT to state 52 with (14 )
-  10:   On FLOAT_CONSTANT to state 53 with (15 )
-  11:   On STRING_LITERAL to state 54 with (16 )
-  12:   On '(' to state 55 with (17 )
+  0:   On multiplicative_expression to state 106 with (0 2 3 )
+  1:   On unary_expression to state 45 with (1 )
+  2:   On postfix_expression to state 46 with (4 )
+  3:   On unary_operator to state 47 with (5 )
+  4:   On primary_expression to state 48 with (6 )
+  5:   On IDENTIFIER to state 49 with (7 8 18 )
+  6:   On l_expression to state 50 with (9 12 13 19 )
+  7:   On '-' to state 51 with (10 )
+  8:   On NOT_OP to state 52 with (11 )
+  9:   On INT_CONSTANT to state 53 with (14 )
+  10:   On FLOAT_CONSTANT to state 54 with (15 )
+  11:   On STRING_LITERAL to state 55 with (16 )
+  12:   On '(' to state 56 with (17 )
 
 
-State 79:
+State 81:
 0: [P44 2] multiplicative_expression -> multiplicative_expression '*'  . unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P46 0] unary_expression ->  . postfix_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (3 4 5 6 ) 1
 2: [P47 0] unary_expression ->  . unary_operator postfix_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (7 8 ) 2
@@ -1643,21 +1688,21 @@ State 79:
 14: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 11
 15: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 4
 16: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (15 16 ) 5
-  0:   On unary_expression to state 105 with (0 )
-  1:   On postfix_expression to state 45 with (1 )
-  2:   On unary_operator to state 46 with (2 )
-  3:   On primary_expression to state 47 with (3 )
-  4:   On IDENTIFIER to state 48 with (4 5 15 )
-  5:   On l_expression to state 49 with (6 9 10 16 )
-  6:   On '-' to state 50 with (7 )
-  7:   On NOT_OP to state 51 with (8 )
-  8:   On INT_CONSTANT to state 52 with (11 )
-  9:   On FLOAT_CONSTANT to state 53 with (12 )
-  10:   On STRING_LITERAL to state 54 with (13 )
-  11:   On '(' to state 55 with (14 )
+  0:   On unary_expression to state 107 with (0 )
+  1:   On postfix_expression to state 46 with (1 )
+  2:   On unary_operator to state 47 with (2 )
+  3:   On primary_expression to state 48 with (3 )
+  4:   On IDENTIFIER to state 49 with (4 5 15 )
+  5:   On l_expression to state 50 with (6 9 10 16 )
+  6:   On '-' to state 51 with (7 )
+  7:   On NOT_OP to state 52 with (8 )
+  8:   On INT_CONSTANT to state 53 with (11 )
+  9:   On FLOAT_CONSTANT to state 54 with (12 )
+  10:   On STRING_LITERAL to state 55 with (13 )
+  11:   On '(' to state 56 with (14 )
 
 
-State 80:
+State 82:
 0: [P45 2] multiplicative_expression -> multiplicative_expression '/'  . unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P46 0] unary_expression ->  . postfix_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (3 4 5 6 ) 1
 2: [P47 0] unary_expression ->  . unary_operator postfix_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (7 8 ) 2
@@ -1675,26 +1720,26 @@ State 80:
 14: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 11
 15: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 4
 16: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (15 16 ) 5
-  0:   On unary_expression to state 106 with (0 )
-  1:   On postfix_expression to state 45 with (1 )
-  2:   On unary_operator to state 46 with (2 )
-  3:   On primary_expression to state 47 with (3 )
-  4:   On IDENTIFIER to state 48 with (4 5 15 )
-  5:   On l_expression to state 49 with (6 9 10 16 )
-  6:   On '-' to state 50 with (7 )
-  7:   On NOT_OP to state 51 with (8 )
-  8:   On INT_CONSTANT to state 52 with (11 )
-  9:   On FLOAT_CONSTANT to state 53 with (12 )
-  10:   On STRING_LITERAL to state 54 with (13 )
-  11:   On '(' to state 55 with (14 )
+  0:   On unary_expression to state 108 with (0 )
+  1:   On postfix_expression to state 46 with (1 )
+  2:   On unary_operator to state 47 with (2 )
+  3:   On primary_expression to state 48 with (3 )
+  4:   On IDENTIFIER to state 49 with (4 5 15 )
+  5:   On l_expression to state 50 with (6 9 10 16 )
+  6:   On '-' to state 51 with (7 )
+  7:   On NOT_OP to state 52 with (8 )
+  8:   On INT_CONSTANT to state 53 with (11 )
+  9:   On FLOAT_CONSTANT to state 54 with (12 )
+  10:   On STRING_LITERAL to state 55 with (13 )
+  11:   On '(' to state 56 with (14 )
 
 
-State 81:
+State 83:
 0: [P47 2] unary_expression -> unary_operator postfix_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 82:
+State 84:
 0: [P49 2] postfix_expression -> IDENTIFIER '('  . ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 1: [P50 2] postfix_expression -> IDENTIFIER '('  . expression_list ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (2 3 ) 1
 2: [P60 0] expression_list ->  . expression   { ')' ',' }  0, (4 5 ) 2
@@ -1733,34 +1778,34 @@ State 82:
 35: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '<' '>' '+' '-' '*' '/' }  0, () 19
 36: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' '<' '>' '+' '-' '*' '/' }  0, () 12
 37: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' '<' '>' '+' '-' '*' '/' }  0, (36 37 ) 13
-  0:   On ')' to state 107 with (0 )
-  1:   On expression_list to state 108 with (1 3 )
-  2:   On expression to state 109 with (2 5 )
-  3:   On logical_and_expression to state 39 with (4 7 )
-  4:   On equality_expression to state 40 with (6 9 10 )
-  5:   On relational_expression to state 41 with (8 12 13 14 15 )
-  6:   On additive_expression to state 42 with (11 17 18 )
-  7:   On multiplicative_expression to state 43 with (16 20 21 )
-  8:   On unary_expression to state 44 with (19 )
-  9:   On postfix_expression to state 45 with (22 )
-  10:   On unary_operator to state 46 with (23 )
-  11:   On primary_expression to state 47 with (24 )
-  12:   On IDENTIFIER to state 48 with (25 26 36 )
-  13:   On l_expression to state 49 with (27 30 31 37 )
-  14:   On '-' to state 50 with (28 )
-  15:   On NOT_OP to state 51 with (29 )
-  16:   On INT_CONSTANT to state 52 with (32 )
-  17:   On FLOAT_CONSTANT to state 53 with (33 )
-  18:   On STRING_LITERAL to state 54 with (34 )
-  19:   On '(' to state 55 with (35 )
+  0:   On ')' to state 109 with (0 )
+  1:   On expression_list to state 110 with (1 3 )
+  2:   On expression to state 111 with (2 5 )
+  3:   On logical_and_expression to state 40 with (4 7 )
+  4:   On equality_expression to state 41 with (6 9 10 )
+  5:   On relational_expression to state 42 with (8 12 13 14 15 )
+  6:   On additive_expression to state 43 with (11 17 18 )
+  7:   On multiplicative_expression to state 44 with (16 20 21 )
+  8:   On unary_expression to state 45 with (19 )
+  9:   On postfix_expression to state 46 with (22 )
+  10:   On unary_operator to state 47 with (23 )
+  11:   On primary_expression to state 48 with (24 )
+  12:   On IDENTIFIER to state 49 with (25 26 36 )
+  13:   On l_expression to state 50 with (27 30 31 37 )
+  14:   On '-' to state 51 with (28 )
+  15:   On NOT_OP to state 52 with (29 )
+  16:   On INT_CONSTANT to state 53 with (32 )
+  17:   On FLOAT_CONSTANT to state 54 with (33 )
+  18:   On STRING_LITERAL to state 55 with (34 )
+  19:   On '(' to state 56 with (35 )
 
 
-State 83:
+State 85:
 0: [P51 2] postfix_expression -> l_expression INC_OP  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 84:
+State 86:
 0: [P53 2] primary_expression -> l_expression ASSIGN_OP  . expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (1 2 ) 0
@@ -1796,367 +1841,359 @@ State 84:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 110 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 112 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 85:
+State 87:
 0: [P57 2] primary_expression -> '(' expression  . ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
-  0:   On ')' to state 111 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+  0:   On ')' to state 113 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
-State 86:
+State 88:
 0: [P69 3] declaration -> type_specifier declarator_list ';'  .   { FOR INT VOID FLOAT IF WHILE RETURN IDENTIFIER '{' ';' }  1, () -1
   Reduce item(s): 0 
 
 
-State 87:
+State 89:
 0: [P71 2] declarator_list -> declarator_list ','  . declarator   { ',' ';' }  0, (1 2 ) 0
 1: [P12 0] declarator ->  . IDENTIFIER   { ',' '[' ';' }  0, () 1
 2: [P13 0] declarator ->  . declarator '[' constant_expression ']'   { ',' '[' ';' }  0, (1 2 ) 0
-  0:   On declarator to state 112 with (0 2 )
-  1:   On IDENTIFIER to state 58 with (1 )
-
-
-State 88:
-0: [P13 2] declarator -> declarator '['  . constant_expression ']'   { ')' ',' '[' ';' }  0, (1 2 ) 0
-1: [P14 0] constant_expression ->  . INT_CONSTANT   { ']' }  0, () 1
-2: [P15 0] constant_expression ->  . FLOAT_CONSTANT   { ']' }  0, () 2
-  0:   On constant_expression to state 113 with (0 )
-  1:   On INT_CONSTANT to state 114 with (1 )
-  2:   On FLOAT_CONSTANT to state 115 with (2 )
-
-
-State 89:
-0: [P64 3] selection_statement -> IF '(' expression  . ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
-  0:   On ')' to state 116 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+  0:   On declarator to state 114 with (0 2 )
+  1:   On IDENTIFIER to state 59 with (1 )
 
 
 State 90:
-0: [P65 3] iteration_statement -> WHILE '(' expression  . ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
-  0:   On ')' to state 117 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+0: [P13 2] declarator -> declarator '['  . constant_expression ']'   { ')' ',' '[' ';' }  0, (1 2 ) 0
+1: [P14 0] constant_expression ->  . INT_CONSTANT   { ']' }  0, () 1
+2: [P15 0] constant_expression ->  . FLOAT_CONSTANT   { ']' }  0, () 2
+  0:   On constant_expression to state 115 with (0 )
+  1:   On INT_CONSTANT to state 116 with (1 )
+  2:   On FLOAT_CONSTANT to state 117 with (2 )
 
 
 State 91:
-0: [P66 3] iteration_statement -> FOR '(' expression  . ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
-  0:   On ';' to state 118 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+0: [P64 3] selection_statement -> IF '(' expression  . ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
+  0:   On ')' to state 118 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
 State 92:
-0: [P27 3] assignment_statement -> l_expression ASSIGN_OP expression  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
-  0:   On ';' to state 119 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+0: [P65 3] iteration_statement -> WHILE '(' expression  . ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
+  0:   On ')' to state 119 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
 State 93:
-0: [P59 3] l_expression -> l_expression '[' expression  . ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ']' }  0, () 1
-  0:   On ']' to state 120 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+0: [P66 3] iteration_statement -> FOR '(' expression  . ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
+  0:   On ';' to state 120 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
 State 94:
+0: [P27 3] assignment_statement -> l_expression ASSIGN_OP expression  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
+  0:   On ';' to state 121 with (0 )
+  1:   On OR_OP to state 71 with (1 )
+
+
+State 95:
+0: [P59 3] l_expression -> l_expression '[' expression  . ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ']' }  0, () 1
+  0:   On ']' to state 122 with (0 )
+  1:   On OR_OP to state 71 with (1 )
+
+
+State 96:
 0: [P10 3] parameter_list -> parameter_list ',' parameter_declaration  .   { ')' ',' }  1, () -1
   Reduce item(s): 0 
 
 
-State 95:
+State 97:
 0: [P29 3] expression -> expression OR_OP logical_and_expression  .   { OR_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
 1: [P31 1] logical_and_expression -> logical_and_expression  . AND_OP equality_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-  0:   On AND_OP to state 70 with (1 )
+  0:   On AND_OP to state 72 with (1 )
   Reduce item(s): 0 
 Solved SR CONFLICT on AND_OP:
-	shift to state 70, removed AND_OP from LA-set of rule 29)
+	shift to state 72, removed AND_OP from LA-set of rule 29)
 
 
-State 96:
+State 98:
 0: [P31 3] logical_and_expression -> logical_and_expression AND_OP equality_expression  .   { OR_OP AND_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
 1: [P33 1] equality_expression -> equality_expression  . EQ_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P34 1] equality_expression -> equality_expression  . NE_OP relational_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On EQ_OP to state 71 with (1 )
-  1:   On NE_OP to state 72 with (2 )
+  0:   On EQ_OP to state 73 with (1 )
+  1:   On NE_OP to state 74 with (2 )
   Reduce item(s): 0 
 Solved SR CONFLICT on EQ_OP:
-	shift to state 71, removed EQ_OP from LA-set of rule 31)
+	shift to state 73, removed EQ_OP from LA-set of rule 31)
 Solved SR CONFLICT on NE_OP:
-	shift to state 72, removed NE_OP from LA-set of rule 31)
+	shift to state 74, removed NE_OP from LA-set of rule 31)
 
 
-State 97:
+State 99:
 0: [P33 3] equality_expression -> equality_expression EQ_OP relational_expression  .   { OR_OP AND_OP EQ_OP NE_OP ')' ',' ']' ';' '+' '-' '*' '/' }  1, () -1
 1: [P36 1] relational_expression -> relational_expression  . '<' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P37 1] relational_expression -> relational_expression  . '>' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
 3: [P38 1] relational_expression -> relational_expression  . LE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
 4: [P39 1] relational_expression -> relational_expression  . GE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 3
-  0:   On '<' to state 73 with (1 )
-  1:   On '>' to state 74 with (2 )
-  2:   On LE_OP to state 75 with (3 )
-  3:   On GE_OP to state 76 with (4 )
+  0:   On '<' to state 75 with (1 )
+  1:   On '>' to state 76 with (2 )
+  2:   On LE_OP to state 77 with (3 )
+  3:   On GE_OP to state 78 with (4 )
   Reduce item(s): 0 
 Solved SR CONFLICT on '<':
-	shift to state 73, removed '<' from LA-set of rule 33)
+	shift to state 75, removed '<' from LA-set of rule 33)
 Solved SR CONFLICT on '>':
-	shift to state 74, removed '>' from LA-set of rule 33)
+	shift to state 76, removed '>' from LA-set of rule 33)
 Solved SR CONFLICT on LE_OP:
-	shift to state 75, removed LE_OP from LA-set of rule 33)
+	shift to state 77, removed LE_OP from LA-set of rule 33)
 Solved SR CONFLICT on GE_OP:
-	shift to state 76, removed GE_OP from LA-set of rule 33)
+	shift to state 78, removed GE_OP from LA-set of rule 33)
 
 
-State 98:
+State 100:
 0: [P34 3] equality_expression -> equality_expression NE_OP relational_expression  .   { OR_OP AND_OP EQ_OP NE_OP ')' ',' ']' ';' '+' '-' '*' '/' }  1, () -1
 1: [P36 1] relational_expression -> relational_expression  . '<' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P37 1] relational_expression -> relational_expression  . '>' additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
 3: [P38 1] relational_expression -> relational_expression  . LE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 2
 4: [P39 1] relational_expression -> relational_expression  . GE_OP additive_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 3
-  0:   On '<' to state 73 with (1 )
-  1:   On '>' to state 74 with (2 )
-  2:   On LE_OP to state 75 with (3 )
-  3:   On GE_OP to state 76 with (4 )
+  0:   On '<' to state 75 with (1 )
+  1:   On '>' to state 76 with (2 )
+  2:   On LE_OP to state 77 with (3 )
+  3:   On GE_OP to state 78 with (4 )
   Reduce item(s): 0 
 Solved SR CONFLICT on '<':
-	shift to state 73, removed '<' from LA-set of rule 34)
+	shift to state 75, removed '<' from LA-set of rule 34)
 Solved SR CONFLICT on '>':
-	shift to state 74, removed '>' from LA-set of rule 34)
+	shift to state 76, removed '>' from LA-set of rule 34)
 Solved SR CONFLICT on LE_OP:
-	shift to state 75, removed LE_OP from LA-set of rule 34)
+	shift to state 77, removed LE_OP from LA-set of rule 34)
 Solved SR CONFLICT on GE_OP:
-	shift to state 76, removed GE_OP from LA-set of rule 34)
-
-
-State 99:
-0: [P36 3] relational_expression -> relational_expression '<' additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
-1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '+' to state 77 with (1 )
-  1:   On '-' to state 78 with (2 )
-  Reduce item(s): 0 
-Solved SR CONFLICT on '+':
-	shift to state 77, removed '+' from LA-set of rule 36)
-Solved SR CONFLICT on '-':
-	shift to state 78, removed '-' from LA-set of rule 36)
-
-
-State 100:
-0: [P37 3] relational_expression -> relational_expression '>' additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
-1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '+' to state 77 with (1 )
-  1:   On '-' to state 78 with (2 )
-  Reduce item(s): 0 
-Solved SR CONFLICT on '+':
-	shift to state 77, removed '+' from LA-set of rule 37)
-Solved SR CONFLICT on '-':
-	shift to state 78, removed '-' from LA-set of rule 37)
+	shift to state 78, removed GE_OP from LA-set of rule 34)
 
 
 State 101:
-0: [P38 3] relational_expression -> relational_expression LE_OP additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
+0: [P36 3] relational_expression -> relational_expression '<' additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
 1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '+' to state 77 with (1 )
-  1:   On '-' to state 78 with (2 )
+  0:   On '+' to state 79 with (1 )
+  1:   On '-' to state 80 with (2 )
   Reduce item(s): 0 
 Solved SR CONFLICT on '+':
-	shift to state 77, removed '+' from LA-set of rule 38)
+	shift to state 79, removed '+' from LA-set of rule 36)
 Solved SR CONFLICT on '-':
-	shift to state 78, removed '-' from LA-set of rule 38)
+	shift to state 80, removed '-' from LA-set of rule 36)
 
 
 State 102:
-0: [P39 3] relational_expression -> relational_expression GE_OP additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
+0: [P37 3] relational_expression -> relational_expression '>' additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
 1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '+' to state 77 with (1 )
-  1:   On '-' to state 78 with (2 )
+  0:   On '+' to state 79 with (1 )
+  1:   On '-' to state 80 with (2 )
   Reduce item(s): 0 
 Solved SR CONFLICT on '+':
-	shift to state 77, removed '+' from LA-set of rule 39)
+	shift to state 79, removed '+' from LA-set of rule 37)
 Solved SR CONFLICT on '-':
-	shift to state 78, removed '-' from LA-set of rule 39)
+	shift to state 80, removed '-' from LA-set of rule 37)
 
 
 State 103:
-0: [P41 3] additive_expression -> additive_expression '+' multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
-1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '*' to state 79 with (1 )
-  1:   On '/' to state 80 with (2 )
+0: [P38 3] relational_expression -> relational_expression LE_OP additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
+1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '+' to state 79 with (1 )
+  1:   On '-' to state 80 with (2 )
   Reduce item(s): 0 
-Solved SR CONFLICT on '*':
-	shift to state 79, removed '*' from LA-set of rule 41)
-Solved SR CONFLICT on '/':
-	shift to state 80, removed '/' from LA-set of rule 41)
+Solved SR CONFLICT on '+':
+	shift to state 79, removed '+' from LA-set of rule 38)
+Solved SR CONFLICT on '-':
+	shift to state 80, removed '-' from LA-set of rule 38)
 
 
 State 104:
-0: [P42 3] additive_expression -> additive_expression '-' multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
-1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
-  0:   On '*' to state 79 with (1 )
-  1:   On '/' to state 80 with (2 )
+0: [P39 3] relational_expression -> relational_expression GE_OP additive_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '*' '/' }  1, () -1
+1: [P41 1] additive_expression -> additive_expression  . '+' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P42 1] additive_expression -> additive_expression  . '-' multiplicative_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '+' to state 79 with (1 )
+  1:   On '-' to state 80 with (2 )
   Reduce item(s): 0 
-Solved SR CONFLICT on '*':
-	shift to state 79, removed '*' from LA-set of rule 42)
-Solved SR CONFLICT on '/':
-	shift to state 80, removed '/' from LA-set of rule 42)
+Solved SR CONFLICT on '+':
+	shift to state 79, removed '+' from LA-set of rule 39)
+Solved SR CONFLICT on '-':
+	shift to state 80, removed '-' from LA-set of rule 39)
 
 
 State 105:
+0: [P41 3] additive_expression -> additive_expression '+' multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
+1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '*' to state 81 with (1 )
+  1:   On '/' to state 82 with (2 )
+  Reduce item(s): 0 
+Solved SR CONFLICT on '*':
+	shift to state 81, removed '*' from LA-set of rule 41)
+Solved SR CONFLICT on '/':
+	shift to state 82, removed '/' from LA-set of rule 41)
+
+
+State 106:
+0: [P42 3] additive_expression -> additive_expression '-' multiplicative_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' }  1, () -1
+1: [P44 1] multiplicative_expression -> multiplicative_expression  . '*' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+2: [P45 1] multiplicative_expression -> multiplicative_expression  . '/' unary_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 1
+  0:   On '*' to state 81 with (1 )
+  1:   On '/' to state 82 with (2 )
+  Reduce item(s): 0 
+Solved SR CONFLICT on '*':
+	shift to state 81, removed '*' from LA-set of rule 42)
+Solved SR CONFLICT on '/':
+	shift to state 82, removed '/' from LA-set of rule 42)
+
+
+State 107:
 0: [P44 3] multiplicative_expression -> multiplicative_expression '*' unary_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 106:
+State 108:
 0: [P45 3] multiplicative_expression -> multiplicative_expression '/' unary_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 107:
+State 109:
 0: [P49 3] postfix_expression -> IDENTIFIER '(' ')'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 108:
+State 110:
 0: [P50 3] postfix_expression -> IDENTIFIER '(' expression_list  . ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
 1: [P61 1] expression_list -> expression_list  . ',' expression   { ')' ',' }  0, () 1
-  0:   On ')' to state 121 with (0 )
-  1:   On ',' to state 122 with (1 )
-
-
-State 109:
-0: [P60 1] expression_list -> expression  .   { ')' ',' }  1, () -1
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' ',' }  0, () 0
-  0:   On OR_OP to state 69 with (1 )
-  Reduce item(s): 0 
-
-
-State 110:
-0: [P53 3] primary_expression -> l_expression ASSIGN_OP expression  .   { AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
-1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
-  0:   On OR_OP to state 69 with (1 )
-  Reduce item(s): 0 
-Solved SR CONFLICT on OR_OP:
-	shift to state 69, removed OR_OP from LA-set of rule 53)
+  0:   On ')' to state 123 with (0 )
+  1:   On ',' to state 124 with (1 )
 
 
 State 111:
-0: [P57 3] primary_expression -> '(' expression ')'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
+0: [P60 1] expression_list -> expression  .   { ')' ',' }  1, () -1
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' ',' }  0, () 0
+  0:   On OR_OP to state 71 with (1 )
   Reduce item(s): 0 
 
 
 State 112:
-0: [P71 3] declarator_list -> declarator_list ',' declarator  .   { ',' ';' }  1, () -1
-1: [P13 1] declarator -> declarator  . '[' constant_expression ']'   { ',' '[' ';' }  0, () 0
-  0:   On '[' to state 88 with (1 )
+0: [P53 3] primary_expression -> l_expression ASSIGN_OP expression  .   { AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
+1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  0, () 0
+  0:   On OR_OP to state 71 with (1 )
   Reduce item(s): 0 
+Solved SR CONFLICT on OR_OP:
+	shift to state 71, removed OR_OP from LA-set of rule 53)
 
 
 State 113:
-0: [P13 3] declarator -> declarator '[' constant_expression  . ']'   { ')' ',' '[' ';' }  0, () 0
-  0:   On ']' to state 123 with (0 )
+0: [P57 3] primary_expression -> '(' expression ')'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
+  Reduce item(s): 0 
 
 
 State 114:
-0: [P14 1] constant_expression -> INT_CONSTANT  .   { ']' }  1, () -1
+0: [P71 3] declarator_list -> declarator_list ',' declarator  .   { ',' ';' }  1, () -1
+1: [P13 1] declarator -> declarator  . '[' constant_expression ']'   { ',' '[' ';' }  0, () 0
+  0:   On '[' to state 90 with (1 )
   Reduce item(s): 0 
 
 
 State 115:
+0: [P13 3] declarator -> declarator '[' constant_expression  . ']'   { ')' ',' '[' ';' }  0, () 0
+  0:   On ']' to state 125 with (0 )
+
+
+State 116:
+0: [P14 1] constant_expression -> INT_CONSTANT  .   { ']' }  1, () -1
+  Reduce item(s): 0 
+
+
+State 117:
 0: [P15 1] constant_expression -> FLOAT_CONSTANT  .   { ']' }  1, () -1
   Reduce item(s): 0 
 
 
-State 116:
-0: [P64 4] selection_statement -> IF '(' expression ')'  . statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
-1: [P21 0] statement ->  . compound_statement   { ELSE }  0, (6 7 8 ) 1
-2: [P22 0] statement ->  . selection_statement   { ELSE }  0, (9 ) 2
-3: [P23 0] statement ->  . iteration_statement   { ELSE }  0, (10 11 ) 3
-4: [P24 0] statement ->  . assignment_statement   { ELSE }  0, (12 13 ) 4
-5: [P25 0] statement ->  . RETURN expression ';'   { ELSE }  0, () 5
-6: [P16 0] compound_statement ->  . '{' '}'   { ELSE }  0, () 6
-7: [P17 0] compound_statement ->  . '{' statement_list '}'   { ELSE }  0, () 6
-8: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { ELSE }  0, () 6
-9: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { ELSE }  0, () 7
-10: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { ELSE }  0, () 8
-11: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { ELSE }  0, () 9
-12: [P26 0] assignment_statement ->  . ';'   { ELSE }  0, () 10
-13: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { ELSE }  0, (14 15 ) 11
-14: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
-15: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (14 15 ) 11
-  0:   On statement to state 124 with (0 )
-  1:   On compound_statement to state 18 with (1 )
-  2:   On selection_statement to state 19 with (2 )
-  3:   On iteration_statement to state 20 with (3 )
-  4:   On assignment_statement to state 21 with (4 )
-  5:   On RETURN to state 22 with (5 )
-  6:   On '{' to state 11 with (6 7 8 )
-  7:   On IF to state 24 with (9 )
-  8:   On WHILE to state 25 with (10 )
-  9:   On FOR to state 26 with (11 )
-  10:   On ';' to state 27 with (12 )
-  11:   On l_expression to state 28 with (13 15 )
-  12:   On IDENTIFIER to state 29 with (14 )
-
-
-State 117:
-0: [P65 4] iteration_statement -> WHILE '(' expression ')'  . statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
-1: [P21 0] statement ->  . compound_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 7 8 ) 1
-2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 ) 2
-3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 3
-4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 4
-5: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 5
-6: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-7: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-8: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-9: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-10: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
-11: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
-13: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (14 15 ) 11
-14: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
-15: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (14 15 ) 11
-  0:   On statement to state 125 with (0 )
-  1:   On compound_statement to state 18 with (1 )
-  2:   On selection_statement to state 19 with (2 )
-  3:   On iteration_statement to state 20 with (3 )
-  4:   On assignment_statement to state 21 with (4 )
-  5:   On RETURN to state 22 with (5 )
-  6:   On '{' to state 11 with (6 7 8 )
-  7:   On IF to state 24 with (9 )
-  8:   On WHILE to state 25 with (10 )
-  9:   On FOR to state 26 with (11 )
-  10:   On ';' to state 27 with (12 )
-  11:   On l_expression to state 28 with (13 15 )
-  12:   On IDENTIFIER to state 29 with (14 )
-
-
 State 118:
+0: [P64 4] selection_statement -> IF '(' expression ')'  . statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
+1: [P21 0] statement ->  . '{' statement_list '}'   { ELSE }  0, () 1
+2: [P22 0] statement ->  . selection_statement   { ELSE }  0, (6 ) 2
+3: [P23 0] statement ->  . iteration_statement   { ELSE }  0, (7 8 ) 3
+4: [P24 0] statement ->  . assignment_statement   { ELSE }  0, (9 10 ) 4
+5: [P25 0] statement ->  . RETURN expression ';'   { ELSE }  0, () 5
+6: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { ELSE }  0, () 6
+7: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { ELSE }  0, () 7
+8: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { ELSE }  0, () 8
+9: [P26 0] assignment_statement ->  . ';'   { ELSE }  0, () 9
+10: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { ELSE }  0, (11 12 ) 10
+11: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 11
+12: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (11 12 ) 10
+  0:   On statement to state 126 with (0 )
+  1:   On '{' to state 18 with (1 )
+  2:   On selection_statement to state 19 with (2 )
+  3:   On iteration_statement to state 20 with (3 )
+  4:   On assignment_statement to state 21 with (4 )
+  5:   On RETURN to state 22 with (5 )
+  6:   On IF to state 24 with (6 )
+  7:   On WHILE to state 25 with (7 )
+  8:   On FOR to state 26 with (8 )
+  9:   On ';' to state 27 with (9 )
+  10:   On l_expression to state 28 with (10 12 )
+  11:   On IDENTIFIER to state 29 with (11 )
+
+
+State 119:
+0: [P65 4] iteration_statement -> WHILE '(' expression ')'  . statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
+1: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 1
+2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 ) 2
+3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 ) 3
+4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 10 ) 4
+5: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 5
+6: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
+7: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 10
+11: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 11
+12: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (11 12 ) 10
+  0:   On statement to state 127 with (0 )
+  1:   On '{' to state 18 with (1 )
+  2:   On selection_statement to state 19 with (2 )
+  3:   On iteration_statement to state 20 with (3 )
+  4:   On assignment_statement to state 21 with (4 )
+  5:   On RETURN to state 22 with (5 )
+  6:   On IF to state 24 with (6 )
+  7:   On WHILE to state 25 with (7 )
+  8:   On FOR to state 26 with (8 )
+  9:   On ';' to state 27 with (9 )
+  10:   On l_expression to state 28 with (10 12 )
+  11:   On IDENTIFIER to state 29 with (11 )
+
+
+State 120:
 0: [P66 4] iteration_statement -> FOR '(' expression ';'  . expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ';' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ';' }  0, (1 2 ) 0
@@ -2192,42 +2229,42 @@ State 118:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '[' ';' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 126 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 128 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 119:
+State 121:
 0: [P27 4] assignment_statement -> l_expression ASSIGN_OP expression ';'  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
   Reduce item(s): 0 
 
 
-State 120:
+State 122:
 0: [P59 4] l_expression -> l_expression '[' expression ']'  .   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 121:
+State 123:
 0: [P50 4] postfix_expression -> IDENTIFIER '(' expression_list ')'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' ']' ';' '<' '>' '+' '-' '*' '/' }  1, () -1
   Reduce item(s): 0 
 
 
-State 122:
+State 124:
 0: [P61 2] expression_list -> expression_list ','  . expression   { ')' ',' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ')' ',' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ')' ',' }  0, (1 2 ) 0
@@ -2263,88 +2300,84 @@ State 122:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' ',' '[' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 127 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 129 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 123:
+State 125:
 0: [P13 4] declarator -> declarator '[' constant_expression ']'  .   { ')' ',' '[' ';' }  1, () -1
   Reduce item(s): 0 
 
 
-State 124:
+State 126:
 0: [P64 5] selection_statement -> IF '(' expression ')' statement  . ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
-  0:   On ELSE to state 128 with (0 )
+  0:   On ELSE to state 130 with (0 )
 
 
-State 125:
+State 127:
 0: [P65 5] iteration_statement -> WHILE '(' expression ')' statement  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
   Reduce item(s): 0 
 
 
-State 126:
+State 128:
 0: [P66 5] iteration_statement -> FOR '(' expression ';' expression  . ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
 1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ';' }  0, () 1
-  0:   On ';' to state 129 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+  0:   On ';' to state 131 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
-State 127:
+State 129:
 0: [P61 3] expression_list -> expression_list ',' expression  .   { ')' ',' }  1, () -1
 1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' ',' }  0, () 0
-  0:   On OR_OP to state 69 with (1 )
+  0:   On OR_OP to state 71 with (1 )
   Reduce item(s): 0 
 
 
-State 128:
+State 130:
 0: [P64 6] selection_statement -> IF '(' expression ')' statement ELSE  . statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
-1: [P21 0] statement ->  . compound_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 7 8 ) 1
-2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 ) 2
-3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 3
-4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 4
+1: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 1
+2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 ) 2
+3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 ) 3
+4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 10 ) 4
 5: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 5
-6: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-7: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-8: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-9: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-10: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
-11: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
-13: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (14 15 ) 11
-14: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
-15: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (14 15 ) 11
-  0:   On statement to state 130 with (0 )
-  1:   On compound_statement to state 18 with (1 )
+6: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
+7: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 10
+11: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 11
+12: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (11 12 ) 10
+  0:   On statement to state 132 with (0 )
+  1:   On '{' to state 18 with (1 )
   2:   On selection_statement to state 19 with (2 )
   3:   On iteration_statement to state 20 with (3 )
   4:   On assignment_statement to state 21 with (4 )
   5:   On RETURN to state 22 with (5 )
-  6:   On '{' to state 11 with (6 7 8 )
-  7:   On IF to state 24 with (9 )
-  8:   On WHILE to state 25 with (10 )
-  9:   On FOR to state 26 with (11 )
-  10:   On ';' to state 27 with (12 )
-  11:   On l_expression to state 28 with (13 15 )
-  12:   On IDENTIFIER to state 29 with (14 )
+  6:   On IF to state 24 with (6 )
+  7:   On WHILE to state 25 with (7 )
+  8:   On FOR to state 26 with (8 )
+  9:   On ';' to state 27 with (9 )
+  10:   On l_expression to state 28 with (10 12 )
+  11:   On IDENTIFIER to state 29 with (11 )
 
 
-State 129:
+State 131:
 0: [P66 6] iteration_statement -> FOR '(' expression ';' expression ';'  . expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 ) 0
 1: [P28 0] expression ->  . logical_and_expression   { OR_OP ')' }  0, (3 4 ) 1
 2: [P29 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ')' }  0, (1 2 ) 0
@@ -2380,71 +2413,67 @@ State 129:
 32: [P57 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '<' '>' '+' '-' '*' '/' }  0, () 17
 33: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, () 10
 34: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP INC_OP OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ')' '[' '<' '>' '+' '-' '*' '/' }  0, (33 34 ) 11
-  0:   On expression to state 131 with (0 2 )
-  1:   On logical_and_expression to state 39 with (1 4 )
-  2:   On equality_expression to state 40 with (3 6 7 )
-  3:   On relational_expression to state 41 with (5 9 10 11 12 )
-  4:   On additive_expression to state 42 with (8 14 15 )
-  5:   On multiplicative_expression to state 43 with (13 17 18 )
-  6:   On unary_expression to state 44 with (16 )
-  7:   On postfix_expression to state 45 with (19 )
-  8:   On unary_operator to state 46 with (20 )
-  9:   On primary_expression to state 47 with (21 )
-  10:   On IDENTIFIER to state 48 with (22 23 33 )
-  11:   On l_expression to state 49 with (24 27 28 34 )
-  12:   On '-' to state 50 with (25 )
-  13:   On NOT_OP to state 51 with (26 )
-  14:   On INT_CONSTANT to state 52 with (29 )
-  15:   On FLOAT_CONSTANT to state 53 with (30 )
-  16:   On STRING_LITERAL to state 54 with (31 )
-  17:   On '(' to state 55 with (32 )
+  0:   On expression to state 133 with (0 2 )
+  1:   On logical_and_expression to state 40 with (1 4 )
+  2:   On equality_expression to state 41 with (3 6 7 )
+  3:   On relational_expression to state 42 with (5 9 10 11 12 )
+  4:   On additive_expression to state 43 with (8 14 15 )
+  5:   On multiplicative_expression to state 44 with (13 17 18 )
+  6:   On unary_expression to state 45 with (16 )
+  7:   On postfix_expression to state 46 with (19 )
+  8:   On unary_operator to state 47 with (20 )
+  9:   On primary_expression to state 48 with (21 )
+  10:   On IDENTIFIER to state 49 with (22 23 33 )
+  11:   On l_expression to state 50 with (24 27 28 34 )
+  12:   On '-' to state 51 with (25 )
+  13:   On NOT_OP to state 52 with (26 )
+  14:   On INT_CONSTANT to state 53 with (29 )
+  15:   On FLOAT_CONSTANT to state 54 with (30 )
+  16:   On STRING_LITERAL to state 55 with (31 )
+  17:   On '(' to state 56 with (32 )
 
 
-State 130:
+State 132:
 0: [P64 7] selection_statement -> IF '(' expression ')' statement ELSE statement  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
   Reduce item(s): 0 
 
 
-State 131:
+State 133:
 0: [P66 7] iteration_statement -> FOR '(' expression ';' expression ';' expression  . ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 0
 1: [P29 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ')' }  0, () 1
-  0:   On ')' to state 132 with (0 )
-  1:   On OR_OP to state 69 with (1 )
+  0:   On ')' to state 134 with (0 )
+  1:   On OR_OP to state 71 with (1 )
 
 
-State 132:
+State 134:
 0: [P66 8] iteration_statement -> FOR '(' expression ';' expression ';' expression ')'  . statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (1 2 3 4 5 ) 0
-1: [P21 0] statement ->  . compound_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 7 8 ) 1
-2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 ) 2
-3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (10 11 ) 3
-4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (12 13 ) 4
+1: [P21 0] statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 1
+2: [P22 0] statement ->  . selection_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (6 ) 2
+3: [P23 0] statement ->  . iteration_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (7 8 ) 3
+4: [P24 0] statement ->  . assignment_statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (9 10 ) 4
 5: [P25 0] statement ->  . RETURN expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 5
-6: [P16 0] compound_statement ->  . '{' '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-7: [P17 0] compound_statement ->  . '{' statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-8: [P18 0] compound_statement ->  . '{' declaration_list statement_list '}'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
-9: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
-10: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
-11: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
-12: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 10
-13: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (14 15 ) 11
-14: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 12
-15: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (14 15 ) 11
-  0:   On statement to state 133 with (0 )
-  1:   On compound_statement to state 18 with (1 )
+6: [P64 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 6
+7: [P65 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 7
+8: [P66 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 8
+9: [P26 0] assignment_statement ->  . ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, () 9
+10: [P27 0] assignment_statement ->  . l_expression ASSIGN_OP expression ';'   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  0, (11 12 ) 10
+11: [P58 0] l_expression ->  . IDENTIFIER   { ASSIGN_OP '[' }  0, () 11
+12: [P59 0] l_expression ->  . l_expression '[' expression ']'   { ASSIGN_OP '[' }  0, (11 12 ) 10
+  0:   On statement to state 135 with (0 )
+  1:   On '{' to state 18 with (1 )
   2:   On selection_statement to state 19 with (2 )
   3:   On iteration_statement to state 20 with (3 )
   4:   On assignment_statement to state 21 with (4 )
   5:   On RETURN to state 22 with (5 )
-  6:   On '{' to state 11 with (6 7 8 )
-  7:   On IF to state 24 with (9 )
-  8:   On WHILE to state 25 with (10 )
-  9:   On FOR to state 26 with (11 )
-  10:   On ';' to state 27 with (12 )
-  11:   On l_expression to state 28 with (13 15 )
-  12:   On IDENTIFIER to state 29 with (14 )
+  6:   On IF to state 24 with (6 )
+  7:   On WHILE to state 25 with (7 )
+  8:   On FOR to state 26 with (8 )
+  9:   On ';' to state 27 with (9 )
+  10:   On l_expression to state 28 with (10 12 )
+  11:   On IDENTIFIER to state 29 with (11 )
 
 
-State 133:
+State 135:
 0: [P66 9] iteration_statement -> FOR '(' expression ';' expression ';' expression ')' statement  .   { FOR IF WHILE ELSE RETURN IDENTIFIER '{' '}' ';' }  1, () -1
   Reduce item(s): 0 
 

@@ -1,9 +1,10 @@
 #include "intu.hpp"
-std::map<std::string, SymbolTableEntry*> currentTable;
-std::map<std::string, SymbolTableEntry*> globalTable;
+std::map<std::string, SymbolTableEntry*> *currentTable;
+std::map<std::string, SymbolTableEntry*> *globalTable;
 DataType currentType;
 int currentOffset = 0;
 std::string name;
+std::string functionName;
 std::list<int> indexList;
 void blockAST::print(std::string format){
 	std::cout << format << "(Block [" << std::endl;
