@@ -4,6 +4,6 @@ int f(){
 }
 
 int g(){
-	int b,c,d;
+	int b,c[4],d[3][8];
 	c = 1;
 }

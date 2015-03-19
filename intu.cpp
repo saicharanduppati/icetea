@@ -1,8 +1,8 @@
 #include "intu.hpp"
 std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>(); //this holds the pointer to the global symbol table. GST contains only functions in our language.
-std::map<std::string, SymbolTableEntry*> *currentTable = globalTable; //this holds the pointer to the symbol table corresponding to the current scope. 
+std::map<std::string, SymbolTableEntry*> *currentTable = new std::map<std::string, SymbolTableEntry*>(); //this holds the pointer to the global symbol table. GST contains only functions in our language.
 DataType currentType; //this is the most recently seen DataType.
-int currentOffset = 0; //offset of the next to-be-seen variable.
+int currentOffset = -4; //offset of the next to-be-seen variable.
 std::string name; //name of the last seen variable.
 std::string functionName; //name of the last seen function.
 std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
@@ -14,8 +14,15 @@ FUNCTION: Prints each entry of a symbol table using call to print function of sy
 OUTPUT: none(void).
 ********************************************************************************/
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
+//	std::cout << "size is " << argument->size() << "\n";
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
+		if(iter->second->type == SymbolTableEntry::FUNC){
+			std::cout << "----------------------------------\n";
+			printSymbolTable(iter->second->pointer);
+			std::cout << "----------------------------------\n";
+		}
 		std::cout << iter->first << "\n       ";
+
 		iter->second->print();
 	}
 }
@@ -135,20 +142,19 @@ void returnAST::print(std::string format){
 }
 
 
-	DataType *constructDT(DataType a, std::list<int> list){
-		if(list.size() == 0){ //in this case, a will be a base type for sure.
-			DataType *toReturn = new DataType();
-			toReturn->tag = DataType::Base;
-			toReturn->basetype = a.basetype;
-			return toReturn;
-		}
-		else{
-			DataType *toReturn = new DataType();
-			toReturn->tag = DataType::Array;
-			toReturn->length = *list.begin();
-			list.erase(list.begin());
-			toReturn->arrayType = constructDT(a,list );
-		}
+DataType *constructDT(DataType a, std::list<int> list){
+	DataType *toReturn = new DataType();
+	if(list.size() == 0){ //in this case, a will be a base type for sure.
+		toReturn->tag = DataType::Base;
+		toReturn->basetype = a.basetype;
 	}
+	else{
+		toReturn->tag = DataType::Array;
+		toReturn->length = *list.begin();
+		list.erase(list.begin());
+		toReturn->arrayType = constructDT(a,list );
+	}
+	return toReturn;
+}
 
 

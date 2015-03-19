@@ -13,36 +13,24 @@
 %%
 translation_unit:
 	function_definition
+	| translation_unit function_definition
 {
 	printSymbolTable(globalTable);
 }
-	| translation_unit function_definition
 	;
 
 function_definition:
 	type_specifier fun_declarator compound_statement
 {
-//	std::cout << "function def\n";
-//	$3->print();
-//	std::cout << std::endl;
-	currentTable = new std::map<std::string, SymbolTableEntry* >(); 
-	currentOffset = -4;
-
-
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::FUNC;
 	temp->scope = SymbolTableEntry::LOCAL;
-	if(!indexList.empty()){
-		std::cout << "thou shall not return arrays from function\n";
-		std::exit(1);
-	}
 	temp->dataType = constructDT(currentType,indexList);
 	temp->size = temp->dataType->size();
 	temp->pointer = currentTable;
-	//temp->offset = urrentOffset;
-	//currentOffset-=temp->size;
-	//indexList.clear();
-	(*globalTable)[name]=temp; 
+	(*globalTable)[functionName]=temp; 
+	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
+	currentOffset = -4;
 }
 	;
 
@@ -91,7 +79,7 @@ parameter_declaration:
 	temp->dataType = constructDT(currentType, indexList);
 	temp->size = temp->dataType->size();
 	temp->offset = currentOffset;
-	currentOffset-=temp->size;
+	currentOffset -= temp->size;
 	indexList.clear();
 	(*currentTable)[name]=temp; 
 }	
@@ -106,7 +94,11 @@ declarator:
 }
 	| declarator '[' constant_expression ']'
 {
+//	std::cout << "before\n";
+//	std::cout.flush();
 	indexList.push_back((int) $3->getVal()); //it has to be ensured that this constant_expression is an int.
+//	std::cout << "after\n";
+//	std::cout.flush();
 }
 	;
 
@@ -332,9 +324,9 @@ l_expression:
 {
 	$$ = new identifierAST($1);
 	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
-	std::cout << "--------------------------------\n";
-	printSymbolTable(currentTable);
-	std::cout << "--------------------------------\n";
+//	std::cout << "--------------------------------\n";
+//	printSymbolTable(currentTable);
+//	std::cout << "--------------------------------\n";
 	if(it == currentTable->end()){
 		std::cout << $1 << " doesn't name a type\n";
 		std::exit(1);
@@ -398,11 +390,15 @@ declaration:
 declarator_list:
 	 declarator
 {
+//	std::cout << "dec before\n";
+//	std::cout.flush();
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::VAR;
 	temp->scope = SymbolTableEntry::LOCAL;
 	temp->dataType = constructDT(currentType, indexList);
 	temp->size = temp->dataType->size();
+//	std::cout << "dec after\n";
+//	std::cout.flush();
 	temp->offset = currentOffset;
 	currentOffset+=temp->size;
 	indexList.clear();
