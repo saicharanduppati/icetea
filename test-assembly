@@ -3,7 +3,7 @@ int f(){
 	a = 1;
 }
 
-int f(float b, int f){
-	int e,c[4],d[3][8];
-	e = 1;
+int h(float b, int f){
+	int e,c[6],d[3][8];
+	efas = 1;
 }

@@ -7,6 +7,7 @@ std::string name; //name of the last seen variable.
 std::string functionName; //name of the last seen function.
 std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
 
+int lineNo = 1;
 
 /********************************************************************************
 INPUT: A pointer to symbol table
@@ -26,7 +27,10 @@ void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 		iter->second->print();
 	}
 }
-	
+
+bool assignmentCompatible(DataType left, DataType right){
+	return false;
+}
 
 
 void blockAST::print(std::string format){

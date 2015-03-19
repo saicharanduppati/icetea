@@ -28,6 +28,34 @@ struct DataType{
 //	DataType
 	DataType(){} //a default constructor
 
+
+	void print(std::ostream& a){
+		if(tag == Base){
+			switch(basetype){
+				case Int:
+					{
+						a << "int";
+						break;
+					}
+				case Float:
+					{
+						a << "float";
+						break;
+					}
+				case Void:
+					{
+						a << "void";
+						break;
+					}
+				default:{}
+			};
+			return;
+		}
+		a << "Array(" << length << ", ";
+		arrayType->print(a);
+		a << ")";
+		return;
+	}
 	/********************************************************************************
 	INPUT: This is a member function. 
 	RETURN VALUE: Returns the size occupied by the data type on which this function is called. Size occupied by Int, Float is 4 and that of Void is 0. Size occupied by an array is calculated depending on the length and type of array.
@@ -92,8 +120,8 @@ struct SymbolTableEntry{
 
 
 /* THIS IS THE CODE FROM 3RD ASSIGNMENT. THIS WAS USED TO CREATE ASTS FOR THE NON-DECLARATIVE PART */
-class basic_types{
-};
+//class basic_types{
+//};
 
 class symbolTable{};
 
@@ -101,11 +129,12 @@ class abstractAST{
 	public:
 		virtual void print(std::string format = "") = 0;
 		virtual std::string generate_code(const symbolTable&) = 0;
-		virtual basic_types getType() = 0;
+		virtual DataType getType() = 0;
 		virtual bool checkTypeofAST() = 0;
 		virtual float getVal(){};
+		DataType astType;
 	protected:
-		virtual void setType(basic_types) = 0;
+		virtual void setType(DataType) = 0;
 	private:
 //		typeExp astnode_type;
 };
@@ -115,10 +144,10 @@ class stmtAST : public abstractAST{
 	public:
 		virtual void print(std::string format = "") {};
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 };
 
@@ -127,11 +156,11 @@ class expAST : public abstractAST{
 	public:
 		virtual void print(std::string format = "") {};
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		virtual float getVal(){};
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 };
 
@@ -140,13 +169,13 @@ class blockAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		blockAST(std::list<abstractAST*> a){
 			first = a;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::list<abstractAST*> first;
 };
@@ -156,14 +185,14 @@ class assAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		assAST(abstractAST *a, abstractAST *b){
 			first = a;
 			second = b;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 		abstractAST *second;
@@ -174,7 +203,7 @@ class ifAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		ifAST(abstractAST *a, abstractAST *b, abstractAST *c){
 			first = a;
@@ -182,7 +211,7 @@ class ifAST : public stmtAST{
 			third = c;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 		abstractAST *second;
@@ -194,14 +223,14 @@ class whileAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		whileAST(abstractAST *a, abstractAST *b){
 			first = a;
 			second = b;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 		abstractAST *second;
@@ -214,13 +243,13 @@ class returnAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		returnAST(abstractAST *a){
 			first = a;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 };
@@ -229,7 +258,7 @@ class forAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		forAST(abstractAST *a, abstractAST *b, abstractAST *c, abstractAST *d){
 			first = a;
@@ -238,7 +267,7 @@ class forAST : public stmtAST{
 			fourth = d;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 		abstractAST *second;
@@ -253,15 +282,15 @@ class bopAST : public expAST{
 //		enum boperator {};
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		bopAST(std::string a, abstractAST *b, abstractAST *c){
-			op = a;
+			op = a; //a may be "PLUS", "PLUSfloat", "MINUS", "MINUSfloat"
 			first = b;
 			second = c;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 //		boperator op;
 		std::string op;
@@ -275,14 +304,14 @@ class uopAST : public expAST{
 //		enum uoperator {UMINUS, NOT, PP};
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		uopAST(std::string a, abstractAST *b){
 			op = a;
 			first = b;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 //		uoperator op;
 		std::string op;
@@ -293,7 +322,7 @@ class funcAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		funcAST(std::string a, std::list<abstractAST*> b){
 			name = a;
@@ -301,7 +330,7 @@ class funcAST : public expAST{
 		}
 
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::string name;
 		std::list <abstractAST*> first;
@@ -312,7 +341,9 @@ class floatAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {
+			return astType;
+		};
 		virtual bool checkTypeofAST() {};
 		floatAST(std::string a){
 			first = a;
@@ -321,7 +352,7 @@ class floatAST : public expAST{
 			return std::stof(first);
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::string first;
 };
@@ -331,7 +362,9 @@ class intAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {
+			return astType;
+		};
 		virtual bool checkTypeofAST() {};
 		intAST(std::string a){
 			first = a;
@@ -340,7 +373,7 @@ class intAST : public expAST{
 			return std::stoi(first);
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::string first;
 };
@@ -350,13 +383,14 @@ class stringAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {
+		};
 		virtual bool checkTypeofAST() {};
 		stringAST(std::string a){
 			first = a;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::string first;
 };
@@ -367,10 +401,10 @@ class arrayrefAST : public expAST{
 	public:
 		virtual void print(std::string format = "") {};
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 };
 
@@ -379,13 +413,13 @@ class identifierAST : public arrayrefAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		identifierAST(std::string a){
 			first = a;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		std::string first;
 };
@@ -394,14 +428,14 @@ class indexAST : public arrayrefAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual basic_types getType() {};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		indexAST(abstractAST *a, abstractAST *b){
 			first = a;
 			second = b;
 		}
 	protected:
-		virtual void setType(basic_types) {};
+		virtual void setType(DataType) {};
 	private:
 		abstractAST *first;
 		abstractAST *second;
@@ -416,4 +450,6 @@ extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;
 DataType *constructDT(DataType a, std::list<int> list);
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument);
+bool assignmentCompatible(DataType a, DataType b);
+extern int lineNo;
 #endif

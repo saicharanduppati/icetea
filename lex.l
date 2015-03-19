@@ -1,9 +1,11 @@
-whitespaces [ \t\n]
+whitespaces [ \t]
+newline [\n]
 integerPart [0-9]+
 
 %%
 
 {whitespaces} {}
+{newline} {lineNo++;}
 "int" {return Parser::INT;}
 "void" {return Parser::VOID;}
 "float" {return Parser::FLOAT;}
@@ -27,4 +29,3 @@ integerPart [0-9]+
 \"([^\n\"]*\\\")*[^\n\"]*\" {Parser::d_val__ = std::string(matched());return Parser::STRING_LITERAL;}
 [[:alpha:]_][[:alnum:]_]* {Parser::d_val__ = std::string(matched());return Parser::IDENTIFIER;}
 . {}
-

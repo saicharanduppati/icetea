@@ -49,7 +49,7 @@ fun_declarator:
 	functionName = $1;
 	currentOffset = 0;
 	if(globalTable->find(functionName) != globalTable->end()){
-		std::cerr << "Function " << functionName << " already defined\n";
+		std::cerr << "Line no " << lineNo << ":\tFunction " << functionName << " already defined\n";
 		std::exit(1);
 	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
@@ -64,7 +64,7 @@ fun_declarator:
 	functionName = $1;
 	currentOffset = 0;
 	if(globalTable->find(functionName) != globalTable->end()){
-		std::cerr << "Function " << functionName << " already defined\n";
+		std::cerr << "Line no " << lineNo << ":\tFunction " << functionName << " already defined\n";
 		std::exit(1);
 	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
@@ -86,11 +86,11 @@ parameter_declaration:
 {
 //	std::cout << "param\n";
 	if(currentType.basetype == DataType::Void){
-		std::cerr << "Parameter " << name << " declared as void\n";
+		std::cerr << "Line no " << lineNo << ":\tParameter " << name << " declared as void\n";
 		std::exit(1);
 	}
 	if(currentTable->find(name) != currentTable->end()){
-		std::cerr << "Variable " << name << "already defined\n";
+		std::cerr << "Line no " << lineNo << ":\tVariable " << name << "already defined\n";
 		std::exit(1);
 	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
@@ -114,7 +114,15 @@ declarator:
 }
 	| declarator '[' constant_expression ']'
 {
-	indexList.push_back((int) $3->getVal()); //it has to be ensured that this constant_expression is an int.
+	if($3->getType().basetype != DataType::Int){
+		std::cerr << "Line no " << lineNo << ":\tIndex of array " << name << " is not an integer\n";
+		std::exit(1);
+	}
+//	if($3->getVal() < 0){
+//		std::cerr << "Line no " << lineNo << ":\tSize of array " << name << " is negative\n";
+//		std::exit(1);
+//	}
+	indexList.push_back($3->getVal()); //it has to be ensured that this constant_expression is an int.
 }
 	;
 
@@ -122,10 +130,12 @@ constant_expression:
 	 INT_CONSTANT
 {
 	$$ = new intAST($1);
+	($$)->astType = DataType(DataType::Int);
 }
         | FLOAT_CONSTANT
 {
 	$$ = new floatAST($1);
+	($$)->astType = DataType(DataType::Float);
 }
         ;
 
@@ -186,6 +196,15 @@ assignment_statement:
 }
 	|  l_expression ASSIGN_OP expression ';'
 {
+	if(!assignmentCompatible($1->getType(), $3->getType()))
+	{
+		std::cerr << "Line no " << lineNo << ":\tNo equality operator for types "; 
+		($1)->getType().print(std::cerr);
+		std::cerr << " and ";
+		($3)->getType().print(std::cerr);
+		std::cerr << "\n";                      
+		std::exit(1);
+	}
 	$$ = new bopAST("ASSIGN", $1, $3);
 }
 	;
@@ -298,7 +317,7 @@ postfix_expression:
 {
 	$$ = new funcAST($1, std::list<abstractAST*>());
 	if(globalTable->find($1) == globalTable->end()){
-		std::cerr << "Function " << $1 << " undefined\n";
+		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
 }
@@ -306,7 +325,7 @@ postfix_expression:
 {
 	$$ = new funcAST($1, $3);
 	if(globalTable->find($1) == globalTable->end()){
-		std::cerr << "Function " << $1 << " undefined\n";
+		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
 }
@@ -328,10 +347,12 @@ primary_expression:
 	| INT_CONSTANT
 {
 	$$ = new intAST($1);
+	$$->astType = DataType(DataType::Int);
 }
 	| FLOAT_CONSTANT
 {
 	$$ = new floatAST($1);
+	$$->astType = DataType(DataType::Float);
 }
     | STRING_LITERAL
 {
@@ -346,12 +367,13 @@ primary_expression:
 l_expression:
 	 IDENTIFIER
 {
-	$$ = new identifierAST($1);
 //	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
 	if(currentTable->find($1) == currentTable->end()){
-		std::cerr << $1 << " doesn't name a type\n";
+		std::cerr << "Line no " << lineNo << ":\t" << $1 << " doesn't name a type\n";
 		std::exit(1);
 	}
+	$$ = new identifierAST($1);
+	($$)->astType = *(((*currentTable->find($1)).second)->dataType);
 }
         | l_expression '[' expression ']' 
 {
@@ -414,11 +436,11 @@ declarator_list:
 //	std::cout << "dec before\n";
 //	std::cout.flush();
 	if(currentType.basetype == DataType::Void){
-		std::cerr << "Variable " << name << " declared as void\n";
+		std::cerr << "Line no " << lineNo << ":\tVariable " << name << " declared as void\n";
 		std::exit(1);
 	}
 	if(currentTable->find(name) != currentTable->end()){
-		std::cerr << "Variable " << name << "already defined\n";
+		std::cerr << "Line no " << lineNo << ":\tVariable " << name << "already defined\n";
 		std::exit(1);
 	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
@@ -436,11 +458,11 @@ declarator_list:
 | declarator_list ',' declarator
 {
 	if(currentType.basetype == DataType::Void){
-		std::cerr << "Variable " << name << " declared as void\n";
+		std::cerr << "Line no " << lineNo << ":\tVariable " << name << " declared as void\n";
 		std::exit(1);
 	}
 	if(currentTable->find(name) != currentTable->end()){
-		std::cerr << "Variable " << name << "already defined\n";
+		std::cerr << "Line no " << lineNo << ":\tVariable " << name << "already defined\n";
 		std::exit(1);
 	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
