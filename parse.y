@@ -22,13 +22,7 @@ translation_unit:
 function_definition:
 	type_specifier fun_declarator compound_statement
 {
-	SymbolTableEntry* temp = new SymbolTableEntry();
-	temp->type = SymbolTableEntry::FUNC;
-	temp->scope = SymbolTableEntry::LOCAL;
-	temp->dataType = constructDT(currentType,indexList);
-	temp->size = temp->dataType->size();
-	temp->pointer = currentTable;
-	(*globalTable)[functionName]=temp; 
+	(*globalTable)[functionName]->pointer = currentTable;
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 	currentOffset = -4;
 }
@@ -41,7 +35,6 @@ type_specifier:
 }
 	| INT
 {
-//	std::cout << "saw int\n";
 	currentType = DataType(DataType::Int);
 }
 	| FLOAT
@@ -55,12 +48,31 @@ fun_declarator:
 {
 	functionName = $1;
 	currentOffset = 0;
+	if(globalTable->find(functionName) != globalTable->end()){
+		std::cerr << "Function " << functionName << " already defined\n";
+		std::exit(1);
+	}
+	SymbolTableEntry* temp = new SymbolTableEntry();
+	temp->type = SymbolTableEntry::FUNC;
+	temp->scope = SymbolTableEntry::LOCAL;
+	temp->dataType = constructDT(currentType,indexList);
+	temp->size = temp->dataType->size();
+	(*globalTable)[functionName]=temp; 
 }
 	| IDENTIFIER '(' ')'
 {
-//	std::cout << "declarator done\n";
 	functionName = $1;
 	currentOffset = 0;
+	if(globalTable->find(functionName) != globalTable->end()){
+		std::cerr << "Function " << functionName << " already defined\n";
+		std::exit(1);
+	}
+	SymbolTableEntry* temp = new SymbolTableEntry();
+	temp->type = SymbolTableEntry::FUNC;
+	temp->scope = SymbolTableEntry::LOCAL;
+	temp->dataType = constructDT(currentType,indexList);
+	temp->size = temp->dataType->size();
+	(*globalTable)[functionName]=temp; 
 }
 	;
 
@@ -73,6 +85,14 @@ parameter_declaration:
 	 type_specifier declarator
 {
 //	std::cout << "param\n";
+	if(currentType.basetype == DataType::Void){
+		std::cerr << "Parameter " << name << " declared as void\n";
+		std::exit(1);
+	}
+	if(currentTable->find(name) != currentTable->end()){
+		std::cerr << "Variable " << name << "already defined\n";
+		std::exit(1);
+	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::VAR;
 	temp->scope = SymbolTableEntry::PARAM;
@@ -94,11 +114,7 @@ declarator:
 }
 	| declarator '[' constant_expression ']'
 {
-//	std::cout << "before\n";
-//	std::cout.flush();
 	indexList.push_back((int) $3->getVal()); //it has to be ensured that this constant_expression is an int.
-//	std::cout << "after\n";
-//	std::cout.flush();
 }
 	;
 
@@ -281,10 +297,18 @@ postfix_expression:
 	| IDENTIFIER '(' ')'
 {
 	$$ = new funcAST($1, std::list<abstractAST*>());
+	if(globalTable->find($1) == globalTable->end()){
+		std::cerr << "Function " << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	| IDENTIFIER '(' expression_list ')'
 {
 	$$ = new funcAST($1, $3);
+	if(globalTable->find($1) == globalTable->end()){
+		std::cerr << "Function " << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	| l_expression INC_OP
 {
@@ -323,12 +347,9 @@ l_expression:
 	 IDENTIFIER
 {
 	$$ = new identifierAST($1);
-	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
-//	std::cout << "--------------------------------\n";
-//	printSymbolTable(currentTable);
-//	std::cout << "--------------------------------\n";
-	if(it == currentTable->end()){
-		std::cout << $1 << " doesn't name a type\n";
+//	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
+	if(currentTable->find($1) == currentTable->end()){
+		std::cerr << $1 << " doesn't name a type\n";
 		std::exit(1);
 	}
 }
@@ -392,6 +413,14 @@ declarator_list:
 {
 //	std::cout << "dec before\n";
 //	std::cout.flush();
+	if(currentType.basetype == DataType::Void){
+		std::cerr << "Variable " << name << " declared as void\n";
+		std::exit(1);
+	}
+	if(currentTable->find(name) != currentTable->end()){
+		std::cerr << "Variable " << name << "already defined\n";
+		std::exit(1);
+	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::VAR;
 	temp->scope = SymbolTableEntry::LOCAL;
@@ -406,6 +435,14 @@ declarator_list:
 }
 | declarator_list ',' declarator
 {
+	if(currentType.basetype == DataType::Void){
+		std::cerr << "Variable " << name << " declared as void\n";
+		std::exit(1);
+	}
+	if(currentTable->find(name) != currentTable->end()){
+		std::cerr << "Variable " << name << "already defined\n";
+		std::exit(1);
+	}
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::VAR;
 	temp->scope = SymbolTableEntry::LOCAL;
