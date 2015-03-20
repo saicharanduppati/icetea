@@ -8,5 +8,10 @@ Set the proper astType in all cases.
 
 assignmentCompatible function
 
+Where does value of x and y in x && y matter?
 
 What is type of a STRING_LITERAL
+
+Does anything have to be done for selection and iteration statements?
+
+Have to 

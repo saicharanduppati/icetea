@@ -160,5 +160,3 @@ DataType *constructDT(DataType a, std::list<int> list){
 	}
 	return toReturn;
 }
-
-

@@ -1,5 +1,8 @@
 #ifndef _INTU_HPP
 #define _INTU_HPP
+
+
+
 #include <list>
 #include <map>
 #include <string>
@@ -29,6 +32,12 @@ struct DataType{
 	DataType(){} //a default constructor
 
 
+	bool operator==(DataType second){
+		if(tag == Base){
+			return (tag == second.tag) && (basetype == second.basetype);
+		}
+		return (length == second.length) && ((*arrayType) == (*(second.arrayType)));
+	}
 	void print(std::ostream& a){
 		if(tag == Base){
 			switch(basetype){
@@ -129,7 +138,9 @@ class abstractAST{
 	public:
 		virtual void print(std::string format = "") = 0;
 		virtual std::string generate_code(const symbolTable&) = 0;
-		virtual DataType getType() = 0;
+		virtual DataType getType(){
+			return astType;
+		}
 		virtual bool checkTypeofAST() = 0;
 		virtual float getVal(){};
 		DataType astType;
@@ -137,6 +148,27 @@ class abstractAST{
 		virtual void setType(DataType) = 0;
 	private:
 //		typeExp astnode_type;
+};
+
+
+class castAST : public abstractAST{
+	public:
+		virtual void print(std::string format = ""){};
+		virtual std::string generate_code(const symbolTable&){};
+		virtual DataType getType() {};
+		virtual bool checkTypeofAST() {};
+		virtual float getVal(){};
+		DataType astType;
+		castAST(std::string a, abstractAST *pointer){
+			castType = a;
+			first = pointer;
+		}
+	protected:
+		virtual void setType(DataType) {};
+	private:
+//		typeExp astnode_type;
+		std::string castType;
+		abstractAST *first;
 };
 
 
@@ -341,9 +373,7 @@ class floatAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual DataType getType() {
-			return astType;
-		};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		floatAST(std::string a){
 			first = a;
@@ -362,9 +392,7 @@ class intAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&) {};
-		virtual DataType getType() {
-			return astType;
-		};
+		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		intAST(std::string a){
 			first = a;

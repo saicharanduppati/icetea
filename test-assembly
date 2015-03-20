@@ -4,6 +4,6 @@ int f(){
 }
 
 int h(float b, int f){
-	int e,c[6],d[3][8];
+	int efas;
 	efas = 1;
 }

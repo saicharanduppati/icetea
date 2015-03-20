@@ -114,7 +114,8 @@ declarator:
 }
 	| declarator '[' constant_expression ']'
 {
-	if($3->getType().basetype != DataType::Int){
+  	std::cout << (($3)->astType.tag == DataType::Base) << std::endl;
+  	if((($3)->astType.tag != DataType::Base) || ((($3)->astType).basetype != DataType::Int)){
 		std::cerr << "Line no " << lineNo << ":\tIndex of array " << name << " is not an integer\n";
 		std::exit(1);
 	}
@@ -196,12 +197,12 @@ assignment_statement:
 }
 	|  l_expression ASSIGN_OP expression ';'
 {
-	if(!assignmentCompatible($1->getType(), $3->getType()))
+  	if(!assignmentCompatible(($1)->astType, ($3)->astType))
 	{
 		std::cerr << "Line no " << lineNo << ":\tNo equality operator for types "; 
-		($1)->getType().print(std::cerr);
+		($1)->astType.print(std::cerr);
 		std::cerr << " and ";
-		($3)->getType().print(std::cerr);
+		($3)->astType.print(std::cerr);
 		std::cerr << "\n";                      
 		std::exit(1);
 	}
@@ -217,6 +218,7 @@ expression:
 	| expression OR_OP logical_and_expression
 {
 	$$ = new bopAST("OR", $1, $3);
+	($$)->astType = DataType(DataType::Int);
 }
 	;
 
@@ -228,6 +230,7 @@ logical_and_expression:
 	| logical_and_expression AND_OP equality_expression
 {
 	$$ = new bopAST("AND", $1, $3);
+	($$)->astType = DataType(DataType::Int);
 }
 	;
 
@@ -236,13 +239,49 @@ equality_expression:
 {
 	$$ = $1;
 }
-	| equality_expression EQ_OP relational_expression
+	| equality_expression EQ_OP	 relational_expression
 {
-	$$ = new bopAST("EQ_OP", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("EQ_OP", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("EQ_OP_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("EQ_OP_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("EQ_OP_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for equality operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
 }
 	| equality_expression NE_OP relational_expression
 {
-	$$ = new bopAST("NE_OP", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("NE_OP", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("NE_OP_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("NE_OP_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("NE_OP_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for equality operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
 }
 	;
 relational_expression:
@@ -252,19 +291,92 @@ relational_expression:
 }
 	| relational_expression '<' additive_expression
 {
-	$$ = new bopAST("LT", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("LT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("LT_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("LT_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("LT_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for < operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
+	
 }
 	| relational_expression '>' additive_expression
 {
-	$$ = new bopAST("GT", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("GT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("GT_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("GT_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("GT_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for > operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
 }
 	| relational_expression LE_OP additive_expression
 {
-	$$ = new bopAST("LE_OP", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("LE_OP", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("LE_OP_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("LE_OP_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("LE_OP_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for <= operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
 }
 	| relational_expression GE_OP additive_expression
 {
-	$$ = new bopAST("GE_OP", $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("GE_OP", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("GE_OP_FLOAT", $1, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("GE_OP_FLOAT", temp, $3);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("GE_OP_FLOAT", $1, temp);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for >= operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+	($$)->astType = DataType(DataType::Int);
 }
 	;
 
@@ -275,11 +387,53 @@ additive_expression:
 }
 	| additive_expression '+' multiplicative_expression
 {
-	$$ = new bopAST(std::string("PLUS"), $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("PLUS", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("PLUS_FLOAT", $1, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("PLUS_FLOAT", temp, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("PLUS_FLOAT", $1, temp);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for + operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	| additive_expression '-' multiplicative_expression
 {
-	$$ = new bopAST(std::string("MINUS"), $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("MINUS", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("MINUS_FLOAT", $1, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("MINUS_FLOAT", temp, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("MINUS_FLOAT", $1, temp);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for - operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	;
 
@@ -290,11 +444,53 @@ multiplicative_expression:
 }
 	| multiplicative_expression '*' unary_expression
 {
-	$$ = new bopAST(std::string("MULT"), $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("MULT", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("MULT_FLOAT", $1, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("MULT_FLOAT", temp, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("MULT_FLOAT", $1, temp);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for * operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	| multiplicative_expression '/' unary_expression
 {
-	$$ = new bopAST(std::string("DIVIDE"), $1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new bopAST("DIVIDE", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new bopAST("DIVIDE_FLOAT", $1, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		$$ = new bopAST("DIVIDE_FLOAT", temp, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new bopAST("DIVIDE_FLOAT", $1, temp);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for / operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	;
 unary_expression:
@@ -305,6 +501,7 @@ unary_expression:
 	| unary_operator postfix_expression
 {
 	$$ = new uopAST($1, $2);
+	($$)->astType = ($2)->getType();
 }
 	;
 
@@ -320,6 +517,7 @@ postfix_expression:
 		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
+	($$)->astType = *(globalTable->find($1)->second->dataType);
 }
 	| IDENTIFIER '(' expression_list ')'
 {
@@ -328,10 +526,17 @@ postfix_expression:
 		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
+	($$)->astType = *(globalTable->find($1)->second->dataType);
 }
 	| l_expression INC_OP
 {
-	$$ = new uopAST($2, $1);
+	if(($1)->astType == DataType(DataType::Int)){
+		$$ = new uopAST($2, $1);
+	}
+	else if(($1)->astType == DataType(DataType::Float)){
+		$$ = new uopAST($2 + "_FLOAT", $1);
+	}	
+	($$)->astType = ($1)->astType;
 }
 	;
 
@@ -342,7 +547,28 @@ primary_expression:
 }
 	| l_expression ASSIGN_OP expression 
 {
-	$$ = new assAST($1, $3);
+	if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Int))){
+		$$ = new assAST($1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Float))){
+		$$ = new assAST($1, $3);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else if((($1)->getType() == DataType(DataType::Int)) && (($3->getType()) == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_INT", $3);
+		$$ = new assAST($1, temp);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->getType() == DataType(DataType::Float)) && (($3->getType()) == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		$$ = new assAST($1, temp);
+		($$)->astType = DataType(DataType::Float);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for / operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }	
 	| INT_CONSTANT
 {
@@ -377,7 +603,17 @@ l_expression:
 }
         | l_expression '[' expression ']' 
 {
+	if((($3)->astType.tag != DataType::Base) || (($3)->astType.basetype != DataType::Int)){
+		std::cerr << "Line no " << lineNo << ":\tIndex of array is not an integer\n";
+		std::exit(1);
+	}
+	if(($1)->astType.tag != DataType::Array){
+		std::cerr << "Line no " << lineNo << ":\toperator [] not defined\n";// << 
+		std::exit(1);
+	}
 	$$ = new indexAST($1, $3);
+	($$)->astType = *(($1)->astType.arrayType);
+	
 }	
         ;
 expression_list:
