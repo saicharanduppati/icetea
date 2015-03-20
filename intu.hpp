@@ -122,6 +122,9 @@ struct SymbolTableEntry{
 		std::cout << "scope: " << ((scope == PARAM) ? "PARAM" : "LOCAL") << "\n";
 		std::cout << "size: " << size << "\n";
 		std::cout << "offset: " << offset << "\n";
+		std::cout << "data type: ";
+		dataType->print(std::cout);
+		std::cout << "\n";
 	}
 };	
 
@@ -153,7 +156,7 @@ class abstractAST{
 
 class castAST : public abstractAST{
 	public:
-		virtual void print(std::string format = ""){};
+		virtual void print(std::string format = "");
 		virtual std::string generate_code(const symbolTable&){};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};

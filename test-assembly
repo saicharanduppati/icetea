@@ -1,9 +1,9 @@
 int f(){
-	int a;
+	float a;
 	a = 1;
 }
 
 int h(float b, int f){
 	int efas;
-	efas = 1;
+	efas = b;
 }

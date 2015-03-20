@@ -62,6 +62,11 @@ void ifAST::print(std::string format){
 	std::cout << ")";
 }
 
+void castAST::print(std::string format){
+  std::cout << format << "(" << castType << ")";
+  first->print();
+}
+
 void whileAST::print(std::string format){
 	std::cout << format << "(While ";
 	first->print();
