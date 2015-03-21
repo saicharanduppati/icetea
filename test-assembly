@@ -1,9 +1,6 @@
-int f(){
-	float a;
-	a = 1;
-}
-
-int h(float b, int f){
-	int efas;
+int h(int b, int f){
+	float efas;
+	float a[5];
 	efas = b;
+	f = b + a[7];
 }

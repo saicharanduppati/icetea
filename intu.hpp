@@ -462,8 +462,12 @@ class indexAST : public arrayrefAST{
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		indexAST(abstractAST *a, abstractAST *b){
+//			std::cout << "inside --> ";
+//			a->astType.print(std::cout);
 			first = a;
 			second = b;
+//			std::cout << "later inside --> ";
+//			a->astType.print(std::cout);
 		}
 	protected:
 		virtual void setType(DataType) {};

@@ -1,0 +1,667 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ABORT	Parserbase.h	/^inline void ParserBase::ABORT() const$/;"	f	class:ParserBase
+ACCCOUNT	Scannerbase.h	/^        ACCCOUNT,$/;"	e	enum:ScannerBase::__anon6
+ACCEPT	Parserbase.h	/^inline void ParserBase::ACCEPT() const$/;"	f	class:ParserBase
+AND_OP	Parserbase.h	/^        AND_OP,$/;"	e	enum:ParserBase::Tokens__
+ASSIGN_OP	Parserbase.h	/^        ASSIGN_OP,$/;"	e	enum:ParserBase::Tokens__
+AT_EOF	Scannerbase.h	/^        AT_EOF = -1$/;"	e	enum:ScannerBase::__anon8
+ActionType__	Scannerbase.h	/^    enum class ActionType__$/;"	c	class:ScannerBase
+Array	intu.hpp	/^		Base, Array, Error, Ok$/;"	e	enum:DataType::Kind
+Assign	Parserbase.h	/^struct Assign<false, SType>$/;"	s	namespace:Meta__
+Assign	Parserbase.h	/^struct Assign<false, Tp_>$/;"	s	namespace:Meta__
+Assign	Parserbase.h	/^struct Assign<true, Tp_>$/;"	s	namespace:Meta__
+BOL	Scannerbase.h	/^        BOL = 8$/;"	e	enum:ScannerBase::__anon7
+Base	Parserbase.h	/^    class Base$/;"	c	namespace:Meta__
+Base	Parserbase.h	/^inline Base::Base(Tag__ tag)$/;"	f	class:Meta__::Base
+Base	intu.hpp	/^		Base, Array, Error, Ok$/;"	e	enum:DataType::Kind
+BaseType	intu.hpp	/^	enum BaseType{$/;"	g	struct:DataType
+BuiltinType	Parserbase.h	/^    struct BuiltinType$/;"	s	namespace:Meta__
+CONTINUE	Scannerbase.h	/^        CONTINUE,               \/\/ transition succeeded, go on$/;"	m	class:ScannerBase::ActionType__
+COUNT	Scannerbase.h	/^        COUNT = 4,$/;"	e	enum:ScannerBase::__anon7
+ClassType	Parserbase.h	/^    struct ClassType$/;"	s	namespace:Meta__
+DEFAULT_RECOVERY_MODE__	Parserbase.h	/^            DEFAULT_RECOVERY_MODE__,$/;"	e	enum:ParserBase::ErrorRecovery__
+DEF_RED	parse.cc	/^        DEF_RED,    \/\/ state having default reduction$/;"	e	enum:__anon1::StateType	file:
+DataType	Parserbase.h	/^        typedef abstractAST* DataType;$/;"	t	struct:Meta__::TypeOfBase
+DataType	Parserbase.h	/^        typedef std::list<abstractAST*> DataType;$/;"	t	struct:Meta__::TypeOfBase
+DataType	Parserbase.h	/^        typedef std::string DataType;$/;"	t	struct:Meta__::TypeOfBase
+DataType	Parserbase.h	/^        typedef typename TypeOf<tg_>::DataType DataType;$/;"	t	class:Meta__::Semantic
+DataType	Parserbase.h	/^        typedef typename TypeOfBase<tg_>::DataType DataType;$/;"	t	struct:Meta__::TypeOf
+DataType	intu.hpp	/^	DataType(){} \/\/a default constructor$/;"	f	struct:DataType
+DataType	intu.hpp	/^	DataType(BaseType b){$/;"	f	struct:DataType
+DataType	intu.hpp	/^struct DataType{$/;"	s
+ECHO_CH	Scannerbase.h	/^        ECHO_CH,                \/\/ echo ch itself (d_matched empty)$/;"	m	class:ScannerBase::ActionType__
+ECHO_FIRST	Scannerbase.h	/^        ECHO_FIRST,             \/\/ echo d_matched[0], push back the rest$/;"	m	class:ScannerBase::ActionType__
+ELSE	Parserbase.h	/^        ELSE,$/;"	e	enum:ParserBase::Tokens__
+END	Scannerbase.h	/^        END,                    \/\/ postCode called when lex__() ends $/;"	m	class:ScannerBase::PostEnum__
+EQ_OP	Parserbase.h	/^        EQ_OP,$/;"	e	enum:ParserBase::Tokens__
+ERROR	Parserbase.h	/^inline void ParserBase::ERROR() const$/;"	f	class:ParserBase
+ERR_DEF	parse.cc	/^        ERR_DEF,    \/\/ ERR_ITEM | DEF_RED$/;"	e	enum:__anon1::StateType	file:
+ERR_ITEM	parse.cc	/^        ERR_ITEM,$/;"	e	enum:__anon1::StateType	file:
+ERR_REQ	parse.cc	/^        ERR_REQ,    \/\/ ERR_ITEM | REQ_TOKEN$/;"	e	enum:__anon1::StateType	file:
+ERR_REQ_DEF	parse.cc	/^        ERR_REQ_DEF \/\/ ERR_ITEM | REQ_TOKEN | DEF_RED$/;"	e	enum:__anon1::StateType	file:
+Error	intu.hpp	/^		Base, Array, Error, Ok$/;"	e	enum:DataType::Kind
+ErrorRecovery__	Parserbase.h	/^        enum ErrorRecovery__$/;"	g	class:ParserBase
+FINAL	Scannerbase.h	/^        FINAL = 1,$/;"	e	enum:ScannerBase::__anon7
+FLAGS	Scannerbase.h	/^        FLAGS,$/;"	e	enum:ScannerBase::__anon6
+FLOAT	Parserbase.h	/^        FLOAT,$/;"	e	enum:ParserBase::Tokens__
+FLOAT_CONSTANT	Parserbase.h	/^        FLOAT_CONSTANT,$/;"	e	enum:ParserBase::Tokens__
+FOR	Parserbase.h	/^        FOR,$/;"	e	enum:ParserBase::Tokens__
+FUNC	intu.hpp	/^	enum Type {VAR, FUNC};$/;"	e	enum:SymbolTableEntry::Type
+FinData	Scannerbase.h	/^    struct FinData            \/\/ Info about intermediate matched rules while$/;"	s	class:ScannerBase
+Final	Scannerbase.h	/^    struct Final$/;"	s	class:ScannerBase
+Float	intu.hpp	/^		Int, Float, Void$/;"	e	enum:DataType::BaseType
+GE_OP	Parserbase.h	/^        GE_OP,$/;"	e	enum:ParserBase::Tokens__
+IDENTIFIER	Parserbase.h	/^        IDENTIFIER,$/;"	e	enum:ParserBase::Tokens__
+IF	Parserbase.h	/^        IF,$/;"	e	enum:ParserBase::Tokens__
+INCREMENT	Scannerbase.h	/^        INCREMENT = 2,$/;"	e	enum:ScannerBase::__anon7
+INC_OP	Parserbase.h	/^        INC_OP,$/;"	e	enum:ParserBase::Tokens__
+INT	Parserbase.h	/^        INT = 257,$/;"	e	enum:ParserBase::Tokens__
+INT_CONSTANT	Parserbase.h	/^        INT_CONSTANT,$/;"	e	enum:ParserBase::Tokens__
+Input	Scannerbase.h	/^    class Input$/;"	c	class:ScannerBase
+Input	lex.cc	/^ScannerBase::Input::Input()$/;"	f	class:ScannerBase::Input
+Input	lex.cc	/^ScannerBase::Input::Input(std::istream *iStream, size_t lineNr)$/;"	f	class:ScannerBase::Input
+Int	intu.hpp	/^		Int, Float, Void$/;"	e	enum:DataType::BaseType
+Kind	intu.hpp	/^	enum Kind{$/;"	g	struct:DataType
+LE_OP	Parserbase.h	/^        LE_OP,$/;"	e	enum:ParserBase::Tokens__
+LOCAL	intu.hpp	/^	enum Scope {PARAM, LOCAL};$/;"	e	enum:SymbolTableEntry::Scope
+Leave__	Scannerbase.h	/^    enum Leave__$/;"	g	class:ScannerBase
+MATCH	Scannerbase.h	/^        MATCH,                  \/\/ matched a rule$/;"	m	class:ScannerBase::ActionType__
+Meta__	Parserbase.h	/^namespace Meta__$/;"	n
+Meta__	parse.cc	/^namespace Meta__$/;"	n	file:
+NE_OP	Parserbase.h	/^        NE_OP,$/;"	e	enum:ParserBase::Tokens__
+NORMAL	parse.cc	/^        NORMAL,$/;"	e	enum:__anon1::StateType	file:
+NOT_OP	Parserbase.h	/^        NOT_OP,$/;"	e	enum:ParserBase::Tokens__
+OR_OP	Parserbase.h	/^        OR_OP,$/;"	e	enum:ParserBase::Tokens__
+Ok	intu.hpp	/^		Base, Array, Error, Ok$/;"	e	enum:DataType::Kind
+PARAM	intu.hpp	/^	enum Scope {PARAM, LOCAL};$/;"	e	enum:SymbolTableEntry::Scope
+PARSE_ABORT__	Parserbase.h	/^            PARSE_ABORT__  = 1$/;"	e	enum:ParserBase::Return__
+PARSE_ACCEPT	parse.cc	/^        PARSE_ACCEPT     = 0,   \/\/ `ACCEPT' TRANSITION$/;"	e	enum:__anon1::ReservedTokens	file:
+PARSE_ACCEPT__	Parserbase.h	/^            PARSE_ACCEPT__ = 0,   \/\/ values used as parse()'s return values$/;"	e	enum:ParserBase::Return__
+PI__	parse.cc	/^    struct PI__     \/\/ Production Info$/;"	s	namespace:__anon1	file:
+POP	Scannerbase.h	/^        POP,                    \/\/ postCode called after switching files$/;"	m	class:ScannerBase::PostEnum__
+Parser	Parser.h	/^class Parser: public ParserBase$/;"	c
+Parser	Parser.h	12;"	d
+Parser	Parserbase.h	462;"	d
+ParserBase	Parserbase.h	/^class ParserBase$/;"	c
+ParserBase	parse.cc	/^ParserBase::ParserBase()$/;"	f	class:ParserBase
+ParserBase_h_included	Parserbase.h	4;"	d
+Parser_h_included	Parser.h	4;"	d
+PostEnum__	Scannerbase.h	/^    enum class PostEnum__$/;"	c	class:ScannerBase
+REQ_DEF	parse.cc	/^        REQ_DEF,    \/\/ REQ_TOKEN | DEF_RED$/;"	e	enum:__anon1::StateType	file:
+REQ_TOKEN	parse.cc	/^        REQ_TOKEN,$/;"	e	enum:__anon1::StateType	file:
+RETURN	Parserbase.h	/^        RETURN,$/;"	e	enum:ParserBase::Tokens__
+RETURN	Scannerbase.h	/^        RETURN,                 \/\/ no further continuation, lex returns 0.$/;"	m	class:ScannerBase::ActionType__
+RETURN	Scannerbase.h	/^        RETURN,                 \/\/ postCode called when lex__() returns$/;"	m	class:ScannerBase::PostEnum__
+RULE	Scannerbase.h	/^        RULE = 0,$/;"	e	enum:ScannerBase::__anon6
+ReservedTokens	parse.cc	/^    enum ReservedTokens$/;"	g	namespace:__anon1	file:
+ReturnType	Parserbase.h	/^                >::type ReturnType;$/;"	t	struct:Meta__::TypeOf
+ReturnType	Parserbase.h	/^            typedef typename TypeOf<tg_>::ReturnType ReturnType;$/;"	t	class:Meta__::Semantic
+Return__	Parserbase.h	/^        enum Return__$/;"	g	class:ParserBase
+SR__	parse.cc	/^    struct SR__     \/\/ Shift Reduce info, see its description above$/;"	s	namespace:__anon1	file:
+STACK_EXPANSION	parse.cc	/^        STACK_EXPANSION = 5     \/\/ size to expand the state-stack with when$/;"	e	enum:__anon1::__anon2	file:
+STRING_LITERAL	Parserbase.h	/^        STRING_LITERAL,$/;"	e	enum:ParserBase::Tokens__
+STYPE__	Parserbase.h	/^    typedef Meta__::SType STYPE__;$/;"	t	class:ParserBase
+SType	Parserbase.h	/^    class SType: public std::shared_ptr<Base>$/;"	c	namespace:Meta__
+Scanner	Scanner.h	/^class Scanner: public ScannerBase$/;"	c
+Scanner	Scanner.h	/^inline Scanner::Scanner(std::istream &in, std::ostream &out)$/;"	f	class:Scanner
+Scanner	Scanner.h	/^inline Scanner::Scanner(std::string const &infile, std::string const &outfile)$/;"	f	class:Scanner
+ScannerBASE_H_INCLUDED	Scannerbase.h	4;"	d
+ScannerBase	Scannerbase.h	/^class ScannerBase$/;"	c
+ScannerBase	lex.cc	/^ScannerBase::ScannerBase(std::istream &in, std::ostream &out)$/;"	f	class:ScannerBase
+ScannerBase	lex.cc	/^ScannerBase::ScannerBase(std::string const &infilename, std::string const &outfilename)$/;"	f	class:ScannerBase
+Scanner_H_INCLUDED_	Scanner.h	4;"	d
+Scope	intu.hpp	/^	enum Scope {PARAM, LOCAL};$/;"	g	struct:SymbolTableEntry
+Semantic	Parserbase.h	/^    class Semantic: public Base$/;"	c	namespace:Meta__
+Semantic	Parserbase.h	/^inline Semantic<tg_>::Semantic()$/;"	f	class:Meta__::Semantic
+Semantic	Parserbase.h	/^inline Semantic<tg_>::Semantic(typename TypeOf<tg_>::DataType &&tmp)$/;"	f	class:Meta__::Semantic
+Semantic	Parserbase.h	/^inline Semantic<tg_>::Semantic(typename TypeOf<tg_>::DataType const &data)$/;"	f	class:Meta__::Semantic
+StartCondition__	Scannerbase.h	/^    enum class StartCondition__ {$/;"	c	class:ScannerBase
+StateType	parse.cc	/^    enum StateType       \/\/ modify statetype\/data.cc when this enum changes$/;"	g	namespace:__anon1	file:
+StreamStruct	Scannerbase.h	/^    struct StreamStruct$/;"	s	class:ScannerBase
+SymbolTableEntry	intu.hpp	/^struct SymbolTableEntry{$/;"	s
+TagOf	Parserbase.h	/^    struct TagOf<abstractAST*>$/;"	s	namespace:Meta__
+TagOf	Parserbase.h	/^    struct TagOf<std::list<abstractAST*>>$/;"	s	namespace:Meta__
+TagOf	Parserbase.h	/^    struct TagOf<std::string>$/;"	s	namespace:Meta__
+Tag__	Parserbase.h	/^enum class Tag__$/;"	c
+Tokens__	Parserbase.h	/^    enum Tokens__$/;"	g	class:ParserBase
+Type	intu.hpp	/^	enum Type {VAR, FUNC};$/;"	g	struct:SymbolTableEntry
+TypeOf	Parserbase.h	/^    struct TypeOf: public TypeOfBase<tg_>$/;"	s	namespace:Meta__
+TypeOfBase	Parserbase.h	/^    struct TypeOfBase<Tag__::ast>$/;"	s	namespace:Meta__
+TypeOfBase	Parserbase.h	/^    struct TypeOfBase<Tag__::listTag>$/;"	s	namespace:Meta__
+TypeOfBase	Parserbase.h	/^    struct TypeOfBase<Tag__::stringTag>$/;"	s	namespace:Meta__
+UNEXPECTED_TOKEN__	Parserbase.h	/^            UNEXPECTED_TOKEN__,$/;"	e	enum:ParserBase::ErrorRecovery__
+VAR	intu.hpp	/^	enum Type {VAR, FUNC};$/;"	e	enum:SymbolTableEntry::Type
+VOID	Parserbase.h	/^        VOID,$/;"	e	enum:ParserBase::Tokens__
+VectorInt	Scannerbase.h	/^    typedef std::vector<int> VectorInt;$/;"	t	class:ScannerBase
+Void	intu.hpp	/^		Int, Float, Void$/;"	e	enum:DataType::BaseType
+WHILE	Parserbase.h	/^        WHILE,$/;"	e	enum:ParserBase::Tokens__
+_	Parserbase.h	/^        char _;$/;"	m	struct:Meta__::BuiltinType
+_	Parserbase.h	/^        char _[2];$/;"	m	struct:Meta__::ClassType
+_EOF_	parse.cc	/^        _EOF_            = -1,$/;"	e	enum:__anon1::ReservedTokens	file:
+_INTU_HPP	intu.hpp	2;"	d
+_UNDETERMINED_	parse.cc	/^        _UNDETERMINED_   = -2,$/;"	e	enum:__anon1::ReservedTokens	file:
+_error_	parse.cc	/^        _error_          = 256$/;"	e	enum:__anon1::ReservedTokens	file:
+_field_1_	parse.cc	/^            int _field_1_;      \/\/ initializer, allowing initializations $/;"	m	union:__anon1::SR__::__anon3	file:
+_field_2_	parse.cc	/^            int _field_2_;$/;"	m	union:__anon1::SR__::__anon4	file:
+abstractAST	intu.hpp	/^class abstractAST{$/;"	c
+accept	lex.cc	/^void ScannerBase::accept(size_t nChars)          \/\/ old name: less$/;"	f	class:ScannerBase
+actionType__	lex.cc	/^ScannerBase::ActionType__ ScannerBase::actionType__(size_t range)$/;"	f	class:ScannerBase
+additive_expression	parse.y	/^additive_expression:$/;"	l
+arrayType	intu.hpp	/^	DataType *arrayType;              \/\/length and arrayType are to be used only if tag == Array$/;"	m	struct:DataType
+arrayrefAST	intu.hpp	/^class arrayrefAST : public expAST{$/;"	c
+assAST	intu.hpp	/^		assAST(abstractAST *a, abstractAST *b){$/;"	f	class:assAST
+assAST	intu.hpp	/^class assAST : public stmtAST{$/;"	c
+assign	Parserbase.h	/^inline SType &Assign<false, SType>::assign(SType *lhs, SType const &tp)$/;"	f	class:Meta__::Assign
+assign	Parserbase.h	/^inline SType &Assign<false, Tp_>::assign(SType *lhs, Tp_ const &tp)$/;"	f	class:Meta__::Assign
+assign	Parserbase.h	/^inline SType &Assign<true, Tp_>::assign(SType *lhs, Tp_ &&tp)$/;"	f	class:Meta__::Assign
+assignmentCompatible	intu.cpp	/^bool assignmentCompatible(DataType left, DataType right){$/;"	f
+assignment_statement	parse.y	/^assignment_statement:$/;"	l
+ast	Parserbase.h	/^    ast,$/;"	m	class:Tag__
+astType	intu.hpp	/^		DataType astType;$/;"	m	class:abstractAST
+astType	intu.hpp	/^		DataType astType;$/;"	m	class:castAST
+atBOL	Scannerbase.h	/^        FinData atBOL;$/;"	m	struct:ScannerBase::Final
+atFinalState	Scannerbase.h	/^inline bool ScannerBase::atFinalState()$/;"	f	class:ScannerBase
+author	parse.cc	/^    char const author[] = "Frank B. Brokken (f.b.brokken@rug.nl)";$/;"	m	namespace:__anon1	file:
+basetype	intu.hpp	/^	BaseType basetype;$/;"	m	struct:DataType
+begin	Scannerbase.h	/^inline void ScannerBase::begin(StartCondition__ startCondition)$/;"	f	class:ScannerBase
+blockAST	intu.hpp	/^		blockAST(std::list<abstractAST*> a){$/;"	f	class:blockAST
+blockAST	intu.hpp	/^class blockAST : public stmtAST{$/;"	c
+bopAST	intu.hpp	/^		bopAST(std::string a, abstractAST *b, abstractAST *c){$/;"	f	class:bopAST
+bopAST	intu.hpp	/^class bopAST : public expAST{$/;"	c
+castAST	intu.hpp	/^		castAST(std::string a, abstractAST *pointer){$/;"	f	class:castAST
+castAST	intu.hpp	/^class castAST : public abstractAST{$/;"	c
+castType	intu.hpp	/^		std::string castType;$/;"	m	class:castAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:arrayrefAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:assAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:blockAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:bopAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:castAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:expAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:floatAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:forAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:funcAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:identifierAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:ifAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:indexAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:intAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:returnAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:stmtAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:stringAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:uopAST
+checkTypeofAST	intu.hpp	/^		virtual bool checkTypeofAST() {};$/;"	f	class:whileAST
+clearin	parse.cc	/^void ParserBase::clearin()$/;"	f	class:ParserBase
+close	Scannerbase.h	/^            void close()                    \/\/ force closing the stream$/;"	f	class:ScannerBase::Input
+compound_statement	parse.y	/^compound_statement:$/;"	l
+constant_expression	parse.y	/^constant_expression:$/;"	l
+constructDT	intu.cpp	/^DataType *constructDT(DataType a, std::list<int> list){$/;"	f
+continue__	lex.cc	/^void ScannerBase::continue__(int ch)$/;"	f	class:ScannerBase
+currentOffset	intu.cpp	/^int currentOffset = -4; \/\/offset of the next to-be-seen variable.$/;"	v
+currentTable	intu.cpp	/^std::map<std::string, SymbolTableEntry*> *currentTable = new std::map<std::string, SymbolTableEntry*>(); \/\/this holds the pointer to the global symbol table. GST contains only functions in our language.$/;"	v
+currentType	intu.cpp	/^DataType currentType; \/\/this is the most recently seen DataType.$/;"	v
+d_acceptedTokens__	Parserbase.h	/^        size_t      d_acceptedTokens__;$/;"	m	class:ParserBase
+d_action	parse.cc	/^            int d_action;           \/\/ may be negative (reduce), $/;"	m	union:__anon1::SR__::__anon4	file:
+d_atBOL	Scannerbase.h	/^    bool            d_atBOL;                \/\/ the matched text starts at BOL$/;"	m	class:ScannerBase
+d_data	Parserbase.h	/^        mutable DataType d_data;$/;"	m	class:Meta__::Semantic
+d_debug__	Parserbase.h	/^        bool        d_debug__;$/;"	m	class:ParserBase
+d_deque	Scannerbase.h	/^        std::deque<unsigned char> d_deque;  \/\/ pending input chars$/;"	m	class:ScannerBase::Input
+d_dfaBase__	Scannerbase.h	/^    int     const (*d_dfaBase__)[71];$/;"	m	class:ScannerBase
+d_errorState	parse.cc	/^            size_t d_errorState;    \/\/ used with Error states$/;"	m	union:__anon1::SR__::__anon4	file:
+d_filename	Scannerbase.h	/^    std::string     d_filename;             \/\/ name of the currently processed$/;"	m	class:ScannerBase
+d_final	Scannerbase.h	/^    Final d_final;                          \/\/ 1st for BOL rules$/;"	m	class:ScannerBase
+d_in	Scannerbase.h	/^        std::istream *d_in;                 \/\/ ptr for easy streamswitching$/;"	m	class:ScannerBase::Input
+d_in	Scannerbase.h	/^    std::istream *d_in;                     \/\/ points to the input stream$/;"	m	class:ScannerBase
+d_in__	Scannerbase.h	/^    std::istream   *d_in__;$/;"	m	class:ScannerBase
+d_input	Scannerbase.h	/^    Input           d_input;$/;"	m	class:ScannerBase
+d_lastIdx	parse.cc	/^            int d_lastIdx;          \/\/ if negative, the state uses SHIFT$/;"	m	union:__anon1::SR__::__anon4	file:
+d_line	Scannerbase.h	/^    std::shared_ptr<std::istringstream> d_line; \/\/ holds line fm d_in$/;"	m	class:ScannerBase
+d_lineNr	Scannerbase.h	/^        size_t d_lineNr;                    \/\/ line count$/;"	m	class:ScannerBase::Input
+d_matched	Scannerbase.h	/^    std::string     d_matched;              \/\/ matched characters$/;"	m	class:ScannerBase
+d_more	Scannerbase.h	/^    bool            d_more = false;         \/\/ set to true by more()$/;"	m	class:ScannerBase
+d_nErrors__	Parserbase.h	/^        size_t      d_nErrors__;$/;"	m	class:ParserBase
+d_nextState	Scannerbase.h	/^    int             d_nextState;$/;"	m	class:ScannerBase
+d_nextToken__	Parserbase.h	/^        int         d_nextToken__;$/;"	m	class:ParserBase
+d_nextVal__	Parserbase.h	/^        STYPE__     d_nextVal__;$/;"	m	class:ParserBase
+d_nonTerm	parse.cc	/^        size_t d_nonTerm; \/\/ identification number of this production's$/;"	m	struct:__anon1::PI__	file:
+d_out	Scannerbase.h	/^    std::shared_ptr<std::ostream> d_out;$/;"	m	class:ScannerBase
+d_requiredTokens__	Parserbase.h	/^        size_t      d_requiredTokens__;$/;"	m	class:ParserBase
+d_return	Scannerbase.h	/^    bool            d_return;               \/\/ return after a rule's action $/;"	m	class:ScannerBase
+d_sawEOF	Scannerbase.h	/^    bool            d_sawEOF;               \/\/ saw EOF: ignore tailCount$/;"	m	class:ScannerBase
+d_scanner	Parser.h	/^    Scanner d_scanner;$/;"	m	class:Parser
+d_size	parse.cc	/^        size_t d_size;    \/\/ number of elements in this production $/;"	m	struct:__anon1::PI__	file:
+d_stackIdx__	Parserbase.h	/^        int d_stackIdx__;$/;"	m	class:ParserBase
+d_startCondition	Scannerbase.h	/^    StartCondition__  d_startCondition;$/;"	m	class:ScannerBase
+d_state	Scannerbase.h	/^    size_t          d_state;$/;"	m	class:ScannerBase
+d_stateStack__	Parserbase.h	/^        std::vector<size_t>   d_stateStack__;$/;"	m	class:ParserBase
+d_state__	Parserbase.h	/^        size_t      d_state__;$/;"	m	class:ParserBase
+d_streamStack	Scannerbase.h	/^    std::vector<StreamStruct>    d_streamStack;$/;"	m	class:ScannerBase
+d_tag	Parserbase.h	/^        Tag__ d_tag;$/;"	m	class:Meta__::Base
+d_tailCount	Scannerbase.h	/^    std::vector<size_t> d_tailCount;         $/;"	m	class:ScannerBase
+d_token	parse.cc	/^            int d_token;$/;"	m	union:__anon1::SR__::__anon3	file:
+d_token__	Parserbase.h	/^        int         d_token__;$/;"	m	class:ParserBase
+d_token__	Scannerbase.h	/^    int d_token__;                          \/\/ returned by lex__$/;"	m	class:ScannerBase
+d_type	parse.cc	/^            int d_type;$/;"	m	union:__anon1::SR__::__anon3	file:
+d_val__	Parserbase.h	/^	public: static STYPE__  d_val__;$/;"	m	class:ParserBase
+d_val__	parse.cc	/^Meta__::SType ParserBase::d_val__;$/;"	m	class:ParserBase	file:
+d_valueStack__	Parserbase.h	/^        std::vector<STYPE__>  d_valueStack__;$/;"	m	class:ParserBase
+d_vsp__	Parserbase.h	/^        STYPE__    *d_vsp__;$/;"	m	class:ParserBase
+data	Parserbase.h	/^inline typename TypeOf<tg_>::DataType &SType::data()$/;"	f	class:Meta__::SType
+data	Parserbase.h	/^inline typename TypeOf<tg_>::ReturnType SType::data() const$/;"	f	class:Meta__::SType
+dataType	intu.hpp	/^	DataType *dataType;$/;"	m	struct:SymbolTableEntry
+debug	Parserbase.h	/^inline bool ParserBase::debug() const$/;"	f	class:ParserBase
+debug	lex.cc	/^bool ScannerBase::debug() const$/;"	f	class:ScannerBase
+declaration	parse.y	/^declaration:$/;"	l
+declaration_list	parse.y	/^declaration_list:$/;"	l
+declarator	parse.y	/^declarator:$/;"	l
+declarator_list	parse.y	/^declarator_list:$/;"	l
+determineMatchedSize	lex.cc	/^void ScannerBase::determineMatchedSize(FinData const &final)$/;"	f	class:ScannerBase
+echo	Scannerbase.h	/^inline void ScannerBase::echo() const$/;"	f	class:ScannerBase
+echoCh__	lex.cc	/^void ScannerBase::echoCh__(size_t ch)$/;"	f	class:ScannerBase
+echoFirst__	lex.cc	/^void ScannerBase::echoFirst__(size_t ch)$/;"	f	class:ScannerBase
+equality_expression	parse.y	/^equality_expression:$/;"	l
+errorRecovery	parse.cc	/^void Parser::errorRecovery()$/;"	f	class:Parser
+executeAction	parse.cc	/^void Parser::executeAction(int production)$/;"	f	class:Parser
+executeAction__	lex.cc	/^int Scanner::executeAction__(size_t ruleIdx)$/;"	f	class:Scanner
+expAST	intu.hpp	/^class expAST : public abstractAST{$/;"	c
+expression	parse.y	/^expression:$/;"	l
+expression_list	parse.y	/^expression_list:$/;"	l
+filename	Scannerbase.h	/^inline std::string const &ScannerBase::filename() const$/;"	f	class:std::ScannerBase
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:assAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:bopAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:castAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:forAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:ifAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:indexAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:returnAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:uopAST
+first	intu.hpp	/^		abstractAST *first;$/;"	m	class:whileAST
+first	intu.hpp	/^		std::list <abstractAST*> first;$/;"	m	class:funcAST
+first	intu.hpp	/^		std::list<abstractAST*> first;$/;"	m	class:blockAST
+first	intu.hpp	/^		std::string first;$/;"	m	class:floatAST
+first	intu.hpp	/^		std::string first;$/;"	m	class:identifierAST
+first	intu.hpp	/^		std::string first;$/;"	m	class:intAST
+first	intu.hpp	/^		std::string first;$/;"	m	class:stringAST
+floatAST	intu.hpp	/^		floatAST(std::string a){$/;"	f	class:floatAST
+floatAST	intu.hpp	/^class floatAST : public expAST{$/;"	c
+forAST	intu.hpp	/^		forAST(abstractAST *a, abstractAST *b, abstractAST *c, abstractAST *d){$/;"	f	class:forAST
+forAST	intu.hpp	/^class forAST : public stmtAST{$/;"	c
+fourth	intu.hpp	/^		abstractAST *fourth;$/;"	m	class:forAST
+fun_declarator	parse.y	/^fun_declarator:$/;"	l
+funcAST	intu.hpp	/^		funcAST(std::string a, std::list<abstractAST*> b){$/;"	f	class:funcAST
+funcAST	intu.hpp	/^class funcAST : public expAST{$/;"	c
+functionName	intu.cpp	/^std::string functionName; \/\/name of the last seen function.$/;"	v
+function_definition	parse.y	/^function_definition:$/;"	l
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:arrayrefAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:assAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:blockAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:bopAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:expAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:floatAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:forAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:funcAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:identifierAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:ifAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:indexAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:intAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:returnAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:stmtAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:stringAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:uopAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&) {};$/;"	f	class:whileAST
+generate_code	intu.hpp	/^		virtual std::string generate_code(const symbolTable&){};$/;"	f	class:castAST
+get	Parserbase.h	/^inline typename TypeOf<tg_>::DataType &Base::get()$/;"	f	class:Meta__::Base
+get	Parserbase.h	/^inline typename TypeOf<tg_>::DataType &SType::get()$/;"	f	class:Meta__::SType
+get	Parserbase.h	/^inline typename TypeOf<tg_>::ReturnType Base::get() const$/;"	f	class:Meta__::Base
+get	Parserbase.h	/^inline typename TypeOf<tg_>::ReturnType SType::get() const$/;"	f	class:Meta__::SType
+get	lex.cc	/^size_t ScannerBase::Input::get()$/;"	f	class:ScannerBase::Input
+getRange__	lex.cc	/^size_t ScannerBase::getRange__(int ch)       \/\/ using int to prevent casts$/;"	f	class:ScannerBase
+getType	intu.hpp	/^		virtual DataType getType() {$/;"	f	class:stringAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:arrayrefAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:assAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:blockAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:bopAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:castAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:expAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:floatAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:forAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:funcAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:identifierAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:ifAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:indexAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:intAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:returnAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:stmtAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:uopAST
+getType	intu.hpp	/^		virtual DataType getType() {};$/;"	f	class:whileAST
+getType	intu.hpp	/^		virtual DataType getType(){$/;"	f	class:abstractAST
+getVal	intu.hpp	/^		virtual float getVal(){$/;"	f	class:floatAST
+getVal	intu.hpp	/^		virtual float getVal(){$/;"	f	class:intAST
+getVal	intu.hpp	/^		virtual float getVal(){};$/;"	f	class:abstractAST
+getVal	intu.hpp	/^		virtual float getVal(){};$/;"	f	class:castAST
+getVal	intu.hpp	/^		virtual float getVal(){};$/;"	f	class:expAST
+get__	Scannerbase.h	/^inline size_t ScannerBase::get__()$/;"	f	class:ScannerBase
+globalTable	intu.cpp	/^std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>(); \/\/this holds the pointer to the global symbol table. GST contains only functions in our language.$/;"	v
+identifierAST	intu.hpp	/^		identifierAST(std::string a){$/;"	f	class:identifierAST
+identifierAST	intu.hpp	/^class identifierAST : public arrayrefAST{$/;"	c
+ifAST	intu.hpp	/^		ifAST(abstractAST *a, abstractAST *b, abstractAST *c){$/;"	f	class:ifAST
+ifAST	intu.hpp	/^class ifAST : public stmtAST{$/;"	c
+indexAST	intu.hpp	/^		indexAST(abstractAST *a, abstractAST *b){$/;"	f	class:indexAST
+indexAST	intu.hpp	/^class indexAST : public arrayrefAST{$/;"	c
+indexList	intu.cpp	/^std::list<int> indexList; \/\/list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].$/;"	v
+inspectRFCs__	lex.cc	/^void ScannerBase::inspectRFCs__()$/;"	f	class:ScannerBase
+intAST	intu.hpp	/^		intAST(std::string a){$/;"	f	class:intAST
+intAST	intu.hpp	/^class intAST : public expAST{$/;"	c
+iteration_statement	parse.y	/^iteration_statement:$/;"	l
+l_expression	parse.y	/^l_expression:$/;"	l
+leave	Scannerbase.h	/^inline void ScannerBase::leave(int retValue) const$/;"	f	class:ScannerBase
+length	Scannerbase.h	/^inline size_t ScannerBase::length() const$/;"	f	class:ScannerBase
+length	intu.hpp	/^	int length;                    $/;"	m	struct:DataType
+lex	Scanner.h	/^inline int Scanner::lex()$/;"	f	class:Scanner
+lex__	lex.cc	/^int Scanner::lex__()$/;"	f	class:Scanner
+lineNo	intu.cpp	/^int lineNo = 1;$/;"	v
+lineNr	Scannerbase.h	/^            size_t lineNr() const$/;"	f	class:ScannerBase::Input
+lineNr	Scannerbase.h	/^inline size_t ScannerBase::lineNr() const$/;"	f	class:ScannerBase
+listTag	Parserbase.h	/^    listTag,$/;"	m	class:Tag__
+logical_and_expression	parse.y	/^logical_and_expression:$/;"	l
+lookup	parse.cc	/^int Parser::lookup(bool recovery)$/;"	f	class:Parser
+main	main.cc	/^int main (int argc, char** arg)$/;"	f
+main	pointer.cpp	/^int main(){$/;"	f
+matchLen	Scannerbase.h	/^        size_t matchLen;$/;"	m	struct:ScannerBase::FinData
+matched	Scannerbase.h	/^inline std::string const &ScannerBase::matched() const$/;"	f	class:std::ScannerBase
+matched__	lex.cc	/^size_t ScannerBase::matched__(size_t ch)$/;"	f	class:ScannerBase
+more	Scannerbase.h	/^inline void ScannerBase::more()$/;"	f	class:ScannerBase
+multiplicative_expression	parse.y	/^multiplicative_expression:$/;"	l
+name	intu.cpp	/^std::string name; \/\/name of the last seen variable.$/;"	v
+name	intu.hpp	/^		std::string name;$/;"	m	class:funcAST
+next	lex.cc	/^size_t ScannerBase::Input::next()$/;"	f	class:ScannerBase::Input
+nextToken	parse.cc	/^void Parser::nextToken()$/;"	f	class:Parser
+noReturn__	Scannerbase.h	/^inline void ScannerBase::noReturn__()$/;"	f	class:ScannerBase
+notAtBOL	Scannerbase.h	/^        FinData notAtBOL;$/;"	m	struct:ScannerBase::Final
+offset	intu.hpp	/^	int offset; \/\/since offset too is an integer number of bytes$/;"	m	struct:SymbolTableEntry
+op	intu.hpp	/^		std::string op;$/;"	m	class:bopAST
+op	intu.hpp	/^		std::string op;$/;"	m	class:uopAST
+operator =	Parserbase.h	/^inline SType &SType::operator=(Tp_ &&rhs) $/;"	f	class:Meta__::SType
+operator ==	intu.hpp	/^	bool operator==(DataType second){$/;"	f	struct:DataType
+operator ReturnType	Parserbase.h	/^inline Semantic<tg_>::operator ReturnType() const$/;"	f	class:Meta__::Semantic
+operator typename Semantic<tg_>::DataType &	Parserbase.h	/^inline Semantic<tg_>::operator typename Semantic<tg_>::DataType &()$/;"	f	class:Meta__::Semantic
+other	Parserbase.h	/^            Base(Base const &other) = delete;$/;"	m	class:Meta__::Base
+other	Parserbase.h	/^            SType(SType const &other) = default;$/;"	m	class:Meta__::SType
+other	Scannerbase.h	/^    ScannerBase(ScannerBase const &other)             = delete;$/;"	m	class:ScannerBase
+out	Scannerbase.h	/^inline std::ostream &ScannerBase::out()$/;"	f	class:ScannerBase
+p_pushStream	lex.cc	/^void ScannerBase::p_pushStream(std::string const &name, std::istream *streamPtr)$/;"	f	class:ScannerBase
+parameter_declaration	parse.y	/^parameter_declaration:$/;"	l
+parameter_list	parse.y	/^parameter_list:$/;"	l
+parse	parse.cc	/^int Parser::parse()$/;"	f	class:Parser
+pointer	intu.hpp	/^	std::map<std::string, SymbolTableEntry*> *pointer;$/;"	m	struct:SymbolTableEntry
+popStream	lex.cc	/^bool ScannerBase::popStream()$/;"	f	class:ScannerBase
+popToken__	parse.cc	/^void ParserBase::popToken__()$/;"	f	class:ParserBase
+pop__	parse.cc	/^void ParserBase::pop__(size_t count)$/;"	f	class:ParserBase
+postCode	Scanner.h	/^inline void Scanner::postCode(PostEnum__ type) $/;"	f	class:Scanner
+postfix_expression	parse.y	/^postfix_expression:$/;"	l
+preCode	Scanner.h	/^inline void Scanner::preCode() $/;"	f	class:Scanner
+primary_expression	parse.y	/^primary_expression:$/;"	l
+print	Scanner.h	/^inline void Scanner::print() $/;"	f	class:Scanner
+print	intu.cpp	/^void assAST::print(std::string format){$/;"	f	class:assAST
+print	intu.cpp	/^void blockAST::print(std::string format){$/;"	f	class:blockAST
+print	intu.cpp	/^void bopAST::print(std::string format){$/;"	f	class:bopAST
+print	intu.cpp	/^void castAST::print(std::string format){$/;"	f	class:castAST
+print	intu.cpp	/^void floatAST::print(std::string format){$/;"	f	class:floatAST
+print	intu.cpp	/^void forAST::print(std::string format){$/;"	f	class:forAST
+print	intu.cpp	/^void funcAST::print(std::string format){$/;"	f	class:funcAST
+print	intu.cpp	/^void identifierAST::print(std::string format){$/;"	f	class:identifierAST
+print	intu.cpp	/^void ifAST::print(std::string format){$/;"	f	class:ifAST
+print	intu.cpp	/^void indexAST::print(std::string format){$/;"	f	class:indexAST
+print	intu.cpp	/^void intAST::print(std::string format){$/;"	f	class:intAST
+print	intu.cpp	/^void returnAST::print(std::string format){$/;"	f	class:returnAST
+print	intu.cpp	/^void stringAST::print(std::string format){$/;"	f	class:stringAST
+print	intu.cpp	/^void uopAST::print(std::string format){$/;"	f	class:uopAST
+print	intu.cpp	/^void whileAST::print(std::string format){$/;"	f	class:whileAST
+print	intu.hpp	/^		virtual void print(std::string format = "") {};$/;"	f	class:arrayrefAST
+print	intu.hpp	/^		virtual void print(std::string format = "") {};$/;"	f	class:expAST
+print	intu.hpp	/^		virtual void print(std::string format = "") {};$/;"	f	class:stmtAST
+print	intu.hpp	/^	void print(){$/;"	f	struct:SymbolTableEntry
+print	intu.hpp	/^	void print(std::ostream& a){$/;"	f	struct:DataType
+printSymbolTable	intu.cpp	/^void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){$/;"	f
+print__	lex.cc	/^void ScannerBase::print__() const$/;"	f	class:ScannerBase
+print__	parse.cc	/^void Parser::print__()$/;"	f	class:Parser
+push	Scannerbase.h	/^inline void ScannerBase::push(size_t ch)$/;"	f	class:ScannerBase
+push	Scannerbase.h	/^inline void ScannerBase::push(std::string const &str)$/;"	f	class:ScannerBase
+pushStream	lex.cc	/^void ScannerBase::pushStream(std::istream  &istr)$/;"	f	class:ScannerBase
+pushStream	lex.cc	/^void ScannerBase::pushStream(std::string const &name)$/;"	f	class:ScannerBase
+pushToken__	parse.cc	/^void ParserBase::pushToken__(int token)$/;"	f	class:ParserBase
+push__	parse.cc	/^void ParserBase::push__(size_t state)$/;"	f	class:ParserBase
+pushedInput	Scannerbase.h	/^        Input pushedInput;$/;"	m	struct:ScannerBase::StreamStruct
+pushedName	Scannerbase.h	/^        std::string pushedName;$/;"	m	struct:ScannerBase::StreamStruct
+reRead	lex.cc	/^void ScannerBase::Input::reRead(size_t ch)$/;"	f	class:ScannerBase::Input
+reRead	lex.cc	/^void ScannerBase::Input::reRead(std::string const &str, size_t fm)$/;"	f	class:ScannerBase::Input
+redo	lex.cc	/^void ScannerBase::redo(size_t nChars)$/;"	f	class:ScannerBase
+reduce__	parse.cc	/^inline void ParserBase::reduce__(PI__ const &pi)$/;"	f	class:ParserBase
+relational_expression	parse.y	/^relational_expression:$/;"	l
+reset__	lex.cc	/^void ScannerBase::reset__()$/;"	f	class:ScannerBase
+returnAST	intu.hpp	/^		returnAST(abstractAST *a){$/;"	f	class:returnAST
+returnAST	intu.hpp	/^class returnAST : public stmtAST{$/;"	c
+return__	Scannerbase.h	/^inline bool ScannerBase::return__()$/;"	f	class:ScannerBase
+rhs	Parserbase.h	/^            SType &operator=(SType const &rhs) = default;$/;"	m	class:Meta__::SType
+rhs	Scannerbase.h	/^    ScannerBase &operator=(ScannerBase const &rhs)    = delete;$/;"	m	class:ScannerBase
+rule	Scannerbase.h	/^        size_t rule;$/;"	m	struct:ScannerBase::FinData
+s_0	parse.cc	/^SR__ s_0[] =$/;"	m	namespace:__anon1	file:
+s_1	parse.cc	/^SR__ s_1[] =$/;"	m	namespace:__anon1	file:
+s_10	parse.cc	/^SR__ s_10[] =$/;"	m	namespace:__anon1	file:
+s_100	parse.cc	/^SR__ s_100[] =$/;"	m	namespace:__anon1	file:
+s_101	parse.cc	/^SR__ s_101[] =$/;"	m	namespace:__anon1	file:
+s_102	parse.cc	/^SR__ s_102[] =$/;"	m	namespace:__anon1	file:
+s_103	parse.cc	/^SR__ s_103[] =$/;"	m	namespace:__anon1	file:
+s_104	parse.cc	/^SR__ s_104[] =$/;"	m	namespace:__anon1	file:
+s_105	parse.cc	/^SR__ s_105[] =$/;"	m	namespace:__anon1	file:
+s_106	parse.cc	/^SR__ s_106[] =$/;"	m	namespace:__anon1	file:
+s_107	parse.cc	/^SR__ s_107[] =$/;"	m	namespace:__anon1	file:
+s_108	parse.cc	/^SR__ s_108[] =$/;"	m	namespace:__anon1	file:
+s_109	parse.cc	/^SR__ s_109[] =$/;"	m	namespace:__anon1	file:
+s_11	parse.cc	/^SR__ s_11[] =$/;"	m	namespace:__anon1	file:
+s_110	parse.cc	/^SR__ s_110[] =$/;"	m	namespace:__anon1	file:
+s_111	parse.cc	/^SR__ s_111[] =$/;"	m	namespace:__anon1	file:
+s_112	parse.cc	/^SR__ s_112[] =$/;"	m	namespace:__anon1	file:
+s_113	parse.cc	/^SR__ s_113[] =$/;"	m	namespace:__anon1	file:
+s_114	parse.cc	/^SR__ s_114[] =$/;"	m	namespace:__anon1	file:
+s_115	parse.cc	/^SR__ s_115[] =$/;"	m	namespace:__anon1	file:
+s_116	parse.cc	/^SR__ s_116[] =$/;"	m	namespace:__anon1	file:
+s_117	parse.cc	/^SR__ s_117[] =$/;"	m	namespace:__anon1	file:
+s_118	parse.cc	/^SR__ s_118[] =$/;"	m	namespace:__anon1	file:
+s_119	parse.cc	/^SR__ s_119[] =$/;"	m	namespace:__anon1	file:
+s_12	parse.cc	/^SR__ s_12[] =$/;"	m	namespace:__anon1	file:
+s_120	parse.cc	/^SR__ s_120[] =$/;"	m	namespace:__anon1	file:
+s_121	parse.cc	/^SR__ s_121[] =$/;"	m	namespace:__anon1	file:
+s_122	parse.cc	/^SR__ s_122[] =$/;"	m	namespace:__anon1	file:
+s_123	parse.cc	/^SR__ s_123[] =$/;"	m	namespace:__anon1	file:
+s_124	parse.cc	/^SR__ s_124[] =$/;"	m	namespace:__anon1	file:
+s_125	parse.cc	/^SR__ s_125[] =$/;"	m	namespace:__anon1	file:
+s_126	parse.cc	/^SR__ s_126[] =$/;"	m	namespace:__anon1	file:
+s_127	parse.cc	/^SR__ s_127[] =$/;"	m	namespace:__anon1	file:
+s_128	parse.cc	/^SR__ s_128[] =$/;"	m	namespace:__anon1	file:
+s_129	parse.cc	/^SR__ s_129[] =$/;"	m	namespace:__anon1	file:
+s_13	parse.cc	/^SR__ s_13[] =$/;"	m	namespace:__anon1	file:
+s_130	parse.cc	/^SR__ s_130[] =$/;"	m	namespace:__anon1	file:
+s_131	parse.cc	/^SR__ s_131[] =$/;"	m	namespace:__anon1	file:
+s_132	parse.cc	/^SR__ s_132[] =$/;"	m	namespace:__anon1	file:
+s_133	parse.cc	/^SR__ s_133[] =$/;"	m	namespace:__anon1	file:
+s_134	parse.cc	/^SR__ s_134[] =$/;"	m	namespace:__anon1	file:
+s_135	parse.cc	/^SR__ s_135[] =$/;"	m	namespace:__anon1	file:
+s_14	parse.cc	/^SR__ s_14[] =$/;"	m	namespace:__anon1	file:
+s_15	parse.cc	/^SR__ s_15[] =$/;"	m	namespace:__anon1	file:
+s_16	parse.cc	/^SR__ s_16[] =$/;"	m	namespace:__anon1	file:
+s_17	parse.cc	/^SR__ s_17[] =$/;"	m	namespace:__anon1	file:
+s_18	parse.cc	/^SR__ s_18[] =$/;"	m	namespace:__anon1	file:
+s_19	parse.cc	/^SR__ s_19[] =$/;"	m	namespace:__anon1	file:
+s_2	parse.cc	/^SR__ s_2[] =$/;"	m	namespace:__anon1	file:
+s_20	parse.cc	/^SR__ s_20[] =$/;"	m	namespace:__anon1	file:
+s_21	parse.cc	/^SR__ s_21[] =$/;"	m	namespace:__anon1	file:
+s_22	parse.cc	/^SR__ s_22[] =$/;"	m	namespace:__anon1	file:
+s_23	parse.cc	/^SR__ s_23[] =$/;"	m	namespace:__anon1	file:
+s_24	parse.cc	/^SR__ s_24[] =$/;"	m	namespace:__anon1	file:
+s_25	parse.cc	/^SR__ s_25[] =$/;"	m	namespace:__anon1	file:
+s_26	parse.cc	/^SR__ s_26[] =$/;"	m	namespace:__anon1	file:
+s_27	parse.cc	/^SR__ s_27[] =$/;"	m	namespace:__anon1	file:
+s_28	parse.cc	/^SR__ s_28[] =$/;"	m	namespace:__anon1	file:
+s_29	parse.cc	/^SR__ s_29[] =$/;"	m	namespace:__anon1	file:
+s_3	parse.cc	/^SR__ s_3[] =$/;"	m	namespace:__anon1	file:
+s_30	parse.cc	/^SR__ s_30[] =$/;"	m	namespace:__anon1	file:
+s_31	parse.cc	/^SR__ s_31[] =$/;"	m	namespace:__anon1	file:
+s_32	parse.cc	/^SR__ s_32[] =$/;"	m	namespace:__anon1	file:
+s_33	parse.cc	/^SR__ s_33[] =$/;"	m	namespace:__anon1	file:
+s_34	parse.cc	/^SR__ s_34[] =$/;"	m	namespace:__anon1	file:
+s_35	parse.cc	/^SR__ s_35[] =$/;"	m	namespace:__anon1	file:
+s_36	parse.cc	/^SR__ s_36[] =$/;"	m	namespace:__anon1	file:
+s_37	parse.cc	/^SR__ s_37[] =$/;"	m	namespace:__anon1	file:
+s_38	parse.cc	/^SR__ s_38[] =$/;"	m	namespace:__anon1	file:
+s_39	parse.cc	/^SR__ s_39[] =$/;"	m	namespace:__anon1	file:
+s_4	parse.cc	/^SR__ s_4[] =$/;"	m	namespace:__anon1	file:
+s_40	parse.cc	/^SR__ s_40[] =$/;"	m	namespace:__anon1	file:
+s_41	parse.cc	/^SR__ s_41[] =$/;"	m	namespace:__anon1	file:
+s_42	parse.cc	/^SR__ s_42[] =$/;"	m	namespace:__anon1	file:
+s_43	parse.cc	/^SR__ s_43[] =$/;"	m	namespace:__anon1	file:
+s_44	parse.cc	/^SR__ s_44[] =$/;"	m	namespace:__anon1	file:
+s_45	parse.cc	/^SR__ s_45[] =$/;"	m	namespace:__anon1	file:
+s_46	parse.cc	/^SR__ s_46[] =$/;"	m	namespace:__anon1	file:
+s_47	parse.cc	/^SR__ s_47[] =$/;"	m	namespace:__anon1	file:
+s_48	parse.cc	/^SR__ s_48[] =$/;"	m	namespace:__anon1	file:
+s_49	parse.cc	/^SR__ s_49[] =$/;"	m	namespace:__anon1	file:
+s_5	parse.cc	/^SR__ s_5[] =$/;"	m	namespace:__anon1	file:
+s_50	parse.cc	/^SR__ s_50[] =$/;"	m	namespace:__anon1	file:
+s_51	parse.cc	/^SR__ s_51[] =$/;"	m	namespace:__anon1	file:
+s_52	parse.cc	/^SR__ s_52[] =$/;"	m	namespace:__anon1	file:
+s_53	parse.cc	/^SR__ s_53[] =$/;"	m	namespace:__anon1	file:
+s_54	parse.cc	/^SR__ s_54[] =$/;"	m	namespace:__anon1	file:
+s_55	parse.cc	/^SR__ s_55[] =$/;"	m	namespace:__anon1	file:
+s_56	parse.cc	/^SR__ s_56[] =$/;"	m	namespace:__anon1	file:
+s_57	parse.cc	/^SR__ s_57[] =$/;"	m	namespace:__anon1	file:
+s_58	parse.cc	/^SR__ s_58[] =$/;"	m	namespace:__anon1	file:
+s_59	parse.cc	/^SR__ s_59[] =$/;"	m	namespace:__anon1	file:
+s_6	parse.cc	/^SR__ s_6[] =$/;"	m	namespace:__anon1	file:
+s_60	parse.cc	/^SR__ s_60[] =$/;"	m	namespace:__anon1	file:
+s_61	parse.cc	/^SR__ s_61[] =$/;"	m	namespace:__anon1	file:
+s_62	parse.cc	/^SR__ s_62[] =$/;"	m	namespace:__anon1	file:
+s_63	parse.cc	/^SR__ s_63[] =$/;"	m	namespace:__anon1	file:
+s_64	parse.cc	/^SR__ s_64[] =$/;"	m	namespace:__anon1	file:
+s_65	parse.cc	/^SR__ s_65[] =$/;"	m	namespace:__anon1	file:
+s_66	parse.cc	/^SR__ s_66[] =$/;"	m	namespace:__anon1	file:
+s_67	parse.cc	/^SR__ s_67[] =$/;"	m	namespace:__anon1	file:
+s_68	parse.cc	/^SR__ s_68[] =$/;"	m	namespace:__anon1	file:
+s_69	parse.cc	/^SR__ s_69[] =$/;"	m	namespace:__anon1	file:
+s_7	parse.cc	/^SR__ s_7[] =$/;"	m	namespace:__anon1	file:
+s_70	parse.cc	/^SR__ s_70[] =$/;"	m	namespace:__anon1	file:
+s_71	parse.cc	/^SR__ s_71[] =$/;"	m	namespace:__anon1	file:
+s_72	parse.cc	/^SR__ s_72[] =$/;"	m	namespace:__anon1	file:
+s_73	parse.cc	/^SR__ s_73[] =$/;"	m	namespace:__anon1	file:
+s_74	parse.cc	/^SR__ s_74[] =$/;"	m	namespace:__anon1	file:
+s_75	parse.cc	/^SR__ s_75[] =$/;"	m	namespace:__anon1	file:
+s_76	parse.cc	/^SR__ s_76[] =$/;"	m	namespace:__anon1	file:
+s_77	parse.cc	/^SR__ s_77[] =$/;"	m	namespace:__anon1	file:
+s_78	parse.cc	/^SR__ s_78[] =$/;"	m	namespace:__anon1	file:
+s_79	parse.cc	/^SR__ s_79[] =$/;"	m	namespace:__anon1	file:
+s_8	parse.cc	/^SR__ s_8[] =$/;"	m	namespace:__anon1	file:
+s_80	parse.cc	/^SR__ s_80[] =$/;"	m	namespace:__anon1	file:
+s_81	parse.cc	/^SR__ s_81[] =$/;"	m	namespace:__anon1	file:
+s_82	parse.cc	/^SR__ s_82[] =$/;"	m	namespace:__anon1	file:
+s_83	parse.cc	/^SR__ s_83[] =$/;"	m	namespace:__anon1	file:
+s_84	parse.cc	/^SR__ s_84[] =$/;"	m	namespace:__anon1	file:
+s_85	parse.cc	/^SR__ s_85[] =$/;"	m	namespace:__anon1	file:
+s_86	parse.cc	/^SR__ s_86[] =$/;"	m	namespace:__anon1	file:
+s_87	parse.cc	/^SR__ s_87[] =$/;"	m	namespace:__anon1	file:
+s_88	parse.cc	/^SR__ s_88[] =$/;"	m	namespace:__anon1	file:
+s_89	parse.cc	/^SR__ s_89[] =$/;"	m	namespace:__anon1	file:
+s_9	parse.cc	/^SR__ s_9[] =$/;"	m	namespace:__anon1	file:
+s_90	parse.cc	/^SR__ s_90[] =$/;"	m	namespace:__anon1	file:
+s_91	parse.cc	/^SR__ s_91[] =$/;"	m	namespace:__anon1	file:
+s_92	parse.cc	/^SR__ s_92[] =$/;"	m	namespace:__anon1	file:
+s_93	parse.cc	/^SR__ s_93[] =$/;"	m	namespace:__anon1	file:
+s_94	parse.cc	/^SR__ s_94[] =$/;"	m	namespace:__anon1	file:
+s_95	parse.cc	/^SR__ s_95[] =$/;"	m	namespace:__anon1	file:
+s_96	parse.cc	/^SR__ s_96[] =$/;"	m	namespace:__anon1	file:
+s_97	parse.cc	/^SR__ s_97[] =$/;"	m	namespace:__anon1	file:
+s_98	parse.cc	/^SR__ s_98[] =$/;"	m	namespace:__anon1	file:
+s_99	parse.cc	/^SR__ s_99[] =$/;"	m	namespace:__anon1	file:
+s_dfaBase__	Scannerbase.h	/^    static int     const (*s_dfaBase__[])[71];$/;"	m	class:ScannerBase
+s_dfaBase__	lex.cc	/^int const (*ScannerBase::s_dfaBase__[])[71] =$/;"	v
+s_dfa__	Scannerbase.h	/^    static int     const s_dfa__[][71];$/;"	m	class:ScannerBase
+s_dfa__	lex.cc	/^int const ScannerBase::s_dfa__[][71] =$/;"	m	class:ScannerBase	file:
+s_istreamNr	Scannerbase.h	/^    static size_t   s_istreamNr;            \/\/ file. With istreams it receives$/;"	m	class:ScannerBase
+s_istreamNr	lex.cc	/^size_t ScannerBase::s_istreamNr = 0;$/;"	m	class:ScannerBase	file:
+s_productionInfo	parse.cc	/^PI__ const s_productionInfo[] = $/;"	m	namespace:__anon1	file:
+s_ranges__	Scannerbase.h	/^    static size_t  const s_ranges__[];$/;"	m	class:ScannerBase
+s_ranges__	lex.cc	/^size_t const ScannerBase::s_ranges__[] =$/;"	m	class:ScannerBase	file:
+s_rfc__	Scannerbase.h	/^    static size_t  const s_rfc__[][3];$/;"	m	class:ScannerBase
+s_rfc__	lex.cc	/^size_t const ScannerBase::s_rfc__[][3] =$/;"	m	class:ScannerBase	file:
+s_state	parse.cc	/^SR__ *s_state[] =$/;"	m	namespace:__anon1	file:
+scope	intu.hpp	/^	Scope scope;$/;"	m	struct:SymbolTableEntry
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:assAST
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:bopAST
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:forAST
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:ifAST
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:indexAST
+second	intu.hpp	/^		abstractAST *second;$/;"	m	class:whileAST
+selection_statement	parse.y	/^selection_statement:$/;"	l
+setDebug	Parserbase.h	/^inline void ParserBase::setDebug(bool mode)$/;"	f	class:ParserBase
+setDebug	lex.cc	/^void ScannerBase::setDebug(bool onOff)$/;"	f	class:ScannerBase
+setFilename	Scannerbase.h	/^inline void ScannerBase::setFilename(std::string const &name)$/;"	f	class:ScannerBase
+setMatched	Scannerbase.h	/^inline void ScannerBase::setMatched(std::string const &text)$/;"	f	class:ScannerBase
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:arrayrefAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:assAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:blockAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:bopAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:castAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:expAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:floatAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:forAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:funcAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:identifierAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:ifAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:indexAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:intAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:returnAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:stmtAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:stringAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:uopAST
+setType	intu.hpp	/^		virtual void setType(DataType) {};$/;"	f	class:whileAST
+size	intu.hpp	/^	int size(){$/;"	f	struct:DataType
+size	intu.hpp	/^	int size; \/\/since we can only use integer number of bytes$/;"	m	struct:SymbolTableEntry
+startCondition	Scannerbase.h	/^inline ScannerBase::StartCondition__ ScannerBase::startCondition() const$/;"	f	class:ScannerBase
+state__	Scannerbase.h	/^inline size_t ScannerBase::state__() const$/;"	f	class:ScannerBase
+statement	parse.y	/^statement:$/;"	l
+statement_list	parse.y	/^statement_list:$/;"	l
+stmtAST	intu.hpp	/^class stmtAST : public abstractAST{$/;"	c
+stringAST	intu.hpp	/^		stringAST(std::string a){$/;"	f	class:stringAST
+stringAST	intu.hpp	/^class stringAST : public expAST{$/;"	c
+stringTag	Parserbase.h	/^    stringTag,$/;"	m	class:Tag__
+switchIstream	lex.cc	/^void ScannerBase::switchIstream(std::string const &infilename)$/;"	f	class:ScannerBase
+switchOstream	lex.cc	/^void ScannerBase::switchOstream(std::ostream &out)$/;"	f	class:ScannerBase
+switchOstream	lex.cc	/^void ScannerBase::switchOstream(std::string const &outfilename)$/;"	f	class:ScannerBase
+switchStream__	lex.cc	/^void ScannerBase::switchStream__(std::istream &in, size_t lineNr)$/;"	f	class:ScannerBase
+switchStreams	lex.cc	/^void ScannerBase::switchStreams(std::istream &in, std::ostream &out)$/;"	f	class:ScannerBase
+switchStreams	lex.cc	/^void ScannerBase::switchStreams(std::string const &infilename,$/;"	f	class:ScannerBase
+symbolTable	intu.hpp	/^class symbolTable{};$/;"	c
+tag	Parserbase.h	/^        static Tag__ const tag = Tag__::ast;$/;"	m	struct:Meta__::TagOf
+tag	Parserbase.h	/^        static Tag__ const tag = Tag__::listTag;$/;"	m	struct:Meta__::TagOf
+tag	Parserbase.h	/^        static Tag__ const tag = Tag__::stringTag;$/;"	m	struct:Meta__::TagOf
+tag	Parserbase.h	/^inline Tag__ Base::tag() const$/;"	f	class:Meta__::Base
+tag	Parserbase.h	/^inline Tag__ SType::tag() const$/;"	f	class:Meta__::SType
+tag	intu.hpp	/^	Kind tag;$/;"	m	struct:DataType
+tailCount	Scannerbase.h	/^        size_t tailCount;$/;"	m	struct:ScannerBase::FinData
+third	intu.hpp	/^		abstractAST *third;$/;"	m	class:forAST
+third	intu.hpp	/^		abstractAST *third;$/;"	m	class:ifAST
+tmp	Parserbase.h	/^            SType &operator=(SType &&tmp) = default;$/;"	m	class:Meta__::SType
+tmp	Parserbase.h	/^            SType(SType &&tmp) = default;$/;"	m	class:Meta__::SType
+top__	parse.cc	/^inline size_t ParserBase::top__() const$/;"	f	class:ParserBase
+translation_unit	parse.y	/^translation_unit:$/;"	l
+type	intu.hpp	/^	Type type;$/;"	m	struct:SymbolTableEntry
+type_specifier	parse.y	/^type_specifier:$/;"	l
+unary_expression	parse.y	/^unary_expression:$/;"	l
+unary_operator	parse.y	/^unary_operator:$/;"	l
+uopAST	intu.hpp	/^		uopAST(std::string a, abstractAST *b){$/;"	f	class:uopAST
+uopAST	intu.hpp	/^class uopAST : public expAST{$/;"	c
+whileAST	intu.hpp	/^		whileAST(abstractAST *a, abstractAST *b){$/;"	f	class:whileAST
+whileAST	intu.hpp	/^class whileAST : public stmtAST{$/;"	c
+~Base	parse.cc	/^   Base::~Base()$/;"	f	class:Meta__::Base

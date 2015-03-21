@@ -15,7 +15,7 @@ translation_unit:
 	function_definition
 	| translation_unit function_definition
 {
-  	printSymbolTable(globalTable);
+    	printSymbolTable(globalTable);
 }
 	;
 
@@ -25,7 +25,7 @@ function_definition:
 	(*globalTable)[functionName]->pointer = currentTable;
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 	currentOffset = -4;
-	$3->print();
+		$3->print();
 }
 	;
 
@@ -115,7 +115,7 @@ declarator:
 }
 	| declarator '[' constant_expression ']'
 {
-  	std::cout << (($3)->astType.tag == DataType::Base) << std::endl;
+  //std::cout << (($3)->astType.tag == DataType::Base) << std::endl;
   	if((($3)->astType.tag != DataType::Base) || ((($3)->astType).basetype != DataType::Int)){
 		std::cerr << "Line no " << lineNo << ":\tIndex of array " << name << " is not an integer\n";
 		std::exit(1);
@@ -198,28 +198,28 @@ assignment_statement:
 }
 	|  l_expression ASSIGN_OP expression ';'
 {		
-	std::cout << "yeah reached here\n";
-	std::cout << "actual beware now\n";
-	($1)->astType.print(std::cout);
-	($3)->astType.print(std::cout);
+  //	std::cout << "yeah reached here\n";
+	//	std::cout << "actual beware now\n";
+  //	($1)->astType.print(std::cout);
+  //	($3)->astType.print(std::cout);
 	if((($1)->astType == DataType(DataType::Int)) && ($3->astType == DataType(DataType::Int))){
-		std::cout << "yeah reached here first\n" << std::endl;		
+	  //		std::cout << "yeah reached here first\n" << std::endl;		
 		$$ = new assAST($1, $3);
 		($$)->astType = DataType(DataType::Int);
 	}
 	else if((($1)->astType == DataType(DataType::Float)) && (($3->astType) == DataType(DataType::Float))){
-		std::cout << "yeah reached here second\n" << std::endl;
+	  //	std::cout << "yeah reached here second\n" << std::endl;
 		$$ = new assAST($1, $3);
 		($$)->astType = DataType(DataType::Float);
 	}
 	else if((($1)->astType == DataType(DataType::Int)) && (($3->astType) == DataType(DataType::Float))){
-	  	std::cout << "third\n" << std::endl;
+	  //	std::cout << "third\n" << std::endl;
 		abstractAST *temp = new castAST("TO_INT", $3);
 		$$ = new assAST($1, temp);
 		($$)->astType = DataType(DataType::Int);
 	}
 	else if((($1)->astType == DataType(DataType::Float)) && (($3->astType) == DataType(DataType::Int))){
-	  std::cout << "fourth\n" << std::endl;	
+	  //std::cout << "fourth\n" << std::endl;	
 		abstractAST *temp = new castAST("TO_FLOAT", $3);
 		$$ = new assAST($1, temp);
 		($$)->astType = DataType(DataType::Float);
@@ -615,17 +615,16 @@ primary_expression:
 l_expression:
 	 IDENTIFIER
 {
-//	std::map<std::string,SymbolTableEntry* >::iterator it = currentTable->find($1);
 	if(currentTable->find($1) == currentTable->end()){
 		std::cerr << "Line no " << lineNo << ":\t" << $1 << " doesn't name a type\n";
 		std::exit(1);
 	}
 	$$ = new identifierAST($1);
 	($$)->astType = *(((*currentTable->find($1)).second)->dataType);
-	std::cout << "Printing type.........beware:\n";
-	($$)->astType.print(std::cout);
+//	std::cout << "Printing type.........beware:\n";
+//	($$)->astType.print(std::cout);
 }
-        | l_expression '[' expression ']' 
+        | l_expression '[' expression ']'
 {
 	if((($3)->astType.tag != DataType::Base) || (($3)->astType.basetype != DataType::Int)){
 		std::cerr << "Line no " << lineNo << ":\tIndex of array is not an integer\n";
@@ -635,7 +634,30 @@ l_expression:
 		std::cerr << "Line no " << lineNo << ":\toperator [] not defined\n";// << 
 		std::exit(1);
 	}
+	/*std::cout << "type -->  ";
+	std::cout << ($1)->astType.length;
+	abstractAST *temp = new indexAST($1, $3);
+	std::cout << "size" << ($1)->astType.length;
+	abstractAST * temp1 = $1;
+	$$ = temp;
+	std::cout << "printing here -->  ";
+	$1 = temp1;
+	std::cout << ($1)->astType.length;
+	($1)->astType.print(std::cout);
+	std::cout << " over ";
+	std::cout.flush();
+	($$)->astType = *(($1)->astType.arrayType);*/
+//	std::cout << "type -->  ";
+//	std::cout << ($1)->astType.length;
 	$$ = new indexAST($1, $3);
+//	std::cout << "size" << ($1)->astType.length;
+	//abstractAST * temp1 = $1;
+//	std::cout << "printing here -->  ";
+	//$1 = temp1;
+//	std::cout << ($1)->astType.length;
+//	($1)->astType.print(std::cout);
+//	std::cout << " over ";
+//	std::cout.flush();
 	($$)->astType = *(($1)->astType.arrayType);
 	
 }	
