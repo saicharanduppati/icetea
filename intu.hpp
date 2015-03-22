@@ -36,7 +36,8 @@ struct DataType{
 		if(tag == Base){
 			return (tag == second.tag) && (basetype == second.basetype);
 		}
-		return (length == second.length) && ((*arrayType) == (*(second.arrayType)));
+//		return (length == second.length) && ((*arrayType) == (*(second.arrayType)));
+		return ((*arrayType) == (*(second.arrayType)));
 	}
 	void print(std::ostream& a){
 		if(tag == Base){
@@ -126,6 +127,7 @@ struct SymbolTableEntry{
 		dataType->print(std::cout);
 		std::cout << "\n";
 	}
+
 };	
 
 
@@ -141,9 +143,6 @@ class abstractAST{
 	public:
 		virtual void print(std::string format = "") = 0;
 		virtual std::string generate_code(const symbolTable&) = 0;
-		virtual DataType getType(){
-			return astType;
-		}
 		virtual bool checkTypeofAST() = 0;
 		virtual float getVal(){};
 		DataType astType;
@@ -486,5 +485,7 @@ extern std::list<int> indexList;
 DataType *constructDT(DataType a, std::list<int> list);
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument);
 bool assignmentCompatible(DataType a, DataType b);
+bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second);
 extern int lineNo;
+extern int returnCount;
 #endif

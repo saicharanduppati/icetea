@@ -4,3 +4,10 @@ int h(int b, int f){
 	efas = b;
 	f = b + a[7];
 }
+
+
+int main(){
+	int a;
+	float b;
+	a = h(5, 4);
+}

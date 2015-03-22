@@ -22,10 +22,23 @@ translation_unit:
 function_definition:
 	type_specifier fun_declarator compound_statement
 {
+	if(*((*globalTable)[functionName]->dataType) == DataType(DataType::Void)){
+		if(returnCount){
+			std::cerr << "Line no " << lineNo << ":\tNon-void return value specified in a void function " << functionName << " \n";
+			std::exit(1);
+		}
+	}
+	else{
+		if(!returnCount){
+			std::cerr << "Line no " << lineNo << ":\tNo return value specified in a non-void function " << functionName << " \n";
+			std::exit(1);
+		}
+	}
 	(*globalTable)[functionName]->pointer = currentTable;
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 	currentOffset = -4;
-		$3->print();
+	returnCount = 0;
+	$3->print();
 }
 	;
 
@@ -78,7 +91,7 @@ fun_declarator:
 	;
 
 parameter_list:
-	 parameter_declaration	
+	 parameter_declaration
 	| parameter_list ',' parameter_declaration
 	;
 
@@ -187,7 +200,22 @@ statement:
 }
     | RETURN expression ';'
 {
-	$$ = new returnAST($2);
+	if((*((*globalTable)[functionName]->dataType) == DataType(DataType::Int)) && (($2)->astType == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_INT", $2);
+		$$ = new returnAST(temp);
+	}
+	else if((*((*globalTable)[functionName]->dataType) == DataType(DataType::Float)) && (($2)->astType == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $2);
+		$$ = new returnAST(temp);
+	}
+	else if(!(*((*globalTable)[functionName]->dataType) == ($2)->astType)){
+		std::cerr << "Line no " << lineNo << ":\tReturn type mismatch in function " << functionName << "\n";
+		std::exit(1);
+	}
+	else{
+		$$ = new returnAST($2);
+	}
+	returnCount++;
 }
 	;
 
@@ -534,20 +562,63 @@ postfix_expression:
 }
 	| IDENTIFIER '(' ')'
 {
-	$$ = new funcAST($1, std::list<abstractAST*>());
 	if(globalTable->find($1) == globalTable->end()){
 		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
+	std::map<std::string, SymbolTableEntry*> *currentMap = globalTable->find($1)->second->pointer;
+	std::list<SymbolTableEntry*> paramList;
+	for(std::map<std::string, SymbolTableEntry*>::iterator name = currentMap->begin(); name != currentMap->end(); name++){
+		if(name->second->scope == SymbolTableEntry::PARAM){
+			paramList.push_back(name->second);
+		}
+	}
+	if(paramList.size() != 0){
+		std::cerr << "Line no " << lineNo << ":\tMismatch in number of arguments to function '" << $1 << "'\n";
+		std::exit(1);
+	}
+	$$ = new funcAST($1, std::list<abstractAST*>());
 	($$)->astType = *(globalTable->find($1)->second->dataType);
 }
 	| IDENTIFIER '(' expression_list ')'
 {
-	$$ = new funcAST($1, $3);
 	if(globalTable->find($1) == globalTable->end()){
 		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 		std::exit(1);
 	}
+	std::map<std::string, SymbolTableEntry*> *currentMap = globalTable->find($1)->second->pointer;
+	std::list<SymbolTableEntry*> paramList;
+	for(std::map<std::string, SymbolTableEntry*>::iterator name = currentMap->begin(); name != currentMap->end(); name++){
+		if(name->second->scope == SymbolTableEntry::PARAM){
+			paramList.push_back(name->second);
+		}
+	}
+	if(paramList.size() != ($3).size()){
+		std::cerr << "Line no " << lineNo << ":\tMismatch in number of arguments to function '" << $1 << "'\n";
+		std::exit(1);
+	}
+	paramList.sort(offsetCompare);
+	std::list<abstractAST*>::iterator absIterator = ($3).begin();
+	for(std::list<SymbolTableEntry*>::iterator pIterator = paramList.begin(); pIterator != paramList.end(); pIterator++){
+		if((*((*pIterator)->dataType) == DataType(DataType::Int)) && ((*absIterator)->astType == DataType(DataType::Float))){
+			abstractAST *temp = new castAST("TO_INT", *absIterator);
+			*absIterator = temp;
+		}
+		else if((*((*pIterator)->dataType) == DataType(DataType::Float)) && ((*absIterator)->astType == DataType(DataType::Int))){
+			abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
+			*absIterator = temp;
+		}
+		else if(!(*((*pIterator)->dataType) == (*absIterator)->astType)){
+			std::cerr << "Line no " << lineNo << ":\tCannot convert type ";// << $1 << "\n";
+			(*absIterator)->astType.print(std::cerr);
+			std::cerr << " to type ";
+			(*pIterator)->dataType->print(std::cerr);
+			std::cerr << " in function call " << $1 << "\n";
+			std::exit(1);
+		}
+		absIterator++;
+	}
+	$$ = new funcAST($1, $3);
 	($$)->astType = *(globalTable->find($1)->second->dataType);
 }
 	| l_expression INC_OP
@@ -634,30 +705,7 @@ l_expression:
 		std::cerr << "Line no " << lineNo << ":\toperator [] not defined\n";// << 
 		std::exit(1);
 	}
-	/*std::cout << "type -->  ";
-	std::cout << ($1)->astType.length;
-	abstractAST *temp = new indexAST($1, $3);
-	std::cout << "size" << ($1)->astType.length;
-	abstractAST * temp1 = $1;
-	$$ = temp;
-	std::cout << "printing here -->  ";
-	$1 = temp1;
-	std::cout << ($1)->astType.length;
-	($1)->astType.print(std::cout);
-	std::cout << " over ";
-	std::cout.flush();
-	($$)->astType = *(($1)->astType.arrayType);*/
-//	std::cout << "type -->  ";
-//	std::cout << ($1)->astType.length;
 	$$ = new indexAST($1, $3);
-//	std::cout << "size" << ($1)->astType.length;
-	//abstractAST * temp1 = $1;
-//	std::cout << "printing here -->  ";
-	//$1 = temp1;
-//	std::cout << ($1)->astType.length;
-//	($1)->astType.print(std::cout);
-//	std::cout << " over ";
-//	std::cout.flush();
 	($$)->astType = *(($1)->astType.arrayType);
 	
 }	
@@ -688,18 +736,21 @@ unary_operator:
 selection_statement:
 	 IF '(' expression ')' statement ELSE statement
 {
-	$$ = new ifAST($3, $5, $7);
+	abstractAST *temp = new castAST("TO_BOOL", $3);
+	$$ = new ifAST(temp, $5, $7);
 }
 	;
 
 iteration_statement:
 	 WHILE '(' expression ')' statement
 {
-	$$ = new whileAST($3, $5);
+	abstractAST *temp = new castAST("TO_BOOL", $3);
+	$$ = new whileAST(temp, $5);
 }
 	| FOR '(' expression ';' expression ';' expression ')' statement
 {
-	$$ = new forAST($3, $5, $7, $9);
+	abstractAST *temp = new castAST("TO_BOOL", $5);
+	$$ = new forAST($3, temp, $7, $9);
 }
 	;
 

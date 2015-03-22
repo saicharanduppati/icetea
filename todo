@@ -1,17 +1,9 @@
 same name function with different parameters.
 
-Complete the getType function in every AST class.
-
-Check the return type of a function.
-
-Set the proper astType in all cases.
-
-assignmentCompatible function
-
 Where does value of x and y in x && y matter?
 
 What is type of a STRING_LITERAL
 
 Does anything have to be done for selection and iteration statements?
 
-Have to 
+Check presence of return statement in all paths.

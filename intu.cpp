@@ -6,9 +6,15 @@ int currentOffset = -4; //offset of the next to-be-seen variable.
 std::string name; //name of the last seen variable.
 std::string functionName; //name of the last seen function.
 std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
+int returnCount = 0;
 
 int lineNo = 1;
 
+bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second){
+	return first->offset > second->offset;
+
+//	return other.offset < offset;
+}
 /********************************************************************************
 INPUT: A pointer to symbol table
 FUNCTION: Prints each entry of a symbol table using call to print function of symbol table entry and prints a new line after every row.
