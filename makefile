@@ -1,27 +1,19 @@
-all:    one two main.cc Scanner.h Scannerbase.h Scanner.ih Parser.h Parserbase.h Parser.ih
-	./sedscript
-	g++ -g  --std=c++0x lex.cc parse.cc main.cc intu.cpp;
+all: parser
 	./a.out < test-assembly
-#	sed -e '1s/^/digraph G{ordering=out;\n/' -e '$$s/$$/}/' -i junk
-#	sed 's/^\([^-]*\)->\([^;]*\);/\2->\1;/' -i junk
-#	dot -Tps junk -o graph1.ps
-#	cat junk;
-#	egrep 'nextToken|reduce|shift' junk
+parser:  lex.cc parse.cc Scanner.h Scannerbase.h Scanner.ih Parser.h Parserbase.h Parser.ih
+	g++ --std=c++0x -o parser lex.cc parse.cc main.cc intu.cpp;
+#	g++ -Wall -g  --std=c++0x -o parser lex.cc parse.cc main.cc intu.cpp;
+	./parser < test-assembly
         
 
-one: lex.l Scanner.ih 
-#	./cond_remove_scannerih; 
+lex.cc: lex.l Scanner.ih 
 	rm -f Scanner.ih;
 	flexc++ lex.l; 
 	sed -i '/include/a #include "Parserbase.h"' Scanner.ih; 
 
-two: parse.y Parser.ih Parser.h Parserbase.h
+parse.cc: parse.y Parser.ih Parser.h Parserbase.h
 	bisonc++  --construction parse.y; 
-#	sed '5s/^.*$$/int var = 0;/' -i parse.cc
-#	bisonc++   --construction -V parse.y; 
-#	sed -i '/ifndef/a #include "tree_util.hh"' Parserbase.h;
-#	sed -i '/ifndef/a #include "tree.hh"' Parserbase.h;
-#	./sedscript
+	./sedscript
      
 
 Parser.ih: parse.y
@@ -32,4 +24,4 @@ Scanner.h: lex.l
 Scannerbase.h: lex.l
 
 clean:
-	rm -f junk a.out lex.cc parse.cc Parserbase.h Parser* Scanner*
+	rm -f junk parser lex.cc parse.cc Parserbase.h Parser* Scanner*

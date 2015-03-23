@@ -32,69 +32,14 @@ struct DataType{
 	DataType(){} //a default constructor
 
 
-	bool operator==(DataType second){
-		if(tag == Base){
-			return (tag == second.tag) && (basetype == second.basetype);
-		}
-//		return (length == second.length) && ((*arrayType) == (*(second.arrayType)));
-		return ((*arrayType) == (*(second.arrayType)));
-	}
-	void print(std::ostream& a){
-		if(tag == Base){
-			switch(basetype){
-				case Int:
-					{
-						a << "int";
-						break;
-					}
-				case Float:
-					{
-						a << "float";
-						break;
-					}
-				case Void:
-					{
-						a << "void";
-						break;
-					}
-				default:{}
-			};
-			return;
-		}
-		a << "Array(" << length << ", ";
-		arrayType->print(a);
-		a << ")";
-		return;
-	}
+	bool operator==(DataType);
+
+	void print(std::ostream& a);
 	/********************************************************************************
 	INPUT: This is a member function. 
 	RETURN VALUE: Returns the size occupied by the data type on which this function is called. Size occupied by Int, Float is 4 and that of Void is 0. Size occupied by an array is calculated depending on the length and type of array.
 	********************************************************************************/
-	int size(){
-		if(tag == Error || tag == Ok){
-			std::cout << "wrong usage of size" << std::endl;
-			exit(1);
-		}
-		else if(tag == Base){
-			switch(basetype){
-				case Int: 
-				{
-					return 4;
-				}
-				case Float:
-				{
-					return 4;
-				}
-				case Void:
-				{
-					return 0;
-				}
-			};
-		}
-		else{
-			return length * arrayType->size();
-		}
-	}
+	int size();
 
 };
 
@@ -118,15 +63,7 @@ struct SymbolTableEntry{
 	FUNCTION: Prints the type, scope, size, offset fields of the object
 	OUTPUT: none (void).
 	********************************************************************************/
-	void print(){
-		std::cout << "type: " << ((type == VAR) ? "VAR" : "FUNC") << "\n";
-		std::cout << "scope: " << ((scope == PARAM) ? "PARAM" : "LOCAL") << "\n";
-		std::cout << "size: " << size << "\n";
-		std::cout << "offset: " << offset << "\n";
-		std::cout << "data type: ";
-		dataType->print(std::cout);
-		std::cout << "\n";
-	}
+	void print();
 
 };	
 
@@ -482,10 +419,15 @@ extern DataType currentType;
 extern std::map<std::string, SymbolTableEntry*> *currentTable;
 extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;
-DataType *constructDT(DataType a, std::list<int> list);
-void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument);
-bool assignmentCompatible(DataType a, DataType b);
-bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second);
 extern int lineNo;
 extern int returnCount;
+
+
+
+
+DataType *constructDT(DataType, std::list<int>);
+void printSymbolTable(std::map<std::string, SymbolTableEntry*> *);
+bool assignmentCompatible(DataType, DataType);
+bool offsetCompare(SymbolTableEntry*, SymbolTableEntry*);
+
 #endif

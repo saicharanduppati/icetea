@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sed -i '/include/a #include "Parserbase.h"' Scanner.ih;
+#sed -i '/include/a #include "Parserbase.h"' Scanner.ih;
 #sed -i '/insert preincludes/a #include "intu.hpp"\n#include <list>' Parserbase.h;
 #sed -i '/include "Parser.h"/a #include "definitions.cc"' Parser.ih;
 
@@ -13,7 +13,6 @@ sed -i '\|typedef Meta__::SType STYPE__;| a \\tpublic: static STYPE__  d_val__;
 sed -i '\|void Parser::print__()| i Meta__::SType ParserBase::d_val__;
 ' parse.cc
 
-#sed '/if (int size =/{N;s/^\(.*\)$/\/\*\1\*\//}' -i parse.cc
 sed '/if (int size =/{N;s/^/\/\*/;s/$/\*\//}' -i parse.cc
 
 #Observe how the delimiter was changed from / to |

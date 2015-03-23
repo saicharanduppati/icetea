@@ -3,6 +3,7 @@ int h(int b, int f){
 	float a[5];
 	efas = b;
 	f = b + a[7];
+	return a[4];
 }
 
 
@@ -10,4 +11,5 @@ int main(){
 	int a;
 	float b;
 	a = h(5, 4);
+	return b;
 }
