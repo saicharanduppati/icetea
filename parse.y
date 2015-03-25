@@ -15,7 +15,7 @@ translation_unit:
 	function_definition
 	| translation_unit function_definition
 {
-    	printSymbolTable(globalTable);
+//    	printSymbolTable(globalTable);
 }
 	;
 
@@ -23,13 +23,13 @@ function_definition:
 	type_specifier fun_declarator compound_statement
 {
 	if(*((*globalTable)[functionName]->dataType) == DataType(DataType::Void)){
-		if(returnCount){
+		if(((stmtAST*) ($3))->hasReturn){
 			std::cerr << "Line no " << lineNo << ":\tNon-void return value specified in a void function " << functionName << " \n";
 			std::exit(1);
 		}
 	}
 	else{
-		if(!returnCount){
+		if(!((stmtAST*) ($3))->hasReturn){
 			std::cerr << "Line no " << lineNo << ":\tNo return value specified in a non-void function " << functionName << " \n";
 			std::exit(1);
 		}
@@ -158,14 +158,17 @@ compound_statement:
 	 '{' '}'
 {
 	$$ = new blockAST(std::list<abstractAST*>());
+	((stmtAST*) ($$))->hasReturn = false;
 }
 	| '{' statement_list '}'
 {
 	$$ = new blockAST($2);
+	((stmtAST*) ($$))->hasReturn = hasReturnInList($2);
 }
     | '{' declaration_list statement_list '}'
 {
 	$$ = new blockAST($3);
+	((stmtAST*) ($$))->hasReturn = hasReturnInList($3);
 }
 	;
 
@@ -185,18 +188,22 @@ statement:
 	'{' statement_list '}'		 
 {
 	$$ = new blockAST($2);
+	((stmtAST*) ($$))->hasReturn = hasReturnInList($2);
 }
 	| selection_statement
 {
 	$$ = $1;
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($1))->hasReturn;
 }
 	| iteration_statement
 {
 	$$ = $1;
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($1))->hasReturn;
 }
 	| assignment_statement
 {
 	$$ = $1;
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($1))->hasReturn;
 }
     | RETURN expression ';'
 {
@@ -216,13 +223,15 @@ statement:
 		$$ = new returnAST($2);
 	}
 	returnCount++;
+	((stmtAST*) ($$))->hasReturn = true;
 }
 	;
 
 assignment_statement:
 	 ';'
 {
-	$$ = new bopAST("EMPTY", NULL, NULL);
+	$$ = new stmtAST();
+	((stmtAST*) ($$))->hasReturn = false;
 }
 	|  l_expression ASSIGN_OP expression ';'
 {		
@@ -234,23 +243,27 @@ assignment_statement:
 	  //		std::cout << "yeah reached here first\n" << std::endl;		
 		$$ = new assAST($1, $3);
 		($$)->astType = DataType(DataType::Int);
+		((stmtAST*) ($$))->hasReturn = false;
 	}
 	else if((($1)->astType == DataType(DataType::Float)) && (($3->astType) == DataType(DataType::Float))){
 	  //	std::cout << "yeah reached here second\n" << std::endl;
 		$$ = new assAST($1, $3);
 		($$)->astType = DataType(DataType::Float);
+		((stmtAST*) ($$))->hasReturn = false;
 	}
 	else if((($1)->astType == DataType(DataType::Int)) && (($3->astType) == DataType(DataType::Float))){
 	  //	std::cout << "third\n" << std::endl;
 		abstractAST *temp = new castAST("TO_INT", $3);
 		$$ = new assAST($1, temp);
 		($$)->astType = DataType(DataType::Int);
+		((stmtAST*) ($$))->hasReturn = false;
 	}
 	else if((($1)->astType == DataType(DataType::Float)) && (($3->astType) == DataType(DataType::Int))){
 	  //std::cout << "fourth\n" << std::endl;	
 		abstractAST *temp = new castAST("TO_FLOAT", $3);
 		$$ = new assAST($1, temp);
 		($$)->astType = DataType(DataType::Float);
+		((stmtAST*) ($$))->hasReturn = false;
 
 	}
 	else{
@@ -738,6 +751,7 @@ selection_statement:
 {
 	abstractAST *temp = new castAST("TO_BOOL", $3);
 	$$ = new ifAST(temp, $5, $7);
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($5))->hasReturn && ((stmtAST*) ($7))->hasReturn;
 }
 	;
 
@@ -746,11 +760,13 @@ iteration_statement:
 {
 	abstractAST *temp = new castAST("TO_BOOL", $3);
 	$$ = new whileAST(temp, $5);
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($5))->hasReturn;
 }
 	| FOR '(' expression ';' expression ';' expression ')' statement
 {
 	abstractAST *temp = new castAST("TO_BOOL", $5);
 	$$ = new forAST($3, temp, $7, $9);
+	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($9))->hasReturn;
 }
 	;
 

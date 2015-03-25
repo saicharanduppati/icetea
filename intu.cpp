@@ -10,6 +10,18 @@ int returnCount = 0;
 
 int lineNo = 1;
 
+
+
+bool hasReturnInList(std::list<abstractAST*> l){
+	for(std::list<abstractAST*>::iterator it = l.begin(); it != l.end(); it++){
+		if(((stmtAST*) (*it))->hasReturn) return true;
+	}
+	return false;
+}
+
+
+
+
 bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second){
 	return first->offset > second->offset;
 

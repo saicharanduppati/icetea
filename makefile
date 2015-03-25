@@ -11,7 +11,7 @@ lex.cc: lex.l
 	flexc++ lex.l; 
 	sed -i '/include/a #include "Parserbase.h"' Scanner.ih; 
 
-parse.cc: parse.y
+parse.cc: parse.y 
 	#Parser.ih Parser.h Parserbase.h
 	bisonc++  --construction parse.y; 
 	./sedscript 

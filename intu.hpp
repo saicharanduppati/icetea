@@ -117,6 +117,7 @@ class stmtAST : public abstractAST{
 		virtual std::string generate_code(const symbolTable&) {};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
+		bool hasReturn;
 	protected:
 		virtual void setType(DataType) {};
 	private:
@@ -439,4 +440,5 @@ OUTPUT: We want sort to be done in reverse order. So we reverse > instead of <
 ********************************************************************************/
 bool offsetCompare(SymbolTableEntry*, SymbolTableEntry*);
 
+bool hasReturnInList(std::list<abstractAST*> l);
 #endif

@@ -3,7 +3,13 @@ int h(int b, int f){
 	float a[5];
 	efas = b;
 	f = b + a[7];
-	return a[4];
+	if(efas == f){
+		return a[4];
+	}
+	else{
+		;
+	}
+	return a[3];	
 }
 
 
@@ -11,4 +17,6 @@ int main(){
 	int a;
 	float b;
 	a = h(5, 4);
+	return a;
+	;
 }
