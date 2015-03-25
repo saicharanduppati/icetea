@@ -422,6 +422,7 @@ extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;
 extern int lineNo;
 extern int returnCount;
+extern std::string suffixString;
 
 
 

@@ -9,6 +9,45 @@ std::list<int> indexList; //list that contains the int indices seen in an array 
 int returnCount = 0;
 
 int lineNo = 1;
+std::string suffixString = "";
+
+
+int stringCost(std::string a, std::string b){// a and b have to be of same size.
+	int toReturn = 0;
+	for(int i = 0; i < a.size(); i++){
+		toReturn += ((a[i] == b[i]) ? 0 : 1);
+	}
+	return toReturn;
+}
+
+
+std::string findBestFunction(std::string name, std::string suffix){
+	int count = 0, minCost = 1000000, cost;
+	std::string toReturn = "2";
+	for(std::map<std::string, SymbolTableEntry*>::iterator iter = globalTable->begin(); iter != globalTable->end(); iter++){
+		if(iter->first.substr(0, iter->first.find_first_of("#") + 1) != name){
+			continue;
+		}
+		std::string stored = iter->first.substr(iter->first.find_first_of("#") + 1);
+		if(stored.size() != suffix.size()){
+			continue;
+		}
+		if(stringCost(stored, suffix) == minCost){
+			count++;
+		}
+		if(stringCost(stored, suffix) < minCost){
+			minCost = stringCost(stored, suffix);
+			toReturn = stored;
+			count = 1;
+		}
+	}
+	if(count != 1){
+		return "1";//this signifies that there are conflicting definitions
+	}
+	return toReturn;
+}
+
+
 
 
 
