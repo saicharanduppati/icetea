@@ -11,5 +11,4 @@ int main(){
 	int a;
 	float b;
 	a = h(5, 4);
-	return b;
 }

@@ -426,8 +426,17 @@ extern int returnCount;
 
 
 DataType *constructDT(DataType, std::list<int>);
+/********************************************************************************
+INPUT: A pointer to symbol table
+FUNCTION: Prints each entry of a symbol table using call to print function of symbol table entry and prints a new line after every row.
+OUTPUT: none(void).
+********************************************************************************/
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *);
-bool assignmentCompatible(DataType, DataType);
+/********************************************************************************
+INPUT: Two SymbolTableEntry pointers.
+FUNCTION: This function is used only to sort two symbol table entries in a list. So this is just a comparison function. Sorting is done based on offsets
+OUTPUT: We want sort to be done in reverse order. So we reverse > instead of <
+********************************************************************************/
 bool offsetCompare(SymbolTableEntry*, SymbolTableEntry*);
 
 #endif

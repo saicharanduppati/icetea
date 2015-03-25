@@ -15,11 +15,6 @@ bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second){
 
 //	return other.offset < offset;
 }
-/********************************************************************************
-INPUT: A pointer to symbol table
-FUNCTION: Prints each entry of a symbol table using call to print function of symbol table entry and prints a new line after every row.
-OUTPUT: none(void).
-********************************************************************************/
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 //	std::cout << "size is " << argument->size() << "\n";
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
@@ -34,9 +29,9 @@ void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 	}
 }
 
-bool assignmentCompatible(DataType left, DataType right){
-	return false;
-}
+//bool assignmentCompatible(DataType left, DataType right){
+//	return false;
+//}
 
 
 void blockAST::print(std::string format){
