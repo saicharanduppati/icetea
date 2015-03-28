@@ -362,10 +362,15 @@ expression:
 }
 	| expression OR_OP logical_and_expression
 {
-	$$ = new bopAST("OR", $1, $3);
-	($$)->astType = DataType(DataType::Int);
-}
-	;
+	if((($1)->astType == DataType(DataType::Int) || ($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int) || ($3)->astType == DataType(DataType::Float))){
+		$$ = new bopAST("OR", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for OR operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
+}	;
 
 logical_and_expression:
 	 equality_expression
@@ -374,8 +379,14 @@ logical_and_expression:
 }
 	| logical_and_expression AND_OP equality_expression
 {
-	$$ = new bopAST("AND", $1, $3);
-	($$)->astType = DataType(DataType::Int);
+	if((($1)->astType == DataType(DataType::Int) || ($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int) || ($3)->astType == DataType(DataType::Float))){
+		$$ = new bopAST("AND", $1, $3);
+		($$)->astType = DataType(DataType::Int);
+	}
+	else{
+		std::cerr << "Line no " << lineNo << ":\tInvalid types for AND operator\n";// << $1 << " undefined\n";
+		std::exit(1);
+	}
 }
 	;
 
