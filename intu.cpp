@@ -2,6 +2,8 @@
 std::map<std::string, SymbolTableEntry*> *globalTable = new std::map<std::string, SymbolTableEntry*>(); //this holds the pointer to the global symbol table. GST contains only functions in our language.
 std::map<std::string, SymbolTableEntry*> *currentTable = new std::map<std::string, SymbolTableEntry*>(); //this holds the pointer to the global symbol table. GST contains only functions in our language.
 DataType currentType; //this is the most recently seen DataType.
+DataType currentFuncType;
+DataType pastType;
 int currentOffset = -4; //offset of the next to-be-seen variable.
 std::string name; //name of the last seen variable.
 std::string functionName; //name of the last seen function.
@@ -25,7 +27,7 @@ std::string findBestFunction(std::string name, std::string suffix){
 	int count = 0, minCost = 1000000, cost;
 	std::string toReturn = "2"; //this signifies that there is no matching fucntion.
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = globalTable->begin(); iter != globalTable->end(); iter++){
-		if(iter->first.substr(0, iter->first.find_first_of("#") + 1) != name){
+		if(iter->first.substr(0, iter->first.find_first_of("#")) != name){
 			continue;
 		}
 		std::string stored = iter->first.substr(iter->first.find_first_of("#") + 1);
@@ -41,7 +43,7 @@ std::string findBestFunction(std::string name, std::string suffix){
 			count = 1;
 		}
 	}
-	if(count != 1){
+	if(count > 1){
 		return "1";//this signifies that there are conflicting definitions
 	}
 	return toReturn;
@@ -69,14 +71,14 @@ bool hasReturnInList(std::list<abstractAST*> l){
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 //	std::cout << "size is " << argument->size() << "\n";
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
-		if(iter->second->type == SymbolTableEntry::FUNC){
-			std::cout << "----------------------------------\n";
-			printSymbolTable(iter->second->pointer);
-			std::cout << "----------------------------------\n";
-		}
-		std::cout << iter->first << "\n       ";
-
+		std::cout.width(10);
+		std::cout << std::left << iter->first.substr(0,iter->first.find_first_of("#"));
 		iter->second->print();
+		if(iter->second->type == SymbolTableEntry::FUNC){
+			std::cout << "SYMBOL TABLE OF " << iter->first.substr(0,iter->first.find_first_of("#")) << " ------------------\n";
+			printSymbolTable(iter->second->pointer);
+			std::cout << "----------------------------------\n\n";
+		}
 	}
 }
 
@@ -93,7 +95,16 @@ void blockAST::print(std::string format){
 		std::cout << std::endl;
 	}
 	(*iter)->print(format+ "        ");
-	std::cout << "])";
+	std::cout << "])\n";
+}
+
+void funcStmtAST::print(std::string format){
+	std::cout << format;
+	std::cout << "(" << name.substr(0,name.find_first_of("#")) << " ";
+	for(std::list<abstractAST*>::iterator iter = first.begin();iter!=first.end();iter++){
+		(*iter)->print();
+	}
+	std::cout << ")";
 }
 
 void assAST::print(std::string format){
@@ -164,7 +175,7 @@ void uopAST::print(std::string format){
 
 void funcAST::print(std::string format){
 	std::cout << format;
-	std::cout << "(" << name << " ";
+	std::cout << "(" << name.substr(0,name.find_first_of("#")) << " ";
 	for(std::list<abstractAST*>::iterator iter = first.begin();iter!=first.end();iter++){
 		(*iter)->print();
 	}
@@ -274,7 +285,7 @@ void DataType::print(std::ostream& a){
 		};
 		return;
 	}
-	a << "Array(" << length << ", ";
+	a << std::left << "Array(" << length << ", ";
 	arrayType->print(a);
 	a << ")";
 	return;
@@ -298,11 +309,14 @@ bool DataType::operator==(DataType second){
 
 
 void SymbolTableEntry::print(){
-	std::cout << "type: " << ((type == VAR) ? "VAR" : "FUNC") << "\n";
-	std::cout << "scope: " << ((scope == PARAM) ? "PARAM" : "LOCAL") << "\n";
-	std::cout << "size: " << size << "\n";
-	std::cout << "offset: " << offset << "\n";
-	std::cout << "data type: ";
+	std::cout.width(10);
+	std::cout << std::left << ((type == VAR) ? "VAR" : "FUNC");// << "\t\t";
+	std::cout.width(10);
+	std::cout << std::left << ((scope == PARAM) ? "PARAM" : "LOCAL");// << "\t\t";
+	std::cout.width(10);
+	std::cout << std::left << size;// << "\t\t";
+	std::cout.width(10);
+	std::cout << std::left << offset;// << "\t\t";
 	dataType->print(std::cout);
 	std::cout << "\n";
 }

@@ -136,6 +136,24 @@ class expAST : public abstractAST{
 	private:
 };
 
+class funcStmtAST : public stmtAST{
+	public:
+		virtual void print(std::string format = "");
+		virtual std::string generate_code(const symbolTable&) {};
+		virtual DataType getType() {};
+		virtual bool checkTypeofAST() {};
+		funcStmtAST(std::string a, std::list<abstractAST*> b){
+			name = a;
+			first = b;
+		}
+
+	protected:
+		virtual void setType(DataType) {};
+	private:
+		std::string name;
+		std::list <abstractAST*> first;
+};
+
 
 class blockAST : public stmtAST{
 	public:
@@ -417,6 +435,8 @@ extern int currentOffset;
 extern std::string name;
 extern std::string functionName;
 extern DataType currentType;
+extern DataType pastType;
+extern DataType currentFuncType;
 extern std::map<std::string, SymbolTableEntry*> *currentTable;
 extern std::map<std::string, SymbolTableEntry*> *globalTable;
 extern std::list<int> indexList;

@@ -1,11 +1,14 @@
-int h(int b, int f){
-	float efas;
-	return b;
+int f(float c){
+	int b[10],d[10];
+	b = d;
+	return b[2];
 }
 
 
-int h(float c, int a){
-	int deb[2];
+int g(float c, int a){
+	int deb[2][4][5][6];
 	int asd;
-	return deb;
+	f(asd);
+	return a;
+	
 }

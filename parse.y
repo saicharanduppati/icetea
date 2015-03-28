@@ -18,7 +18,7 @@ translation_unit:
 	function_definition
 	| translation_unit function_definition
 {
-//    	printSymbolTable(globalTable);
+//	std::cout << "size of global table is " << (*globalTable).size();
 }
 	;
 
@@ -53,14 +53,17 @@ function_definition:
 type_specifier:
 	 VOID
 {
+	pastType = currentType;
 	currentType = DataType(DataType::Void);
 }
 	| INT
 {
+	pastType = currentType;
 	currentType = DataType(DataType::Int);
 }
 	| FLOAT
 {
+	pastType = currentType;
 	currentType = DataType(DataType::Float);
 }
 	;
@@ -77,7 +80,7 @@ fun_declarator:
 	SymbolTableEntry* temp = new SymbolTableEntry();
 	temp->type = SymbolTableEntry::FUNC;
 	temp->scope = SymbolTableEntry::LOCAL;
-	temp->dataType = constructDT(currentType,indexList);
+	temp->dataType = constructDT(currentFuncType,indexList);
 	temp->size = temp->dataType->size();
 //	std::cout << "to put\n";
 	(*globalTable)[functionName + "#" + suffixString]=temp; 
@@ -103,6 +106,9 @@ fun_declarator:
 
 parameter_list:
 	 parameter_declaration
+{
+	currentFuncType = pastType;
+}
 	| parameter_list ',' parameter_declaration
 	;
 
@@ -239,13 +245,12 @@ statement:
 		abstractAST *temp = new castAST("TO_INT", $2);
 		$$ = new returnAST(temp);
 	}
-//	std::cout << "before second\n";
-//	std::cout.flush();
-	if((*(((*globalTable)[functionName + "#" + suffixString])->dataType) == DataType(DataType::Float)) && (($2)->astType == DataType(DataType::Int))){
+	else if((*(((*globalTable)[functionName + "#" + suffixString])->dataType) == DataType(DataType::Float)) && (($2)->astType == DataType(DataType::Int))){
+		
 		abstractAST *temp = new castAST("TO_FLOAT", $2);
 		$$ = new returnAST(temp);
 	}	
-	if(!(*(((*globalTable)[functionName + "#" + suffixString])->dataType) == ($2)->astType)){
+	else if(!(*(((*globalTable)[functionName + "#" + suffixString])->dataType) == ($2)->astType)){
 		std::cerr << "Line no " << lineNo << ":\tReturn type mismatch in function " << functionName << "\n";
 		std::cerr.flush();
 		std::exit(1);
@@ -255,8 +260,55 @@ statement:
 	}
 //	returnCount++;
 	((stmtAST*) ($$))->hasReturn = true;
-}
-	;
+}	
+
+	| IDENTIFIER '(' expression_list ')' ';'
+{
+	std::string suffix = ""; //this is expression string
+	for(std::list<abstractAST*>::iterator iter = ($3).begin(); iter != ($3).end(); iter++){
+		if((*iter)->astType == DataType(DataType::Int)){
+			suffix += "i";
+		}
+		if((*iter)->astType == DataType(DataType::Float)){
+			suffix += "f";
+		}
+	}
+	std::string returned = findBestFunction($1, suffix); //this is function name string
+	if(returned == "2"){
+		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
+		std::exit(1);
+	}
+	if(returned == "1"){
+		std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+		std::exit(1);
+	}
+	std::list<abstractAST*>::iterator absIterator = ($3).begin();
+	for(int i = 0; i < returned.size(); i++){
+		if((returned[i] == 'i') && (suffix[i] == 'f')){
+			abstractAST *temp = new castAST("TO_INT", *absIterator);
+			*absIterator = temp;
+		}
+		if((returned[i] == 'f') && (suffix[i] == 'i')){
+			abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
+			*absIterator = temp;
+		}
+//		else if(!(*((*pIterator)->dataType) == (*absIterator)->astType)){
+	/*	else if(returned[i] != suffix[i]){
+			std::cerr << "Line no " << lineNo << ":\tCannot convert type ";// << $1 << "\n";
+			(*absIterator)->astType.print(std::cerr);
+			std::cerr << " to type ";
+			(*absIterator)->dataType->print(std::cerr);
+			std::cerr << " in function call " << $1 << "\n";
+			std::exit(1);
+		}*/
+		absIterator++;
+	}
+	$$ = new funcStmtAST($1 + "#" + returned, $3);
+	($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
+	
+}	;
+
+
 
 assignment_statement:
 	 ';'
