@@ -264,48 +264,44 @@ statement:
 
 	| IDENTIFIER '(' expression_list ')' ';'
 {
-	std::string suffix = ""; //this is expression string
-	for(std::list<abstractAST*>::iterator iter = ($3).begin(); iter != ($3).end(); iter++){
-		if((*iter)->astType == DataType(DataType::Int)){
-			suffix += "i";
-		}
-		if((*iter)->astType == DataType(DataType::Float)){
-			suffix += "f";
-		}
+	if($1 == "printf"){
+		$$ = new funcStmtAST($1, $3);
+		($$)->astType = DataType(DataType::Void);//*(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-	std::string returned = findBestFunction($1, suffix); //this is function name string
-	if(returned == "2"){
-		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
-		std::exit(1);
-	}
-	if(returned == "1"){
-		std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
-		std::exit(1);
-	}
-	std::list<abstractAST*>::iterator absIterator = ($3).begin();
-	for(int i = 0; i < returned.size(); i++){
-		if((returned[i] == 'i') && (suffix[i] == 'f')){
-			abstractAST *temp = new castAST("TO_INT", *absIterator);
-			*absIterator = temp;
+	else{		
+		std::string suffix = ""; //this is expression string
+		for(std::list<abstractAST*>::iterator iter = ($3).begin(); iter != ($3).end(); iter++){
+			if((*iter)->astType == DataType(DataType::Int)){
+				suffix += "i";
+			}
+			if((*iter)->astType == DataType(DataType::Float)){
+				suffix += "f";
+			}
 		}
-		if((returned[i] == 'f') && (suffix[i] == 'i')){
-			abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
-			*absIterator = temp;
-		}
-//		else if(!(*((*pIterator)->dataType) == (*absIterator)->astType)){
-	/*	else if(returned[i] != suffix[i]){
-			std::cerr << "Line no " << lineNo << ":\tCannot convert type ";// << $1 << "\n";
-			(*absIterator)->astType.print(std::cerr);
-			std::cerr << " to type ";
-			(*absIterator)->dataType->print(std::cerr);
-			std::cerr << " in function call " << $1 << "\n";
+		std::string returned = findBestFunction($1, suffix); //this is function name string
+		if(returned == "2"){
+			std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 			std::exit(1);
-		}*/
-		absIterator++;
+		}
+		if(returned == "1"){
+			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+			std::exit(1);
+		}
+		std::list<abstractAST*>::iterator absIterator = ($3).begin();
+		for(int i = 0; i < returned.size(); i++){
+			if((returned[i] == 'i') && (suffix[i] == 'f')){
+				abstractAST *temp = new castAST("TO_INT", *absIterator);
+				*absIterator = temp;
+			}
+			if((returned[i] == 'f') && (suffix[i] == 'i')){
+				abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
+				*absIterator = temp;
+			}
+			absIterator++;
+		}
+		$$ = new funcStmtAST($1 + "#" + returned, $3);
+		($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-	$$ = new funcStmtAST($1 + "#" + returned, $3);
-	($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
-	
 }	;
 
 
@@ -667,79 +663,69 @@ postfix_expression:
 }
 	| IDENTIFIER '(' ')'
 {
-	std::string suffix = "";
-	std::string returned = findBestFunction($1, suffix);
-	if(returned == "2"){
-		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
-		std::exit(1);
+	if($1 == "printf"){
+		$$ = new funcAST($1, std::list<abstractAST*>());
+		($$)->astType = DataType(DataType::Void);//*(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-//	if(globalTable->find($1) == globalTable->end()){ //this has to be changed.
-//		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
-//		std::exit(1);
-//	}
-	if(returned == "1"){
-		std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
-		std::exit(1);
+	else{
+		std::string suffix = "";
+		std::string returned = findBestFunction($1, suffix);
+		if(returned == "2"){
+			std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
+			std::exit(1);
+		}
+	//	if(globalTable->find($1) == globalTable->end()){ //this has to be changed.
+	//		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
+	//		std::exit(1);
+	//	}
+		if(returned == "1"){
+			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+			std::exit(1);
+		}
+		$$ = new funcAST($1 + "#" + returned, std::list<abstractAST*>());
+		($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-	$$ = new funcAST($1 + "#" + returned, std::list<abstractAST*>());
-	($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
-//	std::map<std::string, SymbolTableEntry*> *currentMap = globalTable->find($1)->second->pointer;
-//	std::list<SymbolTableEntry*> paramList;
-//	for(std::map<std::string, SymbolTableEntry*>::iterator name = currentMap->begin(); name != currentMap->end(); name++){
-//		if(name->second->scope == SymbolTableEntry::PARAM){
-//			paramList.push_back(name->second);
-//		}
-//	}
-//	if(paramList.size() != 0){
-//		std::cerr << "Line no " << lineNo << ":\tMismatch in number of arguments to function '" << $1 << "'\n";
-//		std::exit(1);
-//	}
-//	$$ = new funcAST($1, std::list<abstractAST*>());
-//	($$)->astType = *(globalTable->find($1)->second->dataType);
 }
 	| IDENTIFIER '(' expression_list ')'
 {
-	std::string suffix = ""; //this is expression string
-	for(std::list<abstractAST*>::iterator iter = ($3).begin(); iter != ($3).end(); iter++){
-		if((*iter)->astType == DataType(DataType::Int)){
-			suffix += "i";
-		}
-		if((*iter)->astType == DataType(DataType::Float)){
-			suffix += "f";
-		}
+	if($1 == "printf"){
+		$$ = new funcAST($1, $3);
+		($$)->astType = DataType(DataType::Void);//*(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-	std::string returned = findBestFunction($1, suffix); //this is function name string
-	if(returned == "2"){
-		std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
-		std::exit(1);
-	}
-	if(returned == "1"){
-		std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
-		std::exit(1);
-	}
-	std::list<abstractAST*>::iterator absIterator = ($3).begin();
-	for(int i = 0; i < returned.size(); i++){
-		if((returned[i] == 'i') && (suffix[i] == 'f')){
-			abstractAST *temp = new castAST("TO_INT", *absIterator);
-			*absIterator = temp;
+	else{	
+		std::string suffix = ""; //this is expression string
+		for(std::list<abstractAST*>::iterator iter = ($3).begin(); iter != ($3).end(); iter++){
+			if((*iter)->astType == DataType(DataType::Int)){
+				suffix += "i";
+			}
+			if((*iter)->astType == DataType(DataType::Float)){
+				suffix += "f";
+			}
 		}
-		if((returned[i] == 'f') && (suffix[i] == 'i')){
-			abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
-			*absIterator = temp;
-		}
-//		else if(!(*((*pIterator)->dataType) == (*absIterator)->astType)){
-	/*	else if(returned[i] != suffix[i]){
-			std::cerr << "Line no " << lineNo << ":\tCannot convert type ";// << $1 << "\n";
-			(*absIterator)->astType.print(std::cerr);
-			std::cerr << " to type ";
-			(*absIterator)->dataType->print(std::cerr);
-			std::cerr << " in function call " << $1 << "\n";
+		std::string returned = findBestFunction($1, suffix); //this is function name string
+		if(returned == "2"){
+			std::cerr << "Line no " << lineNo << ":\tFunction " << $1 << " undefined\n";
 			std::exit(1);
-		}*/
-		absIterator++;
+		}
+		if(returned == "1"){
+			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+			std::exit(1);
+		}
+		std::list<abstractAST*>::iterator absIterator = ($3).begin();
+		for(int i = 0; i < returned.size(); i++){
+			if((returned[i] == 'i') && (suffix[i] == 'f')){
+				abstractAST *temp = new castAST("TO_INT", *absIterator);
+				*absIterator = temp;
+			}
+			if((returned[i] == 'f') && (suffix[i] == 'i')){
+				abstractAST *temp = new castAST("TO_FLOAT", *absIterator);
+				*absIterator = temp;
+			}
+			absIterator++;
+		}
+		$$ = new funcAST($1 + "#" + returned, $3);
+		($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
-	$$ = new funcAST($1 + "#" + returned, $3);
-	($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 }
 	| l_expression INC_OP
 {
