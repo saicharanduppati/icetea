@@ -116,7 +116,7 @@ parameter_declaration:
 	 type_specifier declarator
 {
 //	std::cout << "param\n";
-	if(currentType.basetype == DataType::Void){
+	if(currentType == DataType(DataType::Void)){
 		std::cerr << "Line no " << lineNo << ":\tParameter " << name << " declared as void\n";
 		std::exit(1);
 	}
@@ -152,7 +152,7 @@ declarator:
 	| declarator '[' constant_expression ']'
 {
   //std::cout << (($3)->astType.tag == DataType::Base) << std::endl;
-  	if((($3)->astType.tag != DataType::Base) || ((($3)->astType).basetype != DataType::Int)){
+  	if((($3)->astType.tag != DataType::Base) || (!((($3)->astType) == DataType(DataType::Int)))){
 		std::cerr << "Line no " << lineNo << ":\tIndex of array " << name << " is not an integer\n";
 		std::exit(1);
 	}
@@ -815,7 +815,7 @@ l_expression:
 }
         | l_expression '[' expression ']'
 {
-	if((($3)->astType.tag != DataType::Base) || (($3)->astType.basetype != DataType::Int)){
+	if((($3)->astType.tag != DataType::Base) ||(!(($3)->astType == DataType(DataType::Int)))){
 		std::cerr << "Line no " << lineNo << ":\tIndex of array is not an integer\n";
 		std::exit(1);
 	}
@@ -889,7 +889,7 @@ declarator_list:
 {
 //	std::cout << "dec before\n";
 //	std::cout.flush();
-	if(currentType.basetype == DataType::Void){
+	if(currentType == DataType(DataType::Void)){
 		std::cerr << "Line no " << lineNo << ":\tVariable " << name << " declared as void\n";
 		std::exit(1);
 	}
@@ -911,7 +911,7 @@ declarator_list:
 }
 | declarator_list ',' declarator
 {
-	if(currentType.basetype == DataType::Void){
+	if(currentType == DataType(DataType::Void)){
 		std::cerr << "Line no " << lineNo << ":\tVariable " << name << " declared as void\n";
 		std::exit(1);
 	}
