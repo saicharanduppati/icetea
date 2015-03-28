@@ -2,3 +2,10 @@ int h(int b, int f){
 	float efas;
 	return b;
 }
+
+
+int h(float c, int a){
+	int deb[2];
+	int asd;
+	return deb;
+}

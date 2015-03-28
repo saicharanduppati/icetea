@@ -439,7 +439,8 @@ INPUT: Two SymbolTableEntry pointers.
 FUNCTION: This function is used only to sort two symbol table entries in a list. So this is just a comparison function. Sorting is done based on offsets
 OUTPUT: We want sort to be done in reverse order. So we reverse > instead of <
 ********************************************************************************/
-bool offsetCompare(SymbolTableEntry*, SymbolTableEntry*);
+//bool offsetCompare(SymbolTableEntry*, SymbolTableEntry*);
 
 bool hasReturnInList(std::list<abstractAST*> l);
+std::string findBestFunction(std::string, std::string);
 #endif

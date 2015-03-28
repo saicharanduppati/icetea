@@ -23,7 +23,7 @@ int stringCost(std::string a, std::string b){// a and b have to be of same size.
 
 std::string findBestFunction(std::string name, std::string suffix){
 	int count = 0, minCost = 1000000, cost;
-	std::string toReturn = "2";
+	std::string toReturn = "2"; //this signifies that there is no matching fucntion.
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = globalTable->begin(); iter != globalTable->end(); iter++){
 		if(iter->first.substr(0, iter->first.find_first_of("#") + 1) != name){
 			continue;
@@ -61,11 +61,11 @@ bool hasReturnInList(std::list<abstractAST*> l){
 
 
 
-bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second){
+/*bool offsetCompare(SymbolTableEntry* first, SymbolTableEntry *second){
 	return first->offset > second->offset;
 
 //	return other.offset < offset;
-}
+}*/
 void printSymbolTable(std::map<std::string, SymbolTableEntry*> *argument){
 //	std::cout << "size is " << argument->size() << "\n";
 	for(std::map<std::string, SymbolTableEntry*>::iterator iter = argument->begin(); iter != argument->end(); iter++){
@@ -284,10 +284,12 @@ void DataType::print(std::ostream& a){
 
 
 bool DataType::operator==(DataType second){
-	if(tag == Base){
-		return (tag == second.tag) && (basetype == second.basetype);
+	if(tag != second.tag){
+		return false;
 	}
-//		return (length == second.length) && ((*arrayType) == (*(second.arrayType)));
+	if(tag == Base){
+		return (basetype == second.basetype);
+	}
 	return ((*arrayType) == (*(second.arrayType)));
 }
 
