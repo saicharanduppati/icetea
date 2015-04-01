@@ -1,0 +1,15 @@
+int h(int b, int f)
+{ float efas; return b; 
+} 
+
+int f(int c)
+{ int b; b = 1; return b; 
+} 
+
+int p(int c)
+{ int b; b = 1; return b; 
+} 
+
+int g(float c, int a)
+{ int deb[2]; int asd; asd = f(asd); return a; 
+}

@@ -41,7 +41,7 @@ std::string findBestFunction(std::string name, std::string suffix){
 			count = 1;
 		}
 	}
-	if(count != 1){
+	if(count > 1){
 		return "1";//this signifies that there are conflicting definitions
 	}
 	return toReturn;
