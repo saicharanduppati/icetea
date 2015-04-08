@@ -1,15 +1,12 @@
-int h(int b, int f)
-{ float efas; return b; 
-} 
+void foo(int a){
+	int b;
+	b = 5;
+}
 
-int f(int c)
-{ int b; b = 1; return b; 
-} 
 
-int p(int c)
-{ int b; b = 1; return b; 
-} 
-
-int g(float c, int a)
-{ int deb[2]; int asd; asd = f(asd); return a; 
+int main(){
+	int foo;
+	foo = 3;
+	foo(4);
+	return 0;
 }

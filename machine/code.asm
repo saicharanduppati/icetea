@@ -39,14 +39,3 @@ e:	loadi(ind(ebp), ebp); // restoring dynamic link
 	popi(1); //pop stack
 	return; //return
 }
-
-
-
-
-
-
-
-
-
-
-
