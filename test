@@ -1,12 +1,5 @@
-void foo(int a){
+void main(){
 	int b;
-	b = 5;
-}
-
-
-int main(){
-	int foo;
-	foo = 3;
-	foo(4);
-	return 0;
+	int c;
+	b = 5 + c;
 }

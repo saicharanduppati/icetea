@@ -9,5 +9,4 @@ int g(float c, int a){
 	int asd;
 	return a * (a + c);
 	printf("woeh", a,a,a,a);
-	
 }

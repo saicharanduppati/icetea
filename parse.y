@@ -37,16 +37,17 @@ function_definition:
 			std::exit(1);
 		}
 	}
-//	std::cout << "line 40\n";
-//	std::cout.flush();
 	(*globalTable)[functionName + "#" + suffixString]->pointer = currentTable;
-//	std::cout << "line 41\n";
-//	std::cout.flush();
-	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 	currentOffset = -4;
 	returnCount = 0;
 	suffixString = "";
 	$3->print();
+	std::cout.flush();
+	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
+	reset_regs();
+	$3->generate_code();
+	codeFile << "\treturn;\n}";
+	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 }
 	;
 
@@ -230,17 +231,6 @@ statement:
 }
     | RETURN expression ';'
 {
-//	std::cout << functionName + "#" + suffixString << "\n";
-//	std::cout.flush();
-//(((*globalTable)[functionName + "#" + suffixString])->dataType)->print(std::cout);
-//std::cout << (!(*(((*globalTable)[functionName + "#" + suffixString])->dataType) == ($2)->astType)) << "\n";
-//std::cout.flush();
-//	std::cout << "before first\n";
-//std::cout << (*(((*globalTable)[functionName + "#" + suffixString])->dataType) == DataType(DataType::Int)) << "\n";
-//std::cout << (($2)->astType == DataType(DataType::Float)) << "\n";
-
-//std::cout << "here" << "\n";// x << "there\n";
-//   std::cout.flush();
 	if((*(((*globalTable)[functionName + "#" + suffixString])->dataType) == DataType(DataType::Int)) && (($2)->astType == DataType(DataType::Float))){
 		abstractAST *temp = new castAST("TO_INT", $2);
 		$$ = new returnAST(temp);

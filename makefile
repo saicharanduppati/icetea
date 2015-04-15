@@ -2,7 +2,7 @@ all: parser
 	./parser < test
 
 parser:  lex.cc parse.cc Scanner.h Scannerbase.h Scanner.ih Parser.h Parserbase.h Parser.ih
-	g++ --std=c++0x -o parser lex.cc parse.cc main.cc intu.cpp;
+	g++ -g --std=c++0x -o parser lex.cc parse.cc main.cc intu.cpp;
 
 lex.cc: lex.l Scanner.ih
 	rm -f Scanner.ih;

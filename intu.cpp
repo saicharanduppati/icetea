@@ -9,11 +9,64 @@ std::string name; //name of the last seen variable.
 std::string functionName; //name of the last seen function.
 std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
 int returnCount = 0;
+std::ofstream codeFile;
 
+bool avail_regs[NO_REGS];
 int lineNo = 1;
 std::string suffixString = "";
 
+std::string reg_name(int reg){
+	switch(reg)
+	{
+		case(0):
+			return "eax";
+			break;
+		case(1):
+			return "ebx";
+			break;
+		case(2):
+			return "ecx";
+			break;
+		case(3):
+			return "edx";
+			break;
+		case(4):
+			return "esi";
+			break;
+		case(5):
+			return "edi";
+			break;
+	}
+}
 
+void reset_regs(){
+	for(int i = 0; i< NO_REGS;i++){
+		avail_regs[i] = true;
+	}
+}
+
+int find_reg(){
+	for(int i = 0; i < NO_REGS ; i++){
+		if(avail_regs[i]){
+			avail_regs[i] = false;
+			return i;
+		}
+	}
+	return -1;
+}
+void label_manager(abstractAST* p, abstractAST* c1, abstractAST* c2){
+	c1->generate_label();
+	c2->generate_label();
+//	if(c1->label == 0 && c2->label == 0){
+//		c2->label = 1;
+//	}
+	if(c1->label == c2->label){
+		p->label = c1->label + 1;
+	}
+	else{
+		p->label = std::max(c1->label,c2->label);
+	}
+}
 int stringCost(std::string a, std::string b){// a and b have to be of same size.
 	int toReturn = 0;
 	for(int i = 0; i < a.size(); i++){
@@ -319,4 +372,18 @@ void SymbolTableEntry::print(){
 	std::cout << std::left << offset;// << "\t\t";
 	dataType->print(std::cout);
 	std::cout << "\n";
+}
+
+
+
+
+
+
+void bopAST::generate_label(){
+	label_manager(this, first,second);
+	std::cout << "bop label is " << this->label << std::endl;
+}
+void indexAST::generate_label(){
+	label_manager(this, first,second);
+	std::cout << "index label is " << this->label << std::endl;
 }
