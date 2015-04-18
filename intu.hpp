@@ -237,10 +237,23 @@ class assAST : public stmtAST{
 			second->actual_code();
 			reg = second->reg;
 			if(*((*currentTable)[first->get_name()]->dataType) == DataType(DataType::Int)){
-				codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+				codeFile << "\tstorei(" << reg_name(reg) << ", ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 			}
 			else if(*((*currentTable)[first->get_name()]->dataType) == DataType(DataType::Float)){
 				codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+			}
+			else{
+				level++;
+				first->actual_code();
+				level--;
+				codeFile << "\taddi(ebp, " << reg_name(first->reg) << ");\n";
+				if((first->astType).basetype == 0){
+					codeFile << "\tstorei(" << reg_name(reg) << ", " << first->reg << ");\n";
+				}
+				else if((first->astType).basetype == 1){
+					codeFile << "\tstoref(" << reg_name(reg) << ", " << first->reg << ");\n";
+				}
+				avail_regs[first->reg] = true;
 			}
 			return "";
 		}
@@ -284,7 +297,7 @@ class ifAST : public stmtAST{
 				codeFile << "\tcmpf(0," << reg_name(first->reg) << ");\n";
 			}
 			int fl = glabel++;
-			codeFile << "\tjne(-1,L" << fl << ");\n";
+			codeFile << "\tje(L" << fl << ");\n";
 			int ol = glabel++;
 			second->generate_code();
 			codeFile << "\tj(L" << ol << ");\n";
@@ -340,7 +353,7 @@ class whileAST : public stmtAST{
 			else if(first->astType == DataType(DataType::Float)){
 				codeFile << "\tcmpf(0," << reg_name(first->reg) << ");\n";
 			}
-			codeFile << "\tjne(L" << exitl << ");\n";
+			codeFile << "\tje(L" << exitl << ");\n";
 			second->generate_code();
 			codeFile << "\tj(L" << openl << ");\n";
 			codeFile << "L" << exitl << ":\n";
@@ -398,7 +411,7 @@ class forAST : public stmtAST{
 				 codeFile << "\tcmpf(0," << reg_name(second->reg) << ");\n";
 			}
 			int exitl = glabel++;
-			codeFile << "\tjne(L" << exitl << ");\n";
+			codeFile << "\tje(L" << exitl << ");\n";
 			fourth->generate_code();
 			third->generate_code();
 			codeFile << "\tj(L" << entryl << ");\n";
