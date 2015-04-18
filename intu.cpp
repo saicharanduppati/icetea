@@ -407,3 +407,54 @@ void indexAST::generate_label(){
 	label_manager(this, first,second);
 	std::cout << "index label is " << this->label << std::endl;
 }
+
+
+
+
+std::string funcAST::actual_code(){
+	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
+		codeFile << "\tpushf(0.0);\n";
+	}
+	else if(*((*globalTable)[name]->dataType) == DataType(DataType::Int)){
+		codeFile << "\tpushi(0);\n";
+	}
+	for(std::list <abstractAST*>::iterator it = first.begin();it != first.end();it++){
+		intAST* a = dynamic_cast<intAST*>(*it);
+		if(a != NULL){
+			codeFile << "\tpushi(" << a->getVal() << ");\n";
+			continue;
+		}	
+		floatAST* b = dynamic_cast<floatAST*>(*it);
+		if(b != NULL){
+			codeFile << "\tpushf(" << b->getVal() << ");\n";
+			continue;
+		}	
+		(*it)->actual_code();
+		if((*it)->astType == DataType(DataType::Float)){
+			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
+		}
+		else if((*it)->astType == DataType(DataType::Int)){
+			codeFile << "\tpushi(" << reg_name((*it)->reg) << ");\n";
+		}
+		reset_regs();
+	}
+	std::string params = name.substr(name.find_first_of("#"));
+	for(int i=params.size()-1;i >= 0 ; i--){
+		codeFile << "\tpop" << params[i] << "(1);\n";
+		/*TODO
+			grouping of parameter to pop simulataneously*/
+	}
+	codeFile << "\t" << name.substr(0,name.find_first_of("#")) << "();\n";
+	reg = find_reg();
+	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
+		codeFile << "\tloadf(ind(esp), " << reg_name(reg) << ");\n";
+	}
+	else if(*((*globalTable)[name]->dataType) == DataType(DataType::Int)){
+		codeFile << "\tloadi(ind(esp), " << reg_name(reg) << ");\n";
+	}
+	else{
+		std::cout << "this case not possible in function AST\n";
+		std::cout.flush();
+	}
+	return "";
+}	

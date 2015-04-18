@@ -2,18 +2,12 @@ void main(){
 	pushi(ebp);
 	move(esp, ebp);
 	move(0, eax);
-	move(1, ebx);
-	muli(168,ebx);
-	addi(ebx,eax);
-	move(2, ebx);
-	muli(28,ebx);
-	addi(ebx,eax);
-	move(3, ebx);
-	muli(4,ebx);
-	addi(ebx,eax);
-	addf(ebp, eax);
-	loadf(ind(eax), eax);
-	storef(eax,ind(ebp, -840));
+	move(-4, ebx);
+	move(1, ecx);
+	muli(-4,ecx);
+	addi(ecx,ebx);
+	addi(ebp, ebx);
+	storei(eax,ind(ebx));
 	return;
 }
 
