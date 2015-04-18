@@ -19,7 +19,6 @@ void reset_regs();
 int find_reg();
 extern bool avail_regs[NO_REGS];
 extern int glabel;
-extern int level;
 struct DataType{
 	enum Kind{
 		Base, Array, Error, Ok
@@ -52,7 +51,7 @@ struct DataType{
 	RETURN VALUE: Returns the size occupied by the data type on which this function is called. Size occupied by Int, Float is 4 and that of Void is 0. Size occupied by an array is calculated depending on the length and type of array.
 	********************************************************************************/
 	int size();
-	int len(); 
+
 };
 
 
@@ -277,19 +276,15 @@ class ifAST : public stmtAST{
 		};
 		virtual std::string actual_code(){
 			first->actual_code();
-			if(first->astType == DataType(DataType::Int)){
-				codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
-			}
-			else if(first->astType == DataType(DataType::Float)){
-				codeFile << "\tcmpf(0," << reg_name(first->reg) << ");\n";
-			}
+			codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
 			int fl = glabel++;
 			codeFile << "\tjne(-1,L" << fl << ");\n";
 			int ol = glabel++;
-			second->generate_code();
-			codeFile << "\tj(L" << ol << ");\n";
-  			codeFile << "L" << fl << ":\n";
-			third->generate_code();
+			second->actual_code();
+			codeFile << "\tje(0,L" << ol << ");\n";
+			codeFile << "\tjne(0,L" << ol << ");\n";
+			codeFile << "L" << fl << ":\n";
+			third->actual_code();
 			codeFile << "L" << ol << ":\n";
 /*			codeFile << "\tje(L" << *(first->falselabel) << ");\n";
 			second->actual_code;
@@ -297,7 +292,6 @@ class ifAST : public stmtAST{
 			codeFile << "L" << *(first->falselabel) << ":\n";
 			third->actual_code;
 			codeFile << "\tje(" << *(third->nextlabel) << ");\n";*/
-			return "";
 		} 
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
@@ -325,27 +319,7 @@ class ifAST : public stmtAST{
 class whileAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			actual_code();
-			return "";
-		};
-		virtual std::string actual_code(){
-			int openl = glabel++;
-			codeFile << "L" << openl << ":\n";
-			first->generate_code();
-			int exitl = glabel++;
-			if(first->astType == DataType(DataType::Int)){
-				codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
-			}
-			else if(first->astType == DataType(DataType::Float)){
-				codeFile << "\tcmpf(0," << reg_name(first->reg) << ");\n";
-			}
-			codeFile << "\tjne(L" << exitl << ");\n";
-			second->generate_code();
-			codeFile << "\tj(L" << openl << ");\n";
-			codeFile << "L" << exitl << ":\n";
-			return "";
-		}
+		virtual std::string generate_code() {};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		whileAST(abstractAST *a, abstractAST *b){
@@ -382,29 +356,7 @@ class returnAST : public stmtAST{
 class forAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			actual_code();
-			return "";
-		};
-		virtual std::string actual_code(){
-			first->generate_code();
-			int entryl = glabel++;
-			codeFile << "L" << entryl << ":\n";
-			second->generate_code();
-			if(second->astType == DataType(DataType::Int)){
-				 codeFile << "\tcmpi(0," << reg_name(second->reg) << ");\n";
-			}
-			else if(second->astType == DataType(DataType::Float)){
-				 codeFile << "\tcmpf(0," << reg_name(second->reg) << ");\n";
-			}
-			int exitl = glabel++;
-			codeFile << "\tjne(L" << exitl << ");\n";
-			fourth->generate_code();
-			third->generate_code();
-			codeFile << "\tj(L" << entryl << ");\n";
-			codeFile << "L" << exitl << ":\n";
-			return "";
-		}
+		virtual std::string generate_code() {};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		forAST(abstractAST *a, abstractAST *b, abstractAST *c, abstractAST *d){
@@ -557,23 +509,18 @@ class uopAST : public expAST{
 			reg = first->reg;
 			if(op == "PP"){
 				if(first->astType == DataType(DataType::Int)){
-					codeFile << "\taddi(1,"	<< reg_name(reg) << ");\n";
-					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+					codeFile << "\taddi(1,"	<< reg_name(reg) << ")\n;";
 				}
 				else{
-					codeFile << "\taddf(1," << reg_name(reg) << ");\n";
-					codeFile << "\tstorefi(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+					codeFile << "\taddf(1," << reg_name(reg) << ")\n;";
 				}
-				
 			}
 			if(op == "UMINUS"){
 				if(first->astType == DataType(DataType::Int)){
 					codeFile << "\tmuli(-1," << reg_name(reg) << ")\n;";
-					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 				}
 				else{
 					codeFile << "\tmulf(-1," << reg_name(reg) << ")\n;";
-					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 				}
 			}	
 			return "";
@@ -625,11 +572,7 @@ class funcAST : public expAST{
 class floatAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			generate_label();
-			actual_code();
-			return "";
-		};
+		virtual std::string generate_code() {};
 		virtual std::string actual_code(){
 			reg = find_reg();
 			codeFile << "\tmove(" << getVal() << ", " << reg_name(reg) << ");\n";
@@ -658,11 +601,7 @@ class floatAST : public expAST{
 class intAST : public expAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			generate_label();
-			actual_code();
-			return "";
-		};
+		virtual std::string generate_code() {generate_label();return "";};
 		virtual std::string actual_code(){
 			reg = find_reg();
 			codeFile << "\tmove(" << getVal() << ", " << reg_name(reg) << ");\n";
@@ -721,21 +660,14 @@ class arrayrefAST : public expAST{
 class identifierAST : public arrayrefAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			generate_label();
-			actual_code();
-			 return "";
-		};
+		virtual std::string generate_code() {generate_label(); return "";};
 		virtual std::string actual_code(){
 			reg = find_reg();
-			if(*((*currentTable)[first]->dataType) == DataType(DataType::Float)){
-				codeFile << "\tloadf(ind(ebp, " << -(*currentTable)[first]->offset << "), " << reg_name(reg) << ");\n";
-			}
-			else if(*((*currentTable)[first]->dataType) == DataType(DataType::Int)){
+			if(*((*currentTable)[first]->dataType) == DataType(DataType::Int)){
 				codeFile << "\tloadi(ind(ebp, " << -(*currentTable)[first]->offset << "), " << reg_name(reg) << ");\n";
 			}
-			else{
-				codeFile << "\tmove(" << -(*currentTable)[first]->offset << ", " << reg_name(reg) << ");\n";
+			else if(*((*currentTable)[first]->dataType) == DataType(DataType::Float)){
+				codeFile << "\tloadf(ind(ebp, " << -(*currentTable)[first]->offset << "), " << reg_name(reg) << ");\n";
 			}
 			return "";
 		}
@@ -764,75 +696,7 @@ class identifierAST : public arrayrefAST{
 class indexAST : public arrayrefAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {
-			actual_code();	
-			return "";
-		};
-		virtual std::string actual_code(){
-			std::cout <<  std::endl;
-			level++;
-			first->generate_code();
-			level--;
-			second->generate_code();
-			reg = first->reg;
-			codeFile << "\tmuli(" << ((first->astType).arrayType)->size() << "," << reg_name(second->reg) << ");\n";
-			codeFile << "\taddi(" << reg_name(second->reg)  << "," << reg_name(first->reg) << ");\n";
-			avail_regs[second->reg] = true;
-			if(level == 0){
-				if(astType.basetype == 0){
-					codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
-					codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
-				}
-				else if(astType.basetype == 1){
-					codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
-					codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
-				}
-			}
-			return "";
-		}
-/*			second->generate_code();
-			abstractAST* tfirst = first;
-			abstractAST* tsecond = second;
-			codeFile << "\tmuli(" << ((first->astType).arrayType)->size() << ", " << reg_name(second->reg) << ");\n";
-			int last = second->reg;
-			(first->astType).print(std::cout);
-			std::cout << "len" << (first->astType).len() << std::endl;
-			for(int i=0;i < (first->astType).len();i++){
-				tsecond = ((indexAST*) tfirst)->second;
-				tfirst = ((indexAST* ) tfirst)->first;
-				std::cout << tsecond->get_name() << std::endl;
-				std::cout.flush();
-				std::cout << "i am good till here1\n";
-				std::cout.flush();
-				std::cout << "i am good till here2\n";
-
-				tsecond->generate_code();
-				std::cout << "i am good till here3\n";
-				std::cout.flush();
-				codeFile << "\tmuli(" << ((tfirst->astType).arrayType)->size() << ", " << reg_name(tsecond->reg) << ");\n";
-				std::cout << "i am good till here4\n";
-				std::cout.flush();
-				codeFile << "\taddi(" << reg_name(tsecond->reg) << ", " << reg_name(last) << ");\n";
-				std::cout << "i am good till here5\n";
-				std::cout.flush();
-				avail_regs[tsecond->reg] = true;
-			}
-//			(first->astType).print(std::cout);
-			codeFile << "\taddi(" << -(*currentTable)[tfirst->get_name()]->offset << ", " << reg_name(last) << ");\n";
-			codeFile << "\taddi(ebp, " << reg_name(last) << ");\n";
-//			if(first->astType == DataType(DataType::Int)){
-				codeFile << "\tloadi(ind(" << reg_name(last) << "), " << reg_name(last) << ");\n";
-//			}
-//			else if(first->astType == DataType(DataType::Float)){
-//				codeFile << "\tloadf(ind(" << reg_name(last) << "), " << reg_name(last) << ");\n";
-//			}
-//			else if((*((*currentTable)[first->get_name()]->dataType)).basetype == DataType::Float){
-//				codeFile << "\tloadf(ind(" << reg_name(last) << "), " << reg_name(last) << ");\n";
-//			}
-			reg = last;
-			return "";
-				
-		}*/
+		virtual std::string generate_code() {};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		indexAST(abstractAST *a, abstractAST *b){

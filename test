@@ -1,5 +1,6 @@
-void main(){
-	int b;
-	int c;
-	b = 5 + c;
+int main(){
+	float a[5][6][7];
+	float y;
+	y = a[1][2][3];
+	return y;
 }

@@ -46,7 +46,7 @@ function_definition:
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
 	reset_regs();
 	$3->generate_code();
-	codeFile << "\treturn;\n}";
+	codeFile << "\treturn;\n}\n\n";
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 }
 	;

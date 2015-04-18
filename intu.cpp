@@ -10,11 +10,20 @@ std::string functionName; //name of the last seen function.
 std::list<int> indexList; //list that contains the int indices seen in an array declaration. If the declaration is int a[4][5][8], list contains [4,5,8].
 int returnCount = 0;
 std::ofstream codeFile;
-
+int glabel = 0;
 bool avail_regs[NO_REGS];
 int lineNo = 1;
+int level = 0;
 std::string suffixString = "";
+void backpatch(std::vector<int*> v, int label){
+	for(int i= 0 ; i < v.size() ; i++){
+		(*v[i]) = label;
+	}
+}
 
+void merge(std::vector<int* > v1, std::vector<int* > v2){
+	v1.insert(v1.end(),v2.begin(),v2.end());
+} 
 std::string reg_name(int reg){
 	switch(reg)
 	{
@@ -313,7 +322,18 @@ int DataType::size(){
 }
 
 
-
+int DataType::len(){
+	if(tag == Error || tag == Ok){
+		std::cout << "wrong usage of length" << std::endl;
+		exit(1);
+	}
+	else if(tag == Base){
+		return 0;
+	}
+	else{
+		return 1 + arrayType->len();
+	}
+}
 
 
 void DataType::print(std::ostream& a){
