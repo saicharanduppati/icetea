@@ -1,6 +1,6 @@
 #ifndef _INTU_HPP
 #define _INTU_HPP
-#define NO_REGS 6
+#define NO_REGS 4
 
 
 #include <list>
@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <vector>
 
+extern std::string functionName;
+extern std::string suffixString;
 extern std::ofstream codeFile;
 std::string reg_name(int);
 void backpatch(std::vector<int*>, int);
@@ -307,12 +309,6 @@ class ifAST : public stmtAST{
   			codeFile << "L" << fl << ":\n";
 			third->generate_code();
 			codeFile << "L" << ol << ":\n";
-/*			codeFile << "\tje(L" << *(first->falselabel) << ");\n";
-			second->actual_code;
-			codeFile << "\tje(" << *(second->nextlabel) << ");\n";
-			codeFile << "L" << *(first->falselabel) << ":\n";
-			third->actual_code;
-			codeFile << "\tje(" << *(third->nextlabel) << ");\n";*/
 			reset_regs();
 			return "";
 		} 
@@ -322,13 +318,6 @@ class ifAST : public stmtAST{
 			first = a;
 			second = b;
 			third = c;
-//			int m1 = glabel++;
-//			int m2 = glabel++;
-//			*(first->truelabel) = m1;
-//			*(first->falselabel) = m2;
-//			
-//			merge(second->nextlist,third->nextlist); 
-//			nextlist = second->nextlist;	
 		}
 	protected:
 		virtual void setType(DataType) {};
@@ -384,6 +373,24 @@ class returnAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code() {
+			first->generate_code();
+			int minOffset = -4, width = 0; 
+			for(std::map<std::string, SymbolTableEntry*>::iterator it = currentTable->begin(); it != currentTable->end(); it++){
+				if(it->second->offset < minOffset){
+					minOffset = it->second->offset;
+					width =  it->second->dataType->size();
+				}
+			}
+			if(first->astType == DataType(DataType::Int)){
+				codeFile << "\tstorei(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
+			}
+			if(first->astType == DataType(DataType::Float)){
+				codeFile << "\tstoref(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
+			}//this part does the storing of return value into space allocated. We can make all regs available now.
+			reset_regs();
+			//next part is to restore the ebp value (dynamic link);	TODO: These two parts, namely restoring ebp and making esp point to end of params, are to be done even if there is no return statement. Better thing would be to make a label and make everyone jump to that label. presently everything is done locally.
+//			codeFile << "\tmove(ebp, esp);\n\tloadi(ind(ebp), ebp);\n\tpopi(1);\n";
+			codeFile << "\tj(L" << functionName + "_" + suffixString << ");\n";
 			return "";
 		};
 		virtual DataType getType() {};
@@ -534,6 +541,115 @@ class bopAST : public expAST{
 			else if(op == "DIVIDE_FLOAT"){
 				codeFile << "\tdivf(" << reg_name(second->reg) << ", " << reg_name(first->reg) << ");\n";
 			}	
+			else if(op == "EQ_OP"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tje(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "EQ_OP_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tje(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "NE_OP"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjne(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "NE_OP_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjne(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "LT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjl(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "LT_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjl(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "GT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjg(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "GT_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjg(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "LE_OP"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjle(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "LE_OP_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjle(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "GE_OP"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpi(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjge(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+			else if(op == "GE_OP_FLOAT"){
+				int jlabel = glabel++;
+				int exitlabel = glabel++;
+				codeFile << "\tcmpf(" << reg_name(first->reg) << ", " << reg_name(second->reg) << ");\n\tjge(L" << jlabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n\tj(L" << exitlabel << ");\n";
+				codeFile << "L" << jlabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitlabel << ":\n";
+			}
+//			else if(op == "EQ_OP_FLOAT")
 			else{
 				std::cout << "how is this case possible?\n" ;
 			}
@@ -839,14 +955,12 @@ class indexAST : public arrayrefAST{
 /**************************************************************************************/
 extern int currentOffset;
 extern std::string name;
-extern std::string functionName;
 extern DataType currentType;
 extern DataType pastType;
 extern DataType currentFuncType;
 extern std::list<int> indexList;
 extern int lineNo;
 extern int returnCount;
-extern std::string suffixString;
 
 
 

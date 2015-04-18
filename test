@@ -1,7 +1,8 @@
-int main(){
+int main(int al, int bl){
 	int b;
-	int a[5];
-	float y;
-	a[1]= 0;
-	return y;
+	b = 7;
+	while(b > 3){
+		b = b - 1;
+	}
+	return 0;
 }

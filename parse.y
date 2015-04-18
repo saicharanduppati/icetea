@@ -40,13 +40,15 @@ function_definition:
 	(*globalTable)[functionName + "#" + suffixString]->pointer = currentTable;
 	currentOffset = -4;
 	returnCount = 0;
-	suffixString = "";
 	$3->print();
-	std::cout.flush();
+//	std::cout.flush();
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
 	reset_regs();
 	$3->generate_code();
+	codeFile << "L" << functionName + "_" + suffixString << ":\n\tmove(ebp, esp);\n\tloadi(ind(ebp), ebp);\n\tpopi(1);\n";//this is because, if there is no return statement, then these actions must be performed.
 	codeFile << "\treturn;\n}\n\n";
+	suffixString = "";
+	printSymbolTable(currentTable);
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 }
 	;
@@ -73,7 +75,7 @@ fun_declarator:
 	 IDENTIFIER '(' parameter_list ')'
 {
 	functionName = $1;
-	currentOffset = 0;
+	currentOffset = 4;
 	if(globalTable->find(functionName + "#" + suffixString) != globalTable->end()){//this has to be changed.
 		std::cerr << "Line no " << lineNo << ":\tFunction " << functionName << " already defined\n";
 		std::exit(1);
@@ -91,7 +93,7 @@ fun_declarator:
 	| IDENTIFIER '(' ')'
 {
 	functionName = $1;
-	currentOffset = 0;
+	currentOffset = 4;
 	if(globalTable->find(functionName + "#") != globalTable->end()){ //this has to be changed.
 		std::cerr << "Line no " << lineNo << ":\tFunction " << functionName << " already defined\n";
 		std::exit(1);
@@ -874,9 +876,10 @@ unary_operator:
 selection_statement:
 	 IF '(' expression ')' statement ELSE statement
 {
-	abstractAST *temp = new castAST("TO_INT", $3);
-		temp->astType = DataType(DataType::Int);
-	$$ = new ifAST(temp, $5, $7);
+//	abstractAST *temp = new castAST("TO_INT", $3);
+//		temp->astType = DataType(DataType::Int);
+//	$$ = new ifAST(temp, $5, $7);
+	$$ = new ifAST($3, $5, $7);
 	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($5))->hasReturn && ((stmtAST*) ($7))->hasReturn;
 }
 	;
@@ -884,16 +887,18 @@ selection_statement:
 iteration_statement:
 	 WHILE '(' expression ')' statement
 {
-	abstractAST *temp = new castAST("TO_INT", $3);
-		temp->astType = DataType(DataType::Int);
-	$$ = new whileAST(temp, $5);
+//	abstractAST *temp = new castAST("TO_INT", $3);
+//		temp->astType = DataType(DataType::Int);
+//	$$ = new whileAST(temp, $5);
+	$$ = new whileAST($3, $5);
 	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($5))->hasReturn;
 }
 	| FOR '(' expression ';' expression ';' expression ')' statement
 {
-	abstractAST *temp = new castAST("TO_INT", $5);
-		temp->astType = DataType(DataType::Int);
-	$$ = new forAST($3, temp, $7, $9);
+//	abstractAST *temp = new castAST("TO_INT", $5);
+//		temp->astType = DataType(DataType::Int);
+//	$$ = new forAST($3, temp, $7, $9);
+	$$ = new forAST($3, $5, $7, $9);
 	((stmtAST*) ($$))->hasReturn = ((stmtAST*) ($9))->hasReturn;
 }
 	;
