@@ -20,6 +20,11 @@ L2:
 	muli(-1,eax);
 	addi(eax, ecx);
 	storei(ecx, ind(ebp, -4));
+	move(1, eax);
+	loadi(ind(ebp, -4), ebx);
+	muli(-1,eax);
+	addi(eax, ebx);
+	storei(ebx, ind(ebp, -4));
 	j(L0);
 L3:
 	move(0, eax);

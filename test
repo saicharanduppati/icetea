@@ -1,7 +1,6 @@
 int main(int al, int bl){
 	int b;
-	b = 7;
-	while(b > 3){
+	for(b = 7;b > 3;b = b - 1){
 		b = b - 1;
 	}
 	return 0;

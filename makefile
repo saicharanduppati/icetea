@@ -1,4 +1,4 @@
-all: parser
+all: parser test
 	./parser < test
 
 parser:  lex.cc parse.cc Scanner.h Scannerbase.h Scanner.ih Parser.h Parserbase.h Parser.ih

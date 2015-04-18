@@ -304,9 +304,11 @@ class ifAST : public stmtAST{
 			int fl = glabel++;
 			codeFile << "\tje(L" << fl << ");\n";
 			int ol = glabel++;
+			reset_regs();
 			second->generate_code();
 			codeFile << "\tj(L" << ol << ");\n";
   			codeFile << "L" << fl << ":\n";
+			reset_regs();
 			third->generate_code();
 			codeFile << "L" << ol << ":\n";
 			reset_regs();
@@ -347,6 +349,7 @@ class whileAST : public stmtAST{
 				codeFile << "\tcmpf(0," << reg_name(first->reg) << ");\n";
 			}
 			codeFile << "\tje(L" << exitl << ");\n";
+			reset_regs();
 			second->generate_code();
 			codeFile << "\tj(L" << openl << ");\n";
 			codeFile << "L" << exitl << ":\n";
@@ -415,6 +418,7 @@ class forAST : public stmtAST{
 			first->generate_code();
 			int entryl = glabel++;
 			codeFile << "L" << entryl << ":\n";
+			reset_regs();
 			second->generate_code();
 			if(second->astType == DataType(DataType::Int)){
 				 codeFile << "\tcmpi(0," << reg_name(second->reg) << ");\n";
