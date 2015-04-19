@@ -189,7 +189,12 @@ class expAST : public abstractAST{
 class funcStmtAST : public stmtAST{
 	public:
 		virtual void print(std::string format = "");
-		virtual std::string generate_code() {};
+		virtual std::string generate_code() {
+			generate_label();
+			actual_code();
+			return "";
+		};
+		virtual std::string actual_code();
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		funcStmtAST(std::string a, std::list<abstractAST*> b){
@@ -379,17 +384,20 @@ class returnAST : public stmtAST{
 			first->generate_code();
 			int minOffset = -4, width = 0; 
 			for(std::map<std::string, SymbolTableEntry*>::iterator it = currentTable->begin(); it != currentTable->end(); it++){
-				if(it->second->offset < minOffset){
+				if(it->second->offset <= minOffset){
 					minOffset = it->second->offset;
-					width =  it->second->dataType->size();
+					width = it->second->dataType->size();
 				}
 			}
-			if(first->astType == DataType(DataType::Int)){
-				codeFile << "\tstorei(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
+			if(functionName + "#" + suffixString != "main#"){//return value must not be placed for function main(), for others, it has to be placed.
+				if(first->astType == DataType(DataType::Int)){
+					std::cout << "minOffset is " << minOffset << " and width is " << width << std::endl;
+					codeFile << "\tstorei(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
+				}
+				if(first->astType == DataType(DataType::Float)){
+					codeFile << "\tstoref(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
+				}//this part does the storing of return value into space allocated. We can make all regs available now.
 			}
-			if(first->astType == DataType(DataType::Float)){
-				codeFile << "\tstoref(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
-			}//this part does the storing of return value into space allocated. We can make all regs available now.
 			reset_regs();
 			//next part is to restore the ebp value (dynamic link);	TODO: These two parts, namely restoring ebp and making esp point to end of params, are to be done even if there is no return statement. Better thing would be to make a label and make everyone jump to that label. presently everything is done locally.
 //			codeFile << "\tmove(ebp, esp);\n\tloadi(ind(ebp), ebp);\n\tpopi(1);\n";
@@ -653,6 +661,51 @@ class bopAST : public expAST{
 				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
 				codeFile << "L" << exitlabel << ":\n";
 			}
+			else if(op == "AND"){
+				int falseLabel = glabel++;
+				int exitLabel = glabel++;
+				codeFile << "\tcmpi(0, " << reg_name(first->reg) << ");\n\tje(L" << falseLabel << ");\n";
+				codeFile << "\tcmpi(0, " << reg_name(second->reg) << ");\n\tje(L" << falseLabel << ");\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "L" << falseLabel << ":\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitLabel << ":\n";
+			}
+			else if(op == "AND_FLOAT"){
+				int falseLabel = glabel++;
+				int exitLabel = glabel++;
+				codeFile << "\tcmpf(0, " << reg_name(first->reg) << ");\n\tje(L" << falseLabel << ");\n";
+				codeFile << "\tcmpf(0, " << reg_name(second->reg) << ");\n\tje(L" << falseLabel << ");\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "L" << falseLabel << ":\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitLabel << ":\n";
+			}
+			else if(op == "OR"){
+				int trueLabel = glabel++;
+				int exitLabel = glabel++;
+				codeFile << "\tcmpi(1, " << reg_name(first->reg) << ");\n\tje(L" << trueLabel << ");\n";
+				codeFile << "\tcmpi(1, " << reg_name(second->reg) << ");\n\tje(L" << trueLabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
+				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "L" << trueLabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitLabel << ":\n";
+			}
+			else if(op == "OR_FLOAT"){
+				int trueLabel = glabel++;
+				int exitLabel = glabel++;
+				codeFile << "\tcmpf(1, " << reg_name(first->reg) << ");\n\tje(L" << trueLabel << ");\n";
+				codeFile << "\tcmpf(1, " << reg_name(second->reg) << ");\n\tje(L" << trueLabel << ");\n";
+				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
+				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "L" << trueLabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
+				codeFile << "L" << exitLabel << ":\n";
+			}
+
 //			else if(op == "EQ_OP_FLOAT")
 			else{
 				std::cout << "how is this case possible?\n" ;
@@ -693,6 +746,7 @@ class uopAST : public expAST{
 			return "";
 		}
 		virtual std::string actual_code(){
+			first->actual_code();
 			reg = first->reg;
 			if(op == "PP"){
 				if(first->astType == DataType(DataType::Int)){
@@ -707,12 +761,12 @@ class uopAST : public expAST{
 			}
 			if(op == "UMINUS"){
 				if(first->astType == DataType(DataType::Int)){
-					codeFile << "\tmuli(-1," << reg_name(reg) << ")\n;";
-					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+					codeFile << "\tmuli(-1," << reg_name(reg) << ");\n";
+//					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 				}
 				else{
-					codeFile << "\tmulf(-1," << reg_name(reg) << ")\n;";
-					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+					codeFile << "\tmulf(-1," << reg_name(reg) << ");\n";
+//					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 				}
 			}	
 			return "";
@@ -842,10 +896,10 @@ class stringAST : public expAST{
 		stringAST(std::string a){
 			first = a;
 		}
+		std::string first;
 	protected:
 		virtual void setType(DataType) {};
 	private:
-		std::string first;
 };
 
 

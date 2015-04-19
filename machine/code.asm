@@ -1,36 +1,39 @@
+void f(){
+	pushi(ebp);
+	move(esp, ebp);
+	addi(-4, esp);
+	loadi(ind(ebp, 4), eax);
+	storei(eax, ind(ebp, -4));
+	loadi(ind(ebp, -4), eax);
+	storei(eax, ind(ebp, 8));
+	j(Lf_i);
+Lf_i:
+	move(ebp, esp);
+	loadi(ind(ebp), ebp);
+	popi(1);
+	return;
+}
+
 void main(){
 	pushi(ebp);
 	move(esp, ebp);
-	move(7, eax);
+	addi(-4, esp);
+	move(10, eax);
 	storei(eax, ind(ebp, -4));
-L0:
-	move(3, eax);
-	loadi(ind(ebp, -4), ebx);
-	cmpi(ebx, eax);
-	jg(L1);
-	move(0, ebx);
-	j(L2);
-L1:
-	move(1, ebx);
-L2:
-	cmpi(0,ebx);
-	je(L3);
-	move(1, eax);
-	loadi(ind(ebp, -4), ecx);
-	muli(-1,eax);
-	addi(eax, ecx);
-	storei(ecx, ind(ebp, -4));
-	move(1, eax);
-	loadi(ind(ebp, -4), ebx);
-	muli(-1,eax);
-	addi(eax, ebx);
-	storei(ebx, ind(ebp, -4));
-	j(L0);
-L3:
+	pushi(0);
+	loadi(ind(ebp, -4), eax);
+	pushi(eax);
+	f();
+	popi(1);
+	loadi(ind(esp), eax);
+	popi(1);
+	print_string("the value of b is ");
+	loadi(ind(ebp, -4), eax);
+	print_int(eax);
+	print_string("\n");
 	move(0, eax);
-	storei(eax, ind(ebp, 12));
-	j(Lmain_ii);
-Lmain_ii:
+	j(Lmain_);
+Lmain_:
 	move(ebp, esp);
 	loadi(ind(ebp), ebp);
 	popi(1);

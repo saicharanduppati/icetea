@@ -15,6 +15,13 @@ bool avail_regs[NO_REGS];
 int lineNo = 1;
 int level = 0;
 std::string suffixString = "";
+
+
+bool  pairComparator(std::pair<int, DataType> a, std::pair<int, DataType> b){
+	return a.first < b.first;
+}
+
+
 void backpatch(std::vector<int*> v, int label){
 	for(int i= 0 ; i < v.size() ; i++){
 		(*v[i]) = label;
@@ -412,6 +419,96 @@ void indexAST::generate_label(){
 
 
 std::string funcAST::actual_code(){
+	if(name == "printf"){
+		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
+			stringAST *a = dynamic_cast<stringAST*>(*it);
+			if(a == NULL){
+				(*it)->generate_code();
+				if((*it)->astType == DataType(DataType::Int)){
+					codeFile << "\tprint_int(" << reg_name((*it)->reg) << ");\n";
+				}
+				if((*it)->astType == DataType(DataType::Float)){
+					codeFile << "\tprint_float(" << reg_name((*it)->reg) << ");\n";
+				}
+			}
+			else{
+				codeFile << "\tprint_string(" << a->first << ");\n";
+			}
+		}
+		return "";
+	}
+	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
+		codeFile << "\tpushf(0.0);\n";
+	}
+	else if(*((*globalTable)[name]->dataType) == DataType(DataType::Int)){
+		codeFile << "\tpushi(0);\n";
+	}
+	for(std::list <abstractAST*>::reverse_iterator it = first.rbegin();it != first.rend();it++){
+		intAST* a = dynamic_cast<intAST*>(*it);
+		if(a != NULL){
+			codeFile << "\tpushi(" << a->getVal() << ");\n";
+			continue;
+		}	
+		floatAST* b = dynamic_cast<floatAST*>(*it);
+		if(b != NULL){
+			codeFile << "\tpushf(" << b->getVal() << ");\n";
+			continue;
+		}	
+		(*it)->actual_code();
+		if((*it)->astType == DataType(DataType::Float)){
+			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
+		}
+		else if((*it)->astType == DataType(DataType::Int)){
+			codeFile << "\tpushi(" << reg_name((*it)->reg) << ");\n";
+		}
+		reset_regs();
+	}
+	codeFile << "\t" << name.substr(0,name.find_first_of("#")) << "();\n";
+	std::string params = name.substr(name.find_first_of("#"));
+	for(int i=params.size()-1;i > 0 ; i--){ //this is just parameter popping.
+		codeFile << "\tpop" << params[i] << "(1);\n";
+		/*TODO
+			grouping of parameter to pop simulataneously*/
+	}
+	reg = find_reg();
+	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
+		codeFile << "\tloadf(ind(esp), " << reg_name(reg) << ");\n";
+		codeFile << "\tpopf(1);\n";
+	}
+	else if(*((*globalTable)[name]->dataType) == DataType(DataType::Int)){
+		codeFile << "\tloadi(ind(esp), " << reg_name(reg) << ");\n";
+		codeFile << "\tpopi(1);\n";
+	}
+	else{
+		std::cout << "this case not possible in function AST\n";
+		std::cout.flush();
+	}
+	return "";
+}	
+
+
+
+
+
+std::string funcStmtAST::actual_code(){
+	if(name == "printf"){
+		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
+			stringAST *a = dynamic_cast<stringAST*>(*it);
+			if(a == NULL){
+				(*it)->generate_code();
+				if((*it)->astType == DataType(DataType::Int)){
+					codeFile << "\tprint_int(" << reg_name((*it)->reg) << ");\n";
+				}
+				if((*it)->astType == DataType(DataType::Float)){
+					codeFile << "\tprint_float(" << reg_name((*it)->reg) << ");\n";
+				}
+			}
+			else{
+				codeFile << "\tprint_string(" << a->first << ");\n";
+			}
+		}
+		return "";
+	}
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tpushf(0.0);\n";
 	}

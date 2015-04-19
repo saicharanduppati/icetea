@@ -43,6 +43,13 @@ function_definition:
 	$3->print();
 //	std::cout.flush();
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
+	int maxOffset = 0;
+	for(std::map<std::string, SymbolTableEntry*>::iterator it = currentTable->begin(); it != currentTable->end(); it++){
+		if(it->second->offset > maxOffset){
+			maxOffset = it->second->offset;
+		}
+	}
+	codeFile << "\taddi(" << -maxOffset << ", esp);\n";
 	reset_regs();
 	$3->generate_code();
 	codeFile << "L" << functionName + "_" + suffixString << ":\n\tmove(ebp, esp);\n\tloadi(ind(ebp), ebp);\n\tpopi(1);\n";//this is because, if there is no return statement, then these actions must be performed.
@@ -360,14 +367,27 @@ expression:
 }
 	| expression OR_OP logical_and_expression
 {
-	if((($1)->astType == DataType(DataType::Int) || ($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int) || ($3)->astType == DataType(DataType::Float))){
+	if((($1)->astType == DataType(DataType::Int)) && (($3)->astType == DataType(DataType::Int))){
 		$$ = new bopAST("OR", $1, $3);
-		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Float))){
+		$$ = new bopAST("OR_FLOAT", $1, $3);
+	}
+	else if((($1)->astType == DataType(DataType::Int)) && (($3)->astType == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		temp->astType = DataType(DataType::Float);
+		$$ = new bopAST("OR_FLOAT", temp, $3);
+	}
+	else if((($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		temp->astType = DataType(DataType::Float);
+		$$ = new bopAST("OR_FLOAT", temp, $3);
 	}
 	else{
 		std::cerr << "Line no " << lineNo << ":\tInvalid types for OR operator\n";// << $1 << " undefined\n";
 		std::exit(1);
 	}
+	($$)->astType = DataType(DataType::Int);
 }	;
 
 logical_and_expression:
@@ -377,14 +397,30 @@ logical_and_expression:
 }
 	| logical_and_expression AND_OP equality_expression
 {
-	if((($1)->astType == DataType(DataType::Int) || ($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int) || ($3)->astType == DataType(DataType::Float))){
+//	if((($1)->astType == DataType(DataType::Int) || ($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int) || ($3)->astType == DataType(DataType::Float))){
+//		$$ = new bopAST("AND", $1, $3);
+//	}
+	if((($1)->astType == DataType(DataType::Int)) && (($3)->astType == DataType(DataType::Int))){
 		$$ = new bopAST("AND", $1, $3);
-		($$)->astType = DataType(DataType::Int);
+	}
+	else if((($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Float))){
+		$$ = new bopAST("AND_FLOAT", $1, $3);
+	}
+	else if((($1)->astType == DataType(DataType::Int)) && (($3)->astType == DataType(DataType::Float))){
+		abstractAST *temp = new castAST("TO_FLOAT", $1);
+		temp->astType = DataType(DataType::Float);
+		$$ = new bopAST("AND_FLOAT", temp, $3);
+	}
+	else if((($1)->astType == DataType(DataType::Float)) && (($3)->astType == DataType(DataType::Int))){
+		abstractAST *temp = new castAST("TO_FLOAT", $3);
+		temp->astType = DataType(DataType::Float);
+		$$ = new bopAST("AND_FLOAT", temp, $3);
 	}
 	else{
 		std::cerr << "Line no " << lineNo << ":\tInvalid types for AND operator\n";// << $1 << " undefined\n";
 		std::exit(1);
 	}
+	($$)->astType = DataType(DataType::Int);
 }
 	;
 

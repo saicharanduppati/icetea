@@ -1,7 +1,13 @@
-int main(int al, int bl){
+int f(int c){
+	int a;
+	a = c;
+	return a;
+}
+
+int main(){
 	int b;
-	for(b = 7;b > 3;b = b - 1){
-		b = b - 1;
-	}
+	b = 10;
+	f(b);
+	printf("the value of b is ", b, "\n");
 	return 0;
 }
