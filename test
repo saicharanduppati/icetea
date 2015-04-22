@@ -1,4 +1,4 @@
-int f(int c){
+int f(int c, int al){
 	int a;
 	a = c;
 	return a;
@@ -7,7 +7,6 @@ int f(int c){
 int main(){
 	int b;
 	b = 10;
-	f(b);
-	printf("the value of b is ", b, "\n");
+	printf("the value of f(b) is ", f(b, 7), "\n");
 	return 0;
 }

@@ -443,26 +443,40 @@ std::string funcAST::actual_code(){
 	else if(*((*globalTable)[name]->dataType) == DataType(DataType::Int)){
 		codeFile << "\tpushi(0);\n";
 	}
-	for(std::list <abstractAST*>::reverse_iterator it = first.rbegin();it != first.rend();it++){
+	int space = 0;
+	for(std::list <abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
+		space += (*it)->astType.size();
+	}
+	codeFile << "\taddi(" << -space << ", esp);\n";
+	for(std::list <abstractAST*>::iterator it = first.begin();it != first.end();it++){
 		intAST* a = dynamic_cast<intAST*>(*it);
 		if(a != NULL){
-			codeFile << "\tpushi(" << a->getVal() << ");\n";
+//			codeFile << "\tpushi(" << a->getVal() << ");\n";
+			codeFile << "\tstorei(" << a->getVal() << ", ind(esp));\n";
+			codeFile << "\taddi(" << a->astType.size() << ", esp);\n";
 			continue;
 		}	
 		floatAST* b = dynamic_cast<floatAST*>(*it);
 		if(b != NULL){
-			codeFile << "\tpushf(" << b->getVal() << ");\n";
+			codeFile << "\tstoref(" << b->getVal() << ", ind(esp));\n";
+			codeFile << "\taddi(" << b->astType.size() << ", esp);\n";
+			//codeFile << "\tpushf(" << b->getVal() << ");\n";
 			continue;
 		}	
 		(*it)->actual_code();
 		if((*it)->astType == DataType(DataType::Float)){
-			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
+//			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
+			codeFile << "\tstoref(" << reg_name((*it)->reg) << ", ind(esp));\n";
+			codeFile << "\taddi(" << (*it)->astType.size() << ", esp);\n";
 		}
 		else if((*it)->astType == DataType(DataType::Int)){
-			codeFile << "\tpushi(" << reg_name((*it)->reg) << ");\n";
+			//codeFile << "\tpushi(" << reg_name((*it)->reg) << ");\n";
+			codeFile << "\tstorei(" << reg_name((*it)->reg) << ", ind(esp));\n";
+			codeFile << "\taddi(" << (*it)->astType.size() << ", esp);\n";
 		}
 		reset_regs();
 	}
+	codeFile << "\taddi(" << -space << ", esp);\n";
 	codeFile << "\t" << name.substr(0,name.find_first_of("#")) << "();\n";
 	std::string params = name.substr(name.find_first_of("#"));
 	for(int i=params.size()-1;i > 0 ; i--){ //this is just parameter popping.
