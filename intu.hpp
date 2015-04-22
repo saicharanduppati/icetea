@@ -108,12 +108,14 @@ class abstractAST{
 		std::vector<int* > nextlist;
 		DataType astType;
 		virtual std::string get_name(){};
+		bool hasAssignment;
 	protected:
 		virtual void setType(DataType) = 0;
 	private:
 //		typeExp astnode_type;
 };
 
+void bopGenCodeHelper(abstractAST* , abstractAST* );
 
 class castAST : public abstractAST{
 	public:
@@ -141,6 +143,7 @@ class castAST : public abstractAST{
 		castAST(std::string a, abstractAST *pointer){
 			castType = a;
 			first = pointer;
+			hasAssignment = first->hasAssignment;
 		}
 		virtual void generate_label(){
 			first->generate_label();
@@ -277,6 +280,7 @@ class assAST : public stmtAST{
 		assAST(abstractAST *a, abstractAST *b){
 			first = a;
 			second = b;
+			hasAssignment = true;
 /*			nextlabel = new int;
 			(*newlabel) = -1;
 			nextlist.push_back(nextlabel);
@@ -464,7 +468,6 @@ class forAST : public stmtAST{
 
 class bopAST : public expAST{
 	public:
-//		enum boperator {};
 		virtual void print(std::string format = "");
 		virtual std::string generate_code() {
 			generate_label();
@@ -476,56 +479,13 @@ class bopAST : public expAST{
 		virtual std::string actual_code(){
 			std::cout << "Im into this thing\n";
 			std::cout.flush();
+			if(first->hasAssignment && (!second->hasAssignment)){
+			}
 			if(first->label > second->label){
-				first->actual_code();
-				if(first->label >= NO_REGS){
-					if(first->astType == DataType(DataType::Float)){
-						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
-					}	
-					if(first->astType == DataType(DataType::Int)){
-						codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ", ind(esp));\n";
-					}
-					avail_regs[first->reg] = true;
-				}
-				second->actual_code();	
-				if(first->label >= NO_REGS){
-					first->reg = find_reg();
-					if(first->astType == DataType(DataType::Float)){
-//						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
-						codeFile << "\tloadf(ind(esp), " << reg_name(first->reg) << ");\n\tpopf(1);\n";
-					}	
-					if(first->astType == DataType(DataType::Int)){
-//						codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ", ind(esp));\n";
-						codeFile << "\tloadi(ind(esp), " << reg_name(first->reg) << ");\n\tpopi(1);\n";
-					}
-//					avail_regs[first->reg] = true;
-				}
+				bopGenCodeHelper(first, second);
 			}
 			else{
-				second->actual_code();
-			std::cout << "Nothing is second\n";
-			std::cout.flush();
-				if(second->label >= NO_REGS){
-					if(second->astType == DataType(DataType::Float)){
-						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(second->reg) << ", ind(esp));\n";
-					}	
-					if(second->astType == DataType(DataType::Int)){
-						codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ", ind(esp));\n";
-					}
-					avail_regs[second->reg] = true;
-				}
-				first->actual_code();	
-				std::cout << "std is bad\n";
-				std::cout.flush();
-				if(second->label >= NO_REGS){
-					second->reg = find_reg();
-					if(second->astType == DataType(DataType::Float)){
-						codeFile << "\tloadf(ind(esp), " << reg_name(second->reg) << ");\n\tpopf(1);\n";
-					}	
-					if(second->astType == DataType(DataType::Int)){
-						codeFile << "\tloadi(ind(esp), " << reg_name(second->reg) << ");\n\tpopi(1);\n";
-					}
-				}
+				bopGenCodeHelper(second, first);
 			}
 			if(op == "PLUS"){
 				codeFile << "\taddi(" << reg_name(second->reg) << ", " << reg_name(first->reg) << ");\n";
@@ -723,6 +683,7 @@ class bopAST : public expAST{
 			first = b;
 			second = c;
 			label = 1;
+			hasAssignment = first->hasAssignment || second->hasAssignment;
 		}
 		virtual void generate_label();
 //			label_manager(this, first,second);
@@ -779,6 +740,8 @@ class uopAST : public expAST{
 		uopAST(std::string a, abstractAST *b){
 			op = a;
 			first = b;
+			hasAssignment = first->hasAssignment;
+			if(op == "PP") hasAssignment = true;
 		}
 		virtual void generate_label(){
 			first->generate_label();
@@ -807,6 +770,11 @@ class funcAST : public expAST{
 		funcAST(std::string a, std::list<abstractAST*> b){
 			name = a;
 			first = b;
+			hasAssignment = false;
+			for(std::list<abstractAST*>::iterator iter = first.begin(); iter != first.end(); iter++){
+				hasAssignment = (*iter)->hasAssignment;
+				if(hasAssignment) break;
+			}
 		}
 		virtual void generate_label(){
 			this->label = 1;
@@ -836,6 +804,7 @@ class floatAST : public expAST{
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		floatAST(std::string a){
+			hasAssignment = false;
 			first = a;
 		}
 		virtual float getVal(){
@@ -869,6 +838,7 @@ class intAST : public expAST{
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		intAST(std::string a){
+			hasAssignment = false;
 			first = a;
 		}
 		virtual float getVal(){
@@ -894,6 +864,7 @@ class stringAST : public expAST{
 		};
 		virtual bool checkTypeofAST() {};
 		stringAST(std::string a){
+			hasAssignment = false;
 			first = a;
 		}
 		std::string first;
@@ -940,6 +911,7 @@ class identifierAST : public arrayrefAST{
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		identifierAST(std::string a){
+			hasAssignment = false;
 			first = a;
 //			truelabel = new int;
 //			falselabel = new int;
@@ -998,6 +970,7 @@ class indexAST : public arrayrefAST{
 //			a->astType.print(std::cout);
 			first = a;
 			second = b;
+			hasAssignment = first->hasAssignment || second->hasAssignment;
 //			std::cout << "later inside --> ";
 //			a->astType.print(std::cout);
 		}

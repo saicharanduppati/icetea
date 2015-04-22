@@ -557,3 +557,32 @@ std::string funcStmtAST::actual_code(){
 	}
 	return "";
 }	
+
+
+
+
+void bopGenCodeHelper(abstractAST* first, abstractAST* second){
+	first->actual_code();
+	if(first->label >= NO_REGS){
+		if(first->astType == DataType(DataType::Float)){
+			codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
+		}	
+		if(first->astType == DataType(DataType::Int)){
+			codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ", ind(esp));\n";
+		}
+		avail_regs[first->reg] = true;
+	}
+	second->actual_code();	
+	if(first->label >= NO_REGS){
+		first->reg = find_reg();
+		if(first->astType == DataType(DataType::Float)){
+//						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
+			codeFile << "\tloadf(ind(esp), " << reg_name(first->reg) << ");\n\tpopf(1);\n";
+		}	
+		if(first->astType == DataType(DataType::Int)){
+//						codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ", ind(esp));\n";
+			codeFile << "\tloadi(ind(esp), " << reg_name(first->reg) << ");\n\tpopi(1);\n";
+		}
+//					avail_regs[first->reg] = true;
+	}
+}

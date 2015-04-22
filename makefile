@@ -22,3 +22,4 @@ Scannerbase.h: lex.l
 
 clean:
 	rm -f junk parser lex.cc parse.cc Parserbase.h Parser* Scanner*
+	cd ./machine;make clean;cd ..

@@ -302,7 +302,7 @@ protected:
 		cout << (char*) reg;
 	}
 
-	void print_string(char* val) {
+	void print_string(const char* val) {
 		cout << val;
 	}
 
