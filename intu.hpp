@@ -946,23 +946,19 @@ class indexAST : public arrayrefAST{
 		};
 		virtual std::string actual_code(){
 			std::cout <<  std::endl;
-			level++;
 			first->generate_code();
-			level--;
 			second->generate_code();
 			reg = first->reg;
 			codeFile << "\tmuli(" << -((first->astType).arrayType)->size() << "," << reg_name(second->reg) << ");\n";
 			codeFile << "\taddi(" << reg_name(second->reg)  << "," << reg_name(first->reg) << ");\n";
 			avail_regs[second->reg] = true;
-			if(level == 0){
-				if(astType.basetype == 0){
-					codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
-					codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
-				}
-				else if(astType.basetype == 1){
-					codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
-					codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
-				}
+			if(astType.basetype == 0){
+				codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
+				codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
+			}
+			else if(astType.basetype == 1){
+				codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
+				codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
 			}
 			return "";
 		}

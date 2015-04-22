@@ -45,9 +45,7 @@ function_definition:
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
 	int maxOffset = 0;
 	for(std::map<std::string, SymbolTableEntry*>::iterator it = currentTable->begin(); it != currentTable->end(); it++){
-		if(it->second->offset > maxOffset){
-			maxOffset = it->second->offset;
-		}
+		maxOffset += it->second->dataType->size();
 	}
 	codeFile << "\taddi(" << -maxOffset << ", esp);\n";
 	reset_regs();
@@ -305,6 +303,7 @@ statement:
 		$$ = new funcStmtAST($1 + "#" + returned, $3);
 		($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
+	((stmtAST*) $$)->hasReturn = false;
 }	;
 
 

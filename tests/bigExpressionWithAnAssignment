@@ -1,0 +1,12 @@
+int f(int c){
+	printf("I got ", c, "\n");
+	return c;
+}
+
+int main(){
+	int a;
+	int b;
+	a = 4;
+	b = (a = 3) + ((((a * a) + (a * a)) + ((a * a) + (a * a))) * (((a * a) + (a * a)) + ((a * a) + (a * a))));
+	printf("value of b is ", b, "\n");
+}

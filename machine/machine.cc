@@ -300,10 +300,12 @@ protected:
 	void print_string(Reg r) {
 		char* reg = getReg(r);
 		cout << (char*) reg;
+		cout.flush();
 	}
 
 	void print_string(const char* val) {
 		cout << val;
+		cout.flush();
 	}
 
 	CMachineBase() {
