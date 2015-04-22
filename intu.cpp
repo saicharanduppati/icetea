@@ -15,7 +15,7 @@ bool avail_regs[NO_REGS];
 int lineNo = 1;
 int level = 0;
 std::string suffixString = "";
-
+int index_left= 1;
 
 bool  pairComparator(std::pair<int, DataType> a, std::pair<int, DataType> b){
 	return a.first < b.first;

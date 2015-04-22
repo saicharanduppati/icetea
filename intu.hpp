@@ -22,6 +22,8 @@ int find_reg();
 extern bool avail_regs[NO_REGS];
 extern int glabel;
 extern int level;
+extern int index_left;
+ 
 struct DataType{
 	enum Kind{
 		Base, Array, Error, Ok
@@ -255,9 +257,9 @@ class assAST : public stmtAST{
 				codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 			}
 			else{
-				level++;
+				index_left = 0;
 				first->actual_code();
-				level--;
+				index_left = 1;
 				codeFile << "\taddi(ebp, " << reg_name(first->reg) << ");\n";
 				if((first->astType).basetype == 0){
 					codeFile << "\tstorei(" << reg_name(reg) << ",ind(" << reg_name(first->reg) << "));\n";
@@ -960,19 +962,23 @@ class indexAST : public arrayrefAST{
 		};
 		virtual std::string actual_code(){
 			std::cout <<  std::endl;
+			index_left++;
 			first->generate_code();
 			second->generate_code();
+			index_left--;
 			reg = first->reg;
 			codeFile << "\tmuli(" << -((first->astType).arrayType)->size() << "," << reg_name(second->reg) << ");\n";
 			codeFile << "\taddi(" << reg_name(second->reg)  << "," << reg_name(first->reg) << ");\n";
 			avail_regs[second->reg] = true;
-			if(astType.basetype == 0){
-				codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
-				codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
-			}
-			else if(astType.basetype == 1){
-				codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
-				codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
+			if(index_left!=0){
+				if(astType.basetype == 0){
+					codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
+					codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
+				}
+				else if(astType.basetype == 1){
+					codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
+					codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
+				}
 			}
 			return "";
 		}
