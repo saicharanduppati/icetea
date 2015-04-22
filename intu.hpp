@@ -726,7 +726,7 @@ class uopAST : public expAST{
 				}
 				
 			}
-			if(op == "UMINUS"){
+			else if(op == "UMINUS"){
 				if(first->astType == DataType(DataType::Int)){
 					codeFile << "\tmuli(-1," << reg_name(reg) << ");\n";
 //					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
@@ -736,8 +736,22 @@ class uopAST : public expAST{
 //					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 				}
 			}	
+			else if(op == "NOT"){
+				if(first->astType == DataType(DataType::Int)){
+					codeFile << "\tcmpi(0, " << reg_name(reg) << ");\n";
+				}
+				else if(first->astType == DataType(DataType::Float)){
+					codeFile << "\tcmpf(0, " << reg_name(reg) << ");\n";
+				}
+				int zeroLabel = glabel++;
+				codeFile << "\tje(L" << zeroLabel << ");\n";
+				int exitLabel = glabel++;
+				codeFile << "\tmove(0, " << reg_name(reg) << ");\n\tj(L" << exitLabel << ");\n";
+				codeFile << "L" << zeroLabel << ":\n";
+				codeFile << "\tmove(1, " << reg_name(reg) << ");\n";
+				codeFile << "L" << exitLabel << ":\n";
+			}
 			return "";
-
 			//TODO : what if the op is not
 		}
 

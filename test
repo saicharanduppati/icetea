@@ -5,7 +5,13 @@ int f(int c, int d, int e){
 
 int main(){
 	int a;
+	int b;
+	int c;
 	a = 4;
-	a = f(a = 3, a, a = 5);
+	b = a++;
+	a = f(a, a++, a = 5);
+	printf("value of b is ", b = 0, "\n");
+	c = !b;
+	printf("value of c is ", c, "\n");
 	return 0;
 }
