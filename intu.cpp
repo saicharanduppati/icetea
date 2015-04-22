@@ -563,7 +563,7 @@ std::string funcStmtAST::actual_code(){
 
 void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 	first->actual_code();
-	if(first->label >= NO_REGS){
+	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		if(first->astType == DataType(DataType::Float)){
 			codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
 		}	
@@ -573,7 +573,7 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 		avail_regs[first->reg] = true;
 	}
 	second->actual_code();	
-	if(first->label >= NO_REGS){
+	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		first->reg = find_reg();
 		if(first->astType == DataType(DataType::Float)){
 //						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";

@@ -479,13 +479,19 @@ class bopAST : public expAST{
 		virtual std::string actual_code(){
 			std::cout << "Im into this thing\n";
 			std::cout.flush();
-			if(first->hasAssignment && (!second->hasAssignment)){
-			}
-			if(first->label > second->label){
+			if(first->hasAssignment){
 				bopGenCodeHelper(first, second);
 			}
-			else{
+			else if(second->hasAssignment){
 				bopGenCodeHelper(second, first);
+			}
+			else{
+				if(first->label > second->label){
+					bopGenCodeHelper(first, second);
+				}
+				else{
+					bopGenCodeHelper(second, first);
+				}
 			}
 			if(op == "PLUS"){
 				codeFile << "\taddi(" << reg_name(second->reg) << ", " << reg_name(first->reg) << ");\n";
