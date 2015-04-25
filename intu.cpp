@@ -14,9 +14,8 @@ int glabel = 0;
 bool avail_regs[NO_REGS];
 int reg_type[NO_REGS];
 int lineNo = 1;
-int level = 0;
 std::string suffixString = "";
-int index_left= 1;
+bool loadkaru;
 
 bool  pairComparator(std::pair<int, DataType> a, std::pair<int, DataType> b){
 	return a.first < b.first;
@@ -423,6 +422,7 @@ void assAST::generate_label(){
 
 
 std::string funcAST::actual_code(){
+	loadkaru = true;
 	if(name == "printf"){
 		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
 			stringAST *a = dynamic_cast<stringAST*>(*it);
@@ -535,6 +535,7 @@ std::string funcAST::actual_code(){
 
 
 std::string funcStmtAST::actual_code(){
+	loadkaru = true;
 	if(name == "printf"){
 		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
 			stringAST *a = dynamic_cast<stringAST*>(*it);
@@ -621,6 +622,7 @@ std::string funcStmtAST::actual_code(){
 
 void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 	first->actual_code();
+	int ftr = reg_type[first->reg];
 	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		if(first->astType == DataType(DataType::Float)){
 			codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
@@ -630,9 +632,12 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 		}
 		avail_regs[first->reg] = true;
 	}
+	//reset_regs();
+	avail_regs[first->reg] = false;
 	second->actual_code();	
 	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		first->reg = find_reg();
+		reg_type[first->reg] = ftr;
 		if(first->astType == DataType(DataType::Float)){
 //						codeFile << "\tpushf(1);\n\tstoref(" << reg_name(first->reg) << ", ind(esp));\n";
 			codeFile << "\tloadf(ind(esp), " << reg_name(first->reg) << ");\n\tpopf(1);\n";

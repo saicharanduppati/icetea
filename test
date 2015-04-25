@@ -1,6 +1,8 @@
 int main(){
 	int a[5][4];
-	a[0 + 0][3] = (((0 + 0)+ (0 + 0)) * ((0 + 0)+ (0 + 0))) + (((0 + 0)+ (0 + 0)) * ((0 + 0)+ (0 + 0)));
-	printf("value of a[0] is ", a[0][3],"\n");
+	printf("i am good\n");
+	a[0+0][1+0+1] = 1 + 1;
+	printf("i am good\n");
+	printf("value of a[0][2] is ", a[0][2],"\n");
 	return 0;
 }
