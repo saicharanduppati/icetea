@@ -22,9 +22,7 @@ int find_reg();
 extern bool avail_regs[NO_REGS];
 extern int reg_type[NO_REGS];
 extern int glabel;
-extern int level;
-extern int index_left;
- 
+extern bool loadkaru; 
 struct DataType{
 	enum Kind{
 		Base, Array, Error, Ok
@@ -253,11 +251,17 @@ class assAST : public stmtAST{
 		}
 		virtual std::string actual_code(){
 			if(first->label > second->label){
+				std::cout << "assignment cas1\n";
+				std::cout.flush();
+				loadkaru = false;
 				first->actual_code();
+				//reset_regs();
+				avail_regs[first->reg] = false;
 				if(second->label > NO_REGS){
 					int tfr = reg_type[first->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
 					avail_regs[first->reg] = true;
+					loadkaru = true;
 					second->actual_code();
 					first->reg = find_reg();
 					reg_type[first->reg] = tfr;
@@ -269,11 +273,18 @@ class assAST : public stmtAST{
 				
 			}
 			else{
+				std::cout << "assignment cas2\n";
+				std::cout.flush();
+				loadkaru = true;
 				second->actual_code();
+				//reset_regs();
+				avail_regs[second->reg] = false;
+//				codeFile << "heyhethethehthethehth\n";
 				if(first->label > NO_REGS){
 					int tfr = reg_type[second->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";
 					avail_regs[second->reg] = true;
+					loadkaru = false;
 					first->actual_code();
 					second->reg = find_reg();
 					reg_type[second->reg] = tfr;
@@ -291,9 +302,6 @@ class assAST : public stmtAST{
 				codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 			}
 			else{
-				index_left = 0;
-				first->actual_code();
-				index_left = 1;
 				codeFile << "\taddi(ebp, " << reg_name(first->reg) << ");\n";
 				if((first->astType).basetype == 0){
 					codeFile << "\tstorei(" << reg_name(reg) << ",ind(" << reg_name(first->reg) << "));\n";
@@ -303,7 +311,7 @@ class assAST : public stmtAST{
 				}
 				avail_regs[first->reg] = true;
 			}
-			reset_regs();
+			reset_regs();                  //------> beware of this
 			return "";
 		}
 		virtual void generate_label();
@@ -427,7 +435,7 @@ class returnAST : public stmtAST{
 			}
 			if(functionName + "#" + suffixString != "main#"){//return value must not be placed for function main(), for others, it has to be placed.
 				if(first->astType == DataType(DataType::Int)){
-					std::cout << "minOffset is " << minOffset << " and width is " << width << std::endl;
+//					std::cout << "minOffset is " << minOffset << " and width is " << width << std::endl;
 					codeFile << "\tstorei(" << reg_name(first->reg) << ", ind(ebp, " << -minOffset + width << "));\n";
 				}
 				if(first->astType == DataType(DataType::Float)){
@@ -503,14 +511,15 @@ class bopAST : public expAST{
 		virtual void print(std::string format = "");
 		virtual std::string generate_code() {
 			generate_label();
-			std::cout << "labels ready mein Fuhrer\n";
-			std::cout.flush();
+//			std::cout << "labels ready mein Fuhrer\n";
+//			std::cout.flush();
 			actual_code();
 			return "";
 		};
 		virtual std::string actual_code(){
-			std::cout << "Im into this thing\n";
-			std::cout.flush();
+//			std::cout << "Im into this thing\n";
+//			std::cout.flush();
+			loadkaru = true;
 			if(first->hasAssignment){
 				bopGenCodeHelper(first, second);
 			}
@@ -706,7 +715,7 @@ class bopAST : public expAST{
 
 //			else if(op == "EQ_OP_FLOAT")
 			else{
-				std::cout << "how is this case possible?\n" ;
+//				std::cout << "how is this case possible?\n" ;
 			}
 			reg = first->reg;
 			avail_regs[second->reg] = true;
@@ -745,6 +754,7 @@ class uopAST : public expAST{
 			return "";
 		}
 		virtual std::string actual_code(){
+			loadkaru = true;
 			first->actual_code();
 			reg = first->reg;
 			if(op == "PP"){
@@ -830,7 +840,7 @@ class funcAST : public expAST{
 		}
 		virtual void generate_label(){
 			this->label = 1;
-			std::cout << "label of func is " << label << std::endl;
+//			std::cout << "label of func is " << label << std::endl;
 		}
 	protected:
 		virtual void setType(DataType) {};
@@ -865,7 +875,7 @@ class floatAST : public expAST{
 		}
 		virtual void generate_label(){
 			label = 1;
-			std::cout << "label of float is " << label << std::endl;
+//			std::cout << "label of float is " << label << std::endl;
 		}
 
 	protected:
@@ -993,61 +1003,64 @@ class indexAST : public arrayrefAST{
 		virtual void print(std::string format = "");
 		virtual std::string generate_code() {
 			generate_label();
-			std::cout << "labels ready mein Fuhrer for indexAST\n";
-			std::cout.flush();
+//			std::cout << "labels ready mein Fuhrer for indexAST\n";
+//			std::cout.flush();
 			actual_code();
 			return "";
 		};
 		virtual std::string actual_code(){
-			std::cout <<  std::endl;
-			index_left++;
-	  //	if(first->hasAssignment){
-	//	if(first->label >= NO_REGISTERS)first->generate_code();
-	//	second->generate_code();
-	//}
-	//else if(second->hasAssignment){
-	//	second->generate_code();
-	//	first->generate_code();
-	//}
-	//else{
+			bool loadkarucopy = loadkaru;
 			if(first->label > second->label){
+				std::cout << "index cas1\n";
+				std::cout.flush();
+				loadkaru = false;
 				first->actual_code();
-				if(second->label > NO_REGS){
+		//		reset_regs();
+				avail_regs[first->reg] = false;
+				if(second->label >= NO_REGS){
 					int tfr = reg_type[first->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
 					avail_regs[first->reg] = true;
+					loadkaru = true;
 					second->actual_code();
 					first->reg = find_reg();
 					reg_type[first->reg] = tfr;
 					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
+					loadkaru = true;
 					second->actual_code();
 				}
 				
 			}
 			else{
+				std::cout << "index cas2\n";
+				std::cout.flush();
+				loadkaru = true;
 				second->actual_code();
-				if(first->label > NO_REGS){
+		//		reset_regs();
+				avail_regs[second->reg] = false;
+				if(first->label >= NO_REGS){
 					int tfr = reg_type[second->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";
 					avail_regs[second->reg] = true;
+					loadkaru = false;
 					first->actual_code();
 					second->reg = find_reg();
 					reg_type[second->reg] = tfr;
 					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
+					loadkaru = false;
 					first->actual_code();
 				}
 			}
 	//}
-			index_left--;
 			reg = first->reg;
 			codeFile << "\tmuli(" << -((first->astType).arrayType)->size() << "," << reg_name(second->reg) << ");\n";
 			codeFile << "\taddi(" << reg_name(second->reg)  << "," << reg_name(first->reg) << ");\n";
 			avail_regs[second->reg] = true;
-			if(index_left!=0){
+			if(loadkarucopy){
 				if(astType.basetype == 0){
 					codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
 					codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
