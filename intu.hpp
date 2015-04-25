@@ -256,8 +256,8 @@ class assAST : public stmtAST{
 				loadkaru = false;
 				first->actual_code();
 				//reset_regs();
-				avail_regs[first->reg] = false;
-				if(second->label > NO_REGS){
+				//avail_regs[first->reg] = false;
+				if(second->label >= NO_REGS){
 					int tfr = reg_type[first->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
 					avail_regs[first->reg] = true;
@@ -268,6 +268,7 @@ class assAST : public stmtAST{
 					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
+					loadkaru = true;
 					second->actual_code();
 				}
 				
@@ -277,10 +278,11 @@ class assAST : public stmtAST{
 				std::cout.flush();
 				loadkaru = true;
 				second->actual_code();
+				std::cout << "returned from second" << std::endl;
 				//reset_regs();
-				avail_regs[second->reg] = false;
+		//		avail_regs[second->reg] = false;
 //				codeFile << "heyhethethehthethehth\n";
-				if(first->label > NO_REGS){
+				if(first->label >= NO_REGS){
 					int tfr = reg_type[second->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";
 					avail_regs[second->reg] = true;
@@ -291,6 +293,7 @@ class assAST : public stmtAST{
 					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
+					loadkaru = false;
 					first->actual_code();
 				}
 			}
@@ -753,49 +756,7 @@ class uopAST : public expAST{
 			actual_code();
 			return "";
 		}
-		virtual std::string actual_code(){
-			loadkaru = true;
-			first->actual_code();
-			reg = first->reg;
-			if(op == "PP"){
-				if(first->astType == DataType(DataType::Int)){
-					codeFile << "\taddi(1,"	<< reg_name(reg) << ");\n";
-					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
-				}
-				else{
-					codeFile << "\taddf(1," << reg_name(reg) << ");\n";
-					codeFile << "\tstorefi(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
-				}
-				
-			}
-			else if(op == "UMINUS"){
-				if(first->astType == DataType(DataType::Int)){
-					codeFile << "\tmuli(-1," << reg_name(reg) << ");\n";
-//					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
-				}
-				else{
-					codeFile << "\tmulf(-1," << reg_name(reg) << ");\n";
-//					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
-				}
-			}	
-			else if(op == "NOT"){
-				if(first->astType == DataType(DataType::Int)){
-					codeFile << "\tcmpi(0, " << reg_name(reg) << ");\n";
-				}
-				else if(first->astType == DataType(DataType::Float)){
-					codeFile << "\tcmpf(0, " << reg_name(reg) << ");\n";
-				}
-				int zeroLabel = glabel++;
-				codeFile << "\tje(L" << zeroLabel << ");\n";
-				int exitLabel = glabel++;
-				codeFile << "\tmove(0, " << reg_name(reg) << ");\n\tj(L" << exitLabel << ");\n";
-				codeFile << "L" << zeroLabel << ":\n";
-				codeFile << "\tmove(1, " << reg_name(reg) << ");\n";
-				codeFile << "L" << exitLabel << ":\n";
-			}
-			return "";
-			//TODO : what if the op is not
-		}
+		virtual std::string actual_code();
 
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
@@ -1016,7 +977,7 @@ class indexAST : public arrayrefAST{
 				loadkaru = false;
 				first->actual_code();
 		//		reset_regs();
-				avail_regs[first->reg] = false;
+				//avail_regs[first->reg] = false;
 				if(second->label >= NO_REGS){
 					int tfr = reg_type[first->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
@@ -1039,7 +1000,7 @@ class indexAST : public arrayrefAST{
 				loadkaru = true;
 				second->actual_code();
 		//		reset_regs();
-				avail_regs[second->reg] = false;
+				//avail_regs[second->reg] = false;
 				if(first->label >= NO_REGS){
 					int tfr = reg_type[second->reg];
 					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";

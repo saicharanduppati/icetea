@@ -68,6 +68,8 @@ int find_reg(){
 			return i;
 		}
 	}
+	std::cout << "NO REGISTERS AVAILABLE SCREEEEEEEEEEEEECCCCHHHHHH" << std::endl;
+	exit(-1);
 	return -1;
 }
 void label_manager(abstractAST* p, abstractAST* c1, abstractAST* c2){
@@ -633,7 +635,7 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 		avail_regs[first->reg] = true;
 	}
 	//reset_regs();
-	avail_regs[first->reg] = false;
+	//	avail_regs[first->reg] = false;
 	second->actual_code();	
 	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		first->reg = find_reg();
@@ -648,4 +650,92 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 		}
 //					avail_regs[first->reg] = true;
 	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+std::string uopAST::actual_code(){
+	loadkaru = true;
+	if(op == "PP"){
+		indexAST* temp = dynamic_cast<indexAST*>(first);
+		if(temp == NULL){
+			loadkaru = true;
+			first->actual_code();
+			reg = first->reg;
+			if(first->astType == DataType(DataType::Int)){
+				codeFile << "\taddi(1,"	<< reg_name(reg) << ");\n";
+				codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+			}
+			else if(first->astType == DataType(DataType::Float)){
+				codeFile << "\taddf(1," << reg_name(reg) << ");\n";
+				codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+			}
+		}
+		else{
+			loadkaru = false;
+			first->actual_code();
+			reg = first->reg;
+//			codeFile << "\tmuli(-1, " << reg_name(reg) << ");\n";
+			codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
+			if(first->astType == DataType(DataType::Int)){
+				int temp_reg = find_reg();
+				codeFile << "\tloadi(ind(" << reg_name(reg) << ")," << reg_name(temp_reg) <<");\n";
+				codeFile << "\taddi(1, " << reg_name(temp_reg) << ");\n";
+				codeFile << "\tstorei(" << reg_name(temp_reg) << ", ind(" << reg_name(reg) << "));\n";
+				codeFile << "\tmove(" << reg_name(temp_reg) << ", " << reg_name(reg) << ");\n";
+				avail_regs[temp_reg] = true;
+			}
+			if(first->astType == DataType(DataType::Float)){
+				int temp_reg = find_reg();
+				codeFile << "\tloadf(ind(" << reg_name(reg) << ")," << reg_name(temp_reg) <<");\n";
+				codeFile << "\taddi(1, " << reg_name(temp_reg) << ");\n";
+				codeFile << "\tstoref(" << reg_name(temp_reg) << ", ind(" << reg_name(reg) << "));\n";
+				codeFile << "\tmove(" << reg_name(temp_reg) << ", " << reg_name(reg) << ");\n";
+				avail_regs[temp_reg] = true;
+			}
+		}
+	}
+
+	else if(op == "UMINUS"){
+			first->actual_code();
+			reg = first->reg;
+
+		if(first->astType == DataType(DataType::Int)){
+			codeFile << "\tmuli(-1," << reg_name(reg) << ");\n";
+//					codeFile << "\tstorei(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+		}
+		else{
+			codeFile << "\tmulf(-1," << reg_name(reg) << ");\n";
+//					codeFile << "\tstoref(" << reg_name(reg) << ",ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
+		}
+	}	
+	else if(op == "NOT"){
+			first->actual_code();
+			reg = first->reg;
+		if(first->astType == DataType(DataType::Int)){
+			codeFile << "\tcmpi(0, " << reg_name(reg) << ");\n";
+		}
+		else if(first->astType == DataType(DataType::Float)){
+			codeFile << "\tcmpf(0, " << reg_name(reg) << ");\n";
+		}
+		int zeroLabel = glabel++;
+		codeFile << "\tje(L" << zeroLabel << ");\n";
+		int exitLabel = glabel++;
+		codeFile << "\tmove(0, " << reg_name(reg) << ");\n\tj(L" << exitLabel << ");\n";
+		codeFile << "L" << zeroLabel << ":\n";
+		codeFile << "\tmove(1, " << reg_name(reg) << ");\n";
+		codeFile << "L" << exitLabel << ":\n";
+	}
+	return "";
+	//TODO : what if the op is not
 }
