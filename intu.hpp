@@ -20,6 +20,7 @@ void backpatch(std::vector<int*>, int);
 void reset_regs();
 int find_reg();
 extern bool avail_regs[NO_REGS];
+extern int reg_type[NO_REGS];
 extern int glabel;
 extern int level;
 extern int index_left;
@@ -132,9 +133,12 @@ class castAST : public abstractAST{
 			reg = first->reg;
 			if(castType == "TO_FLOAT"){
 				codeFile << "\tintTofloat(" << reg_name(reg) << ");\n";
+				reg_type[reg] = 2;	
 			}
 			else{
 				codeFile << "\tfloatToint(" << reg_name(reg) << ");\n";
+				reg_type[reg] = 1;
+
 			}
 			return "";
 		} 
@@ -248,7 +252,37 @@ class assAST : public stmtAST{
 			return "";
 		}
 		virtual std::string actual_code(){
-			second->actual_code();
+			if(first->label > second->label){
+				first->actual_code();
+				if(second->label > NO_REGS){
+					int tfr = reg_type[first->reg];
+					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
+					avail_regs[first->reg] = true;
+					second->actual_code();
+					first->reg = find_reg();
+					reg_type[first->reg] = tfr;
+					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
+				}
+				else{
+					second->actual_code();
+				}
+				
+			}
+			else{
+				second->actual_code();
+				if(first->label > NO_REGS){
+					int tfr = reg_type[second->reg];
+					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";
+					avail_regs[second->reg] = true;
+					first->actual_code();
+					second->reg = find_reg();
+					reg_type[second->reg] = tfr;
+					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
+				}
+				else{
+					first->actual_code();
+				}
+			}
 			reg = second->reg;
 			if(*((*currentTable)[first->get_name()]->dataType) == DataType(DataType::Int)){
 				codeFile << "\tstorei(" << reg_name(reg) << ", ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
@@ -272,11 +306,7 @@ class assAST : public stmtAST{
 			reset_regs();
 			return "";
 		}
-		virtual void generate_label(){
-			second->generate_label();
-			label = second->label;
-			std::cout << "the label of assignment is " << label << std::endl;
-		}
+		virtual void generate_label();
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		assAST(abstractAST *a, abstractAST *b){
@@ -820,6 +850,7 @@ class floatAST : public expAST{
 		};
 		virtual std::string actual_code(){
 			reg = find_reg();
+			reg_type[reg] = 2;
 			codeFile << "\tmove(" << getVal() << ", " << reg_name(reg) << ");\n";
 			return "";
 		}
@@ -854,6 +885,7 @@ class intAST : public expAST{
 		};
 		virtual std::string actual_code(){
 			reg = find_reg();
+			reg_type[reg] = 1;
 			codeFile << "\tmove(" << getVal() << ", " << reg_name(reg) << ");\n";
 			return "";
 		}
@@ -921,12 +953,15 @@ class identifierAST : public arrayrefAST{
 			reg = find_reg();
 			if(*((*currentTable)[first]->dataType) == DataType(DataType::Float)){
 				codeFile << "\tloadf(ind(ebp, " << -(*currentTable)[first]->offset << "), " << reg_name(reg) << ");\n";
+				reg_type[reg] = 2;
 			}
 			else if(*((*currentTable)[first]->dataType) == DataType(DataType::Int)){
 				codeFile << "\tloadi(ind(ebp, " << -(*currentTable)[first]->offset << "), " << reg_name(reg) << ");\n";
+				reg_type[reg] = 1;
 			}
 			else{
 				codeFile << "\tmove(" << -(*currentTable)[first]->offset << ", " << reg_name(reg) << ");\n";
+				reg_type[reg] = 1;
 			}
 			return "";
 		}
@@ -957,14 +992,56 @@ class indexAST : public arrayrefAST{
 	public:
 		virtual void print(std::string format = "");
 		virtual std::string generate_code() {
-			actual_code();	
+			generate_label();
+			std::cout << "labels ready mein Fuhrer for indexAST\n";
+			std::cout.flush();
+			actual_code();
 			return "";
 		};
 		virtual std::string actual_code(){
 			std::cout <<  std::endl;
 			index_left++;
-			first->generate_code();
-			second->generate_code();
+	  //	if(first->hasAssignment){
+	//	if(first->label >= NO_REGISTERS)first->generate_code();
+	//	second->generate_code();
+	//}
+	//else if(second->hasAssignment){
+	//	second->generate_code();
+	//	first->generate_code();
+	//}
+	//else{
+			if(first->label > second->label){
+				first->actual_code();
+				if(second->label > NO_REGS){
+					int tfr = reg_type[first->reg];
+					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
+					avail_regs[first->reg] = true;
+					second->actual_code();
+					first->reg = find_reg();
+					reg_type[first->reg] = tfr;
+					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
+				}
+				else{
+					second->actual_code();
+				}
+				
+			}
+			else{
+				second->actual_code();
+				if(first->label > NO_REGS){
+					int tfr = reg_type[second->reg];
+					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(second->reg) << ",ind(esp);\n";
+					avail_regs[second->reg] = true;
+					first->actual_code();
+					second->reg = find_reg();
+					reg_type[second->reg] = tfr;
+					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
+				}
+				else{
+					first->actual_code();
+				}
+			}
+	//}
 			index_left--;
 			reg = first->reg;
 			codeFile << "\tmuli(" << -((first->astType).arrayType)->size() << "," << reg_name(second->reg) << ");\n";
@@ -998,6 +1075,7 @@ class indexAST : public arrayrefAST{
 		}
 		virtual void generate_label();
 //			label_manager(this, first,second);
+
 //		}
 	protected:
 		virtual void setType(DataType) {};

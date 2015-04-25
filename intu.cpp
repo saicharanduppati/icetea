@@ -12,6 +12,7 @@ int returnCount = 0;
 std::ofstream codeFile;
 int glabel = 0;
 bool avail_regs[NO_REGS];
+int reg_type[NO_REGS];
 int lineNo = 1;
 int level = 0;
 std::string suffixString = "";
@@ -415,8 +416,10 @@ void indexAST::generate_label(){
 	label_manager(this, first,second);
 	std::cout << "index label is " << this->label << std::endl;
 }
-
-
+void assAST::generate_label(){
+	label_manager(this,first,second);
+	std::cout << "ass label is " <<  this->label << std::endl;
+}
 
 
 std::string funcAST::actual_code(){
@@ -437,6 +440,20 @@ std::string funcAST::actual_code(){
 			}
 		}
 		return "";
+	}
+	bool reg_status_copy[NO_REGS];
+	bool reg_type_copy[NO_REGS];
+	for(int i = 0;i<NO_REGS;i++){
+		reg_status_copy[i] = avail_regs[i];
+		reg_type_copy[i] = reg_type[i];
+		if(avail_regs[i]){
+			if(reg_type[i] == 1){
+				codeFile << "\tpushi(" << reg_name(i) << ");\n";
+			}
+			else if(reg_type[i] == 2){
+				codeFile << "\tpushf(" << reg_name(i) << ");\n";
+			}
+		}
 	}
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tpushf(0.0);\n";
@@ -497,6 +514,18 @@ std::string funcAST::actual_code(){
 	else{
 		std::cout << "this case not possible in function AST\n";
 		std::cout.flush();
+	}
+	for(int i = 0;i<NO_REGS;i++){
+		avail_regs[i] = reg_status_copy[i];
+		reg_type[i] = reg_type_copy[i];
+		if(avail_regs[i]){
+			if(reg_type[i] == 1){
+				codeFile << "\tloadi(" << reg_name(i) << ");\n\tpopi(1);\n";
+			}
+			else if(reg_type[i] == 2){
+				codeFile << "\tloadf(" << reg_name(i) << ");\n\tpopf(1);\n";
+			}
+		}
 	}
 	return "";
 }	
