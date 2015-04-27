@@ -1036,7 +1036,7 @@ class indexAST : public arrayrefAST{
 					codeFile << "\tloadi(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
 				}
 				else if(astType.basetype == 1){
-					codeFile << "\taddf(ebp, " << reg_name(reg) << ");\n";
+					codeFile << "\taddi(ebp, " << reg_name(reg) << ");\n";
 					codeFile << "\tloadf(ind(" << reg_name(reg) << "), " << reg_name(reg) <<");\n";
 				}
 			}

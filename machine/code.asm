@@ -77,6 +77,7 @@ void main(){
 	loadi(ind(esp), eax);
 	popi(1);
 	addi(edx, eax);
+	intTofloat(eax);
 	move(1, ebx);
 	move(1, ecx);
 	addi(ebx, ecx);
@@ -91,8 +92,8 @@ void main(){
 	muli(-4,ecx);
 	addi(ecx,edx);
 	addi(ebp, edx);
-	storei(eax,ind(edx));
-	print_string("value of b[0][4] is ");
+	storef(eax,ind(edx));
+	print_string("value of b[0][1] is ");
 	move(0, eax);
 	move(-4, ebx);
 	muli(-20,eax);
@@ -100,13 +101,9 @@ void main(){
 	move(4, eax);
 	muli(-4,eax);
 	addi(eax,ebx);
-	addi(ebp, ebx);
-	loadi(ind(ebx),eax);
-	addi(1, eax);
-	storei(eax, ind(ebx));
-	move(eax, ebx);
-	print_int(ebx);
-	print_string("\n");
+	addf(ebp, ebx);
+	loadf(ind(ebx), ebx);
+	print_float(ebx);
 	move(0, eax);
 	j(Lmain_);
 Lmain_:

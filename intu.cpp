@@ -429,6 +429,7 @@ std::string funcAST::actual_code(){
 		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
 			stringAST *a = dynamic_cast<stringAST*>(*it);
 			if(a == NULL){
+				loadkaru = true;
 				(*it)->generate_code();
 				if((*it)->astType == DataType(DataType::Int)){
 					codeFile << "\tprint_int(" << reg_name((*it)->reg) << ");\n";
