@@ -483,6 +483,7 @@ std::string funcAST::actual_code(){
 			//codeFile << "\tpushf(" << b->getVal() << ");\n";
 			continue;
 		}	
+		loadkaru = true;
 		(*it)->actual_code();
 		if((*it)->astType == DataType(DataType::Float)){
 //			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
@@ -582,7 +583,8 @@ std::string funcStmtAST::actual_code(){
 			//codeFile << "\tpushf(" << b->getVal() << ");\n";
 			continue;
 		}	
-		(*it)->actual_code();
+		loadkaru = true;
+		(*it)->generate_code();
 		if((*it)->astType == DataType(DataType::Float)){
 //			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
 			codeFile << "\tstoref(" << reg_name((*it)->reg) << ", ind(esp));\n";
@@ -623,6 +625,7 @@ std::string funcStmtAST::actual_code(){
 
 
 void bopGenCodeHelper(abstractAST* first, abstractAST* second){
+	loadkaru = true;
 	first->actual_code();
 	int ftr = reg_type[first->reg];
 	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
@@ -636,6 +639,7 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 	}
 	//reset_regs();
 	//	avail_regs[first->reg] = false;
+	loadkaru = true;
 	second->actual_code();	
 	if((first->label >= NO_REGS) || (second->label >= NO_REGS)){
 		first->reg = find_reg();

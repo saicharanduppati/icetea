@@ -127,6 +127,7 @@ class castAST : public abstractAST{
 			return "";
 		};
 		virtual std::string actual_code(){
+			loadkaru = true;
 			first->actual_code();
 			reg = first->reg;
 			if(castType == "TO_FLOAT"){
@@ -346,7 +347,9 @@ class ifAST : public stmtAST{
 			return "";
 		};
 		virtual std::string actual_code(){
-			first->actual_code();
+			std::cout << "VAAAAAAAAAAAAAAALLLLLLLLUUUUUEE of loadkaru is " << loadkaru << std::endl;
+			loadkaru = true;
+			first->generate_code();
 			if(first->astType == DataType(DataType::Int)){
 				codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
 			}
@@ -800,7 +803,13 @@ class funcAST : public expAST{
 			}
 		}
 		virtual void generate_label(){
-			this->label = 1;
+			label = 0;
+			for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
+				(*it)->generate_label();
+				if((*it)->label > label){
+					label = (*it)->label;
+				}
+			}
 //			std::cout << "label of func is " << label << std::endl;
 		}
 	protected:
