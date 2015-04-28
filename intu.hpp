@@ -260,13 +260,13 @@ class assAST : public stmtAST{
 				//avail_regs[first->reg] = false;
 				if(second->label >= NO_REGS){
 					int tfr = reg_type[first->reg];
-					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp);\n";
+					codeFile << "\tpushi(1);\n\tstorei(" << reg_name(first->reg) << ",ind(esp));\n";
 					avail_regs[first->reg] = true;
 					loadkaru = true;
 					second->actual_code();
 					first->reg = find_reg();
 					reg_type[first->reg] = tfr;
-					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
+					codeFile << "\tloadi(ind(esp)," << reg_name(first->reg) << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
 					loadkaru = true;
@@ -291,7 +291,7 @@ class assAST : public stmtAST{
 					first->actual_code();
 					second->reg = find_reg();
 					reg_type[second->reg] = tfr;
-					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
+					codeFile << "\tloadi(ind(esp)," << reg_name(second->reg) << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
 					loadkaru = false;
@@ -995,7 +995,7 @@ class indexAST : public arrayrefAST{
 					second->actual_code();
 					first->reg = find_reg();
 					reg_type[first->reg] = tfr;
-					codeFile << "\tloadi((esp)," << first->reg << ");\n" << "\tpopi(1);\n";	
+					codeFile << "\tloadi(ind(esp)," << reg_name(first->reg) << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
 					loadkaru = true;
@@ -1018,7 +1018,7 @@ class indexAST : public arrayrefAST{
 					first->actual_code();
 					second->reg = find_reg();
 					reg_type[second->reg] = tfr;
-					codeFile << "\tloadi((esp)," << second->reg << ");\n" << "\tpopi(1);\n";	
+					codeFile << "\tloadi(ind(esp)," << reg_name(second->reg) << ");\n" << "\tpopi(1);\n";	
 				}
 				else{
 					loadkaru = false;
