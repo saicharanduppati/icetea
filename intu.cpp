@@ -82,7 +82,7 @@ void label_manager(abstractAST* p, abstractAST* c1, abstractAST* c2){
 		p->label = c1->label + 1;
 	}
 	else{
-		p->label = std::max(c1->label,c2->label);
+		p->label = std::max(c1->label,c2->label) + ((c1->hasAssignment || c2->hasAssignment) ? 1 : 0);
 	}
 }
 int stringCost(std::string a, std::string b){// a and b have to be of same size.
@@ -437,6 +437,7 @@ std::string funcAST::actual_code(){
 				if((*it)->astType == DataType(DataType::Float)){
 					codeFile << "\tprint_float(" << reg_name((*it)->reg) << ");\n";
 				}
+				avail_regs[(*it)->reg] = true;
 			}
 			else{
 				codeFile << "\tprint_string(" << a->first << ");\n";
@@ -522,8 +523,8 @@ std::string funcAST::actual_code(){
 		codeFile << "\tpopi(1);\n";
 	}
 	else{
-		std::cout << "this case not possible in function AST\n";
-		std::cout.flush();
+//		std::cout << "this case not possible in function AST\n";
+//		std::cout.flush();
 	}
 	for(int i = NO_REGS-1;i>=0;i--){ 
 		if(!avail_regs[i] && !(reg == i)){
@@ -548,6 +549,7 @@ std::string funcStmtAST::actual_code(){
 		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
 			stringAST *a = dynamic_cast<stringAST*>(*it);
 			if(a == NULL){
+				loadkaru = true;
 				(*it)->generate_code();
 				if((*it)->astType == DataType(DataType::Int)){
 					codeFile << "\tprint_int(" << reg_name((*it)->reg) << ");\n";
@@ -555,12 +557,29 @@ std::string funcStmtAST::actual_code(){
 				if((*it)->astType == DataType(DataType::Float)){
 					codeFile << "\tprint_float(" << reg_name((*it)->reg) << ");\n";
 				}
+				avail_regs[(*it)->reg] = true;
 			}
 			else{
 				codeFile << "\tprint_string(" << a->first << ");\n";
 			}
 		}
 		return "";
+	}
+	bool reg_status_copy[NO_REGS];
+	bool reg_type_copy[NO_REGS];
+	int count = 0;
+	for(int i = 0;i<NO_REGS;i++){
+		reg_status_copy[i] = avail_regs[i];
+		reg_type_copy[i] = reg_type[i];
+		if(!avail_regs[i]){
+			count++;
+			if(reg_type[i] == 1){
+				codeFile << "\tpushi(" << reg_name(i) << ");\n";
+			}
+			else if(reg_type[i] == 2){
+				codeFile << "\tpushf(" << reg_name(i) << ");\n";
+			}
+		}
 	}
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tpushf(0.0);\n";
@@ -589,7 +608,7 @@ std::string funcStmtAST::actual_code(){
 			continue;
 		}	
 		loadkaru = true;
-		(*it)->generate_code();
+		(*it)->actual_code();
 		if((*it)->astType == DataType(DataType::Float)){
 //			codeFile << "\tpushf(" << reg_name((*it)->reg) << ");\n";
 			codeFile << "\tstoref(" << reg_name((*it)->reg) << ", ind(esp));\n";
@@ -610,6 +629,10 @@ std::string funcStmtAST::actual_code(){
 		/*TODO
 			grouping of parameter to pop simulataneously*/
 	}
+	for(int i = NO_REGS-1;i>=0;i--){
+		avail_regs[i] = reg_status_copy[i]; 
+		reg_type[i] = reg_type_copy[i];
+	}	
 	reg = find_reg();
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tloadf(ind(esp), " << reg_name(reg) << ");\n";
@@ -620,9 +643,20 @@ std::string funcStmtAST::actual_code(){
 		codeFile << "\tpopi(1);\n";
 	}
 	else{
-		std::cout << "this case not possible in function AST\n";
-		std::cout.flush();
+//		std::cout << "this case not possible in function AST\n";
+//		std::cout.flush();
 	}
+	for(int i = NO_REGS-1;i>=0;i--){ 
+		if(!avail_regs[i] && !(reg == i)){
+			if(reg_type[i] == 1){
+				codeFile << "\tloadi(ind(esp), " << reg_name(i) << ");\n\tpopi(1);\n";
+			}
+			else if(reg_type[i] == 2){
+				codeFile << "\tloadf(ind(esp), " << reg_name(i) << ");\n\tpopf(1);\n";
+			}
+		}
+	}
+	reset_regs();
 	return "";
 }	
 

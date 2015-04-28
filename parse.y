@@ -40,7 +40,7 @@ function_definition:
 	(*globalTable)[functionName + "#" + suffixString]->pointer = currentTable;
 	currentOffset = -4;
 	returnCount = 0;
-	//$3->print();
+	$3->print();
 //	std::cout.flush();
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
 	int maxOffset = 0;
@@ -284,6 +284,10 @@ statement:
 		}
 		if(returned == "1"){
 			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+			std::exit(1);
+		}
+		if(currentTable->find($1) != currentTable->end()){
+			std::cerr << "Line no " << lineNo << ":\tLocal variable with same name as function call declared\n";
 			std::exit(1);
 		}
 		std::list<abstractAST*>::iterator absIterator = ($3).begin();
@@ -746,6 +750,10 @@ postfix_expression:
 			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
 			std::exit(1);
 		}
+		if(currentTable->find($1) != currentTable->end()){
+			std::cerr << "Line no " << lineNo << ":\tLocal variable with same name as function call declared\n";
+			std::exit(1);
+		}
 		$$ = new funcAST($1 + "#" + returned, std::list<abstractAST*>());
 		($$)->astType = *(globalTable->find($1 + "#" + returned)->second->dataType);
 	}
@@ -773,6 +781,10 @@ postfix_expression:
 		}
 		if(returned == "1"){
 			std::cerr << "Line no " << lineNo << ":\tAmbiguous function call " << $1 << "\n";
+			std::exit(1);
+		}
+		if(currentTable->find($1) != currentTable->end()){
+			std::cerr << "Line no " << lineNo << ":\tLocal variable with same name as function call declared\n";
 			std::exit(1);
 		}
 		std::list<abstractAST*>::iterator absIterator = ($3).begin();

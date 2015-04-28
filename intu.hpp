@@ -167,7 +167,7 @@ class castAST : public abstractAST{
 class stmtAST : public abstractAST{
 	public:
 		virtual void print(std::string format = "") {};
-		virtual std::string generate_code() {};
+		virtual std::string generate_code() {return "";};
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		bool hasReturn;
@@ -210,6 +210,16 @@ class funcStmtAST : public stmtAST{
 			first = b;
 		}
 
+		virtual void generate_label(){
+			label = 1;
+			for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
+				(*it)->generate_label();
+				if((*it)->label > label){
+					label = (*it)->label;
+				}
+			}
+//			std::cout << "label of func is " << label << std::endl;
+		}
 	protected:
 		virtual void setType(DataType) {};
 	private:
@@ -360,8 +370,21 @@ class ifAST : public stmtAST{
 		};
 		virtual std::string actual_code(){
 //			std::cout << "VAAAAAAAAAAAAAAALLLLLLLLUUUUUEE of loadkaru is " << loadkaru << std::endl;
+//			int count = 0;
+//			for(int i = 0; i < NO_REGS; i++){
+//				if(avail_regs[i]) count++;
+//			}
+//			std::cout << "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ" << count << ">>>" << std::endl;
 			loadkaru = true;
 			first->generate_code();
+//			first->generate_label();
+//			std::cout << "---------------------------" << first->label << "------------------------" << std::endl;
+//			first->actual_code();
+//			count = 0;
+//			for(int i = 0; i < NO_REGS; i++){
+//				if(avail_regs[i]) count++;
+//			}
+//			std::cout << "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" << count << ">>>" << std::endl;
 			if(first->astType == DataType(DataType::Int)){
 				codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
 			}
@@ -407,6 +430,7 @@ class whileAST : public stmtAST{
 		virtual std::string actual_code(){
 			int openl = glabel++;
 			codeFile << "L" << openl << ":\n";
+			reset_regs();
 			first->generate_code();
 			int exitl = glabel++;
 			if(first->astType == DataType(DataType::Int)){
@@ -498,7 +522,9 @@ class forAST : public stmtAST{
 			}
 			int exitl = glabel++;
 			codeFile << "\tje(L" << exitl << ");\n";
+			reset_regs();
 			fourth->generate_code();
+			reset_regs();
 			third->generate_code();
 			codeFile << "\tj(L" << entryl << ");\n";
 			codeFile << "L" << exitl << ":\n";
@@ -541,9 +567,6 @@ class bopAST : public expAST{
 			if(first->hasAssignment || second->hasAssignment){
 				bopGenCodeHelper(first, second);
 			}
-//			else if(second->hasAssignment){
-//				bopGenCodeHelper(second, first);
-//			}
 			else{
 				if(first->label > second->label){
 					bopGenCodeHelper(first, second);
@@ -694,7 +717,7 @@ class bopAST : public expAST{
 				codeFile << "\tcmpi(0, " << reg_name(first->reg) << ");\n\tje(L" << falseLabel << ");\n";
 				codeFile << "\tcmpi(0, " << reg_name(second->reg) << ");\n\tje(L" << falseLabel << ");\n";
 				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
-				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "\tj(L" << exitLabel << ");\n";
 				codeFile << "L" << falseLabel << ":\n";
 				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
 				codeFile << "L" << exitLabel << ":\n";
@@ -705,7 +728,7 @@ class bopAST : public expAST{
 				codeFile << "\tcmpf(0, " << reg_name(first->reg) << ");\n\tje(L" << falseLabel << ");\n";
 				codeFile << "\tcmpf(0, " << reg_name(second->reg) << ");\n\tje(L" << falseLabel << ");\n";
 				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
-				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "\tj(L" << exitLabel << ");\n";
 				codeFile << "L" << falseLabel << ":\n";
 				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
 				codeFile << "L" << exitLabel << ":\n";
@@ -716,7 +739,7 @@ class bopAST : public expAST{
 				codeFile << "\tcmpi(0, " << reg_name(first->reg) << ");\n\tjne(L" << trueLabel << ");\n";
 				codeFile << "\tcmpi(0, " << reg_name(second->reg) << ");\n\tjne(L" << trueLabel << ");\n";
 				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
-				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "\tj(L" << exitLabel << ");\n";
 				codeFile << "L" << trueLabel << ":\n";
 				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
 				codeFile << "L" << exitLabel << ":\n";
@@ -729,7 +752,7 @@ class bopAST : public expAST{
 				codeFile << "\tmove(0, " << reg_name(first->reg) << ");\n";
 //				std::cout << " nitishisgod_________________\n";
 //				std::cout.flush();
-				codeFile << "j(L" << exitLabel << ");\n";
+				codeFile << "\tj(L" << exitLabel << ");\n";
 				codeFile << "L" << trueLabel << ":\n";
 				codeFile << "\tmove(1, " << reg_name(first->reg) << ");\n";
 				codeFile << "L" << exitLabel << ":\n";
@@ -819,7 +842,7 @@ class funcAST : public expAST{
 			}
 		}
 		virtual void generate_label(){
-			label = 0;
+			label = 1;
 			for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
 				(*it)->generate_label();
 				if((*it)->label > label){
