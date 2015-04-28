@@ -281,20 +281,24 @@ protected:
 		char* reg = getReg(r);
 		float val = *((float*) reg);
 		cout << val;
+		cout.flush();
 	}
 
 	void print_float(double i) {
 		cout << ((float)i);
+		cout.flush();
 	}
 
 	void print_char(Reg r) {
 		char* reg = getReg(r);
 		char val = *((char*) reg);
 		cout << val;
+		cout.flush();
 	}
 
 	void print_char(char val) {
 		cout << val;
+		cout.flush();
 	}
 
 	void print_string(Reg r) {

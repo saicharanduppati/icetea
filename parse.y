@@ -40,7 +40,7 @@ function_definition:
 	(*globalTable)[functionName + "#" + suffixString]->pointer = currentTable;
 	currentOffset = -4;
 	returnCount = 0;
-	$3->print();
+	//$3->print();
 //	std::cout.flush();
 	codeFile << "void " << functionName << "(){\n\tpushi(ebp);\n\tmove(esp, ebp);\n";
 	int maxOffset = 0;
@@ -53,7 +53,7 @@ function_definition:
 	codeFile << "L" << functionName + "_" + suffixString << ":\n\tmove(ebp, esp);\n\tloadi(ind(ebp), ebp);\n\tpopi(1);\n";//this is because, if there is no return statement, then these actions must be performed.
 	codeFile << "\treturn;\n}\n\n";
 	suffixString = "";
-	printSymbolTable(currentTable);
+//	printSymbolTable(currentTable);
 	currentTable = new std::map<std::string, SymbolTableEntry*>(); 
 }
 	;

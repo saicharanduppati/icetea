@@ -68,7 +68,7 @@ int find_reg(){
 			return i;
 		}
 	}
-	std::cout << "NO REGISTERS AVAILABLE SCREEEEEEEEEEEEECCCCHHHHHH" << std::endl;
+//	std::cout << "NO REGISTERS AVAILABLE SCREEEEEEEEEEEEECCCCHHHHHH" << std::endl;
 	exit(-1);
 	return -1;
 }
@@ -126,7 +126,7 @@ std::string findBestFunction(std::string name, std::string suffix){
 
 bool hasReturnInList(std::list<abstractAST*> l){
 	for(std::list<abstractAST*>::iterator it = l.begin(); it != l.end(); it++){
-		std::cout << "gone" << std::endl;
+//		std::cout << "gone" << std::endl;
 		if(((stmtAST*) (*it))->hasReturn) return true;
 	}
 	return false;
@@ -411,15 +411,15 @@ void SymbolTableEntry::print(){
 
 void bopAST::generate_label(){
 	label_manager(this, first,second);
-	std::cout << "bop label is " << this->label << std::endl;
+//	std::cout << "bop label is " << this->label << std::endl;
 }
 void indexAST::generate_label(){
 	label_manager(this, first,second);
-	std::cout << "index label is " << this->label << std::endl;
+//	std::cout << "index label is " << this->label << std::endl;
 }
 void assAST::generate_label(){
 	label_manager(this,first,second);
-	std::cout << "ass label is " <<  this->label << std::endl;
+//	std::cout << "ass label is " <<  this->label << std::endl;
 }
 
 
@@ -446,10 +446,12 @@ std::string funcAST::actual_code(){
 	}
 	bool reg_status_copy[NO_REGS];
 	bool reg_type_copy[NO_REGS];
+	int count = 0;
 	for(int i = 0;i<NO_REGS;i++){
 		reg_status_copy[i] = avail_regs[i];
 		reg_type_copy[i] = reg_type[i];
-		if(avail_regs[i]){
+		if(!avail_regs[i]){
+			count++;
 			if(reg_type[i] == 1){
 				codeFile << "\tpushi(" << reg_name(i) << ");\n";
 			}
@@ -473,13 +475,13 @@ std::string funcAST::actual_code(){
 		intAST* a = dynamic_cast<intAST*>(*it);
 		if(a != NULL){
 //			codeFile << "\tpushi(" << a->getVal() << ");\n";
-			codeFile << "\tstorei(" << a->getVal() << ", ind(esp));\n";
+			codeFile << "\tstorei(" << a->first << ", ind(esp));\n";
 			codeFile << "\taddi(" << a->astType.size() << ", esp);\n";
 			continue;
 		}	
 		floatAST* b = dynamic_cast<floatAST*>(*it);
 		if(b != NULL){
-			codeFile << "\tstoref(" << b->getVal() << ", ind(esp));\n";
+			codeFile << "\tstoref(" << b->first << ", ind(esp));\n";
 			codeFile << "\taddi(" << b->astType.size() << ", esp);\n";
 			//codeFile << "\tpushf(" << b->getVal() << ");\n";
 			continue;
@@ -506,6 +508,10 @@ std::string funcAST::actual_code(){
 		/*TODO
 			grouping of parameter to pop simulataneously*/
 	}
+	for(int i = NO_REGS-1;i>=0;i--){
+		avail_regs[i] = reg_status_copy[i]; 
+		reg_type[i] = reg_type_copy[i];
+	}	
 	reg = find_reg();
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tloadf(ind(esp), " << reg_name(reg) << ");\n";
@@ -519,15 +525,13 @@ std::string funcAST::actual_code(){
 		std::cout << "this case not possible in function AST\n";
 		std::cout.flush();
 	}
-	for(int i = 0;i<NO_REGS;i++){
-		avail_regs[i] = reg_status_copy[i];
-		reg_type[i] = reg_type_copy[i];
-		if(avail_regs[i]){
+	for(int i = NO_REGS-1;i>=0;i--){ 
+		if(!avail_regs[i] && !(reg == i)){
 			if(reg_type[i] == 1){
-				codeFile << "\tloadi(" << reg_name(i) << ");\n\tpopi(1);\n";
+				codeFile << "\tloadi(ind(esp), " << reg_name(i) << ");\n\tpopi(1);\n";
 			}
 			else if(reg_type[i] == 2){
-				codeFile << "\tloadf(" << reg_name(i) << ");\n\tpopf(1);\n";
+				codeFile << "\tloadf(ind(esp), " << reg_name(i) << ");\n\tpopf(1);\n";
 			}
 		}
 	}
@@ -573,13 +577,13 @@ std::string funcStmtAST::actual_code(){
 		intAST* a = dynamic_cast<intAST*>(*it);
 		if(a != NULL){
 //			codeFile << "\tpushi(" << a->getVal() << ");\n";
-			codeFile << "\tstorei(" << a->getVal() << ", ind(esp));\n";
+			codeFile << "\tstorei(" << a->first << ", ind(esp));\n";
 			codeFile << "\taddi(" << a->astType.size() << ", esp);\n";
 			continue;
 		}	
 		floatAST* b = dynamic_cast<floatAST*>(*it);
 		if(b != NULL){
-			codeFile << "\tstoref(" << b->getVal() << ", ind(esp));\n";
+			codeFile << "\tstoref(" << b->first << ", ind(esp));\n";
 			codeFile << "\taddi(" << b->astType.size() << ", esp);\n";
 			//codeFile << "\tpushf(" << b->getVal() << ");\n";
 			continue;
@@ -671,7 +675,7 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 
 std::string uopAST::actual_code(){
 	loadkaru = true;
-	if(op == "PP"){
+	if(op == "PP" || op == "PP_FLOAT"){
 		indexAST* temp = dynamic_cast<indexAST*>(first);
 		if(temp == NULL){
 			loadkaru = true;
@@ -703,7 +707,7 @@ std::string uopAST::actual_code(){
 			if(first->astType == DataType(DataType::Float)){
 				int temp_reg = find_reg();
 				codeFile << "\tloadf(ind(" << reg_name(reg) << ")," << reg_name(temp_reg) <<");\n";
-				codeFile << "\taddi(1, " << reg_name(temp_reg) << ");\n";
+				codeFile << "\taddf(1, " << reg_name(temp_reg) << ");\n";
 				codeFile << "\tstoref(" << reg_name(temp_reg) << ", ind(" << reg_name(reg) << "));\n";
 				codeFile << "\tmove(" << reg_name(temp_reg) << ", " << reg_name(reg) << ");\n";
 				avail_regs[temp_reg] = true;
