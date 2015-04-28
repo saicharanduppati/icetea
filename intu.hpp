@@ -203,6 +203,7 @@ class funcStmtAST : public stmtAST{
 			return "";
 		};
 		virtual std::string actual_code();
+//		code for this is defined in intu.cpp
 		virtual DataType getType() {};
 		virtual bool checkTypeofAST() {};
 		funcStmtAST(std::string a, std::list<abstractAST*> b){
@@ -262,12 +263,14 @@ class assAST : public stmtAST{
 		}
 		virtual std::string actual_code(){
 			if(*((*currentTable)[first->get_name()]->dataType) == DataType(DataType::Int)){
+// 			directly store the value of rhs at the offset of leftside
 				loadkaru = true;
 				second->actual_code();
 				reg = second->reg;
 				codeFile << "\tstorei(" << reg_name(reg) << ", ind(ebp, " << -(*currentTable)[first->get_name()]->offset << "));\n";
 			}
 			else if(*((*currentTable)[first->get_name()]->dataType) == DataType(DataType::Float)){
+// 			directly store the value of rhs at the offset of leftside
 				loadkaru = true;
 				second->actual_code();
 				reg = second->reg;
@@ -278,6 +281,7 @@ class assAST : public stmtAST{
 //					std::cout << "assignment cas1\n";
 //					std::cout.flush();
 					loadkaru = false;
+// here we dont want to call load the value of the left hand side
 					first->actual_code();
 					//reset_regs();
 					//avail_regs[first->reg] = false;
@@ -369,22 +373,8 @@ class ifAST : public stmtAST{
 			return "";
 		};
 		virtual std::string actual_code(){
-//			std::cout << "VAAAAAAAAAAAAAAALLLLLLLLUUUUUEE of loadkaru is " << loadkaru << std::endl;
-//			int count = 0;
-//			for(int i = 0; i < NO_REGS; i++){
-//				if(avail_regs[i]) count++;
-//			}
-//			std::cout << "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ" << count << ">>>" << std::endl;
 			loadkaru = true;
 			first->generate_code();
-//			first->generate_label();
-//			std::cout << "---------------------------" << first->label << "------------------------" << std::endl;
-//			first->actual_code();
-//			count = 0;
-//			for(int i = 0; i < NO_REGS; i++){
-//				if(avail_regs[i]) count++;
-//			}
-//			std::cout << "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" << count << ">>>" << std::endl;
 			if(first->astType == DataType(DataType::Int)){
 				codeFile << "\tcmpi(0," << reg_name(first->reg) << ");\n";
 			}
@@ -395,6 +385,7 @@ class ifAST : public stmtAST{
 			codeFile << "\tje(L" << fl << ");\n";
 			int ol = glabel++;
 			reset_regs();
+//			call reset_regs() before calling gen code for every statement
 			second->generate_code();
 			codeFile << "\tj(L" << ol << ");\n";
   			codeFile << "L" << fl << ":\n";
@@ -980,6 +971,7 @@ class identifierAST : public arrayrefAST{
 				reg_type[reg] = 1;
 			}
 			else{
+// dont send the loaded value, what is required is the offset of the array
 				codeFile << "\tmove(" << -(*currentTable)[first]->offset << ", " << reg_name(reg) << ");\n";
 				reg_type[reg] = 1;
 			}
@@ -1024,6 +1016,7 @@ class indexAST : public arrayrefAST{
 //				std::cout << "index cas1\n";
 			//	std::cout.flush();
 				loadkaru = false;
+// dont load the value of the left hand side, just the offset is needed
 				first->actual_code();
 		//		reset_regs();
 				//avail_regs[first->reg] = false;

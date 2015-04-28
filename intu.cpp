@@ -22,15 +22,6 @@ bool  pairComparator(std::pair<int, DataType> a, std::pair<int, DataType> b){
 }
 
 
-void backpatch(std::vector<int*> v, int label){
-	for(int i= 0 ; i < v.size() ; i++){
-		(*v[i]) = label;
-	}
-}
-
-void merge(std::vector<int* > v1, std::vector<int* > v2){
-	v1.insert(v1.end(),v2.begin(),v2.end());
-} 
 std::string reg_name(int reg){
 	switch(reg)
 	{
@@ -54,13 +45,14 @@ std::string reg_name(int reg){
 			break;
 	}
 }
-
+/** This function resets all the registers **/
 void reset_regs(){
 	for(int i = 0; i< NO_REGS;i++){
 		avail_regs[i] = true;
 	}
 }
 
+/** finding a new free register **/
 int find_reg(){
 	for(int i = 0; i < NO_REGS ; i++){
 		if(avail_regs[i]){
@@ -72,6 +64,7 @@ int find_reg(){
 	exit(-1);
 	return -1;
 }
+/** manages labels for certain ASTs :- indexAST, assignmentAST, bopAST **/
 void label_manager(abstractAST* p, abstractAST* c1, abstractAST* c2){
 	c1->generate_label();
 	c2->generate_label();
@@ -448,6 +441,7 @@ std::string funcAST::actual_code(){
 	bool reg_status_copy[NO_REGS];
 	bool reg_type_copy[NO_REGS];
 	int count = 0;
+	// pushing caller saved registers onto the stack
 	for(int i = 0;i<NO_REGS;i++){
 		reg_status_copy[i] = avail_regs[i];
 		reg_type_copy[i] = reg_type[i];
@@ -461,6 +455,7 @@ std::string funcAST::actual_code(){
 			}
 		}
 	}
+	// creating space for the returned value
 	if(*((*globalTable)[name]->dataType) == DataType(DataType::Float)){
 		codeFile << "\tpushf(0.0);\n";
 	}
@@ -472,6 +467,7 @@ std::string funcAST::actual_code(){
 		space += (*it)->astType.size();
 	}
 	codeFile << "\taddi(" << -space << ", esp);\n";
+	// pushing the parameters
 	for(std::list <abstractAST*>::iterator it = first.begin();it != first.end();it++){
 		intAST* a = dynamic_cast<intAST*>(*it);
 		if(a != NULL){
@@ -526,6 +522,7 @@ std::string funcAST::actual_code(){
 //		std::cout << "this case not possible in function AST\n";
 //		std::cout.flush();
 	}
+	// set back all the registers that were previously saved
 	for(int i = NO_REGS-1;i>=0;i--){ 
 		if(!avail_regs[i] && !(reg == i)){
 			if(reg_type[i] == 1){
@@ -544,6 +541,7 @@ std::string funcAST::actual_code(){
 
 
 std::string funcStmtAST::actual_code(){
+	// almost similat to funcAST except for the freeing of the registers at the end
 	loadkaru = true;
 	if(name == "printf"){
 		for(std::list<abstractAST*>::iterator it = first.begin(); it != first.end(); it++){
@@ -662,7 +660,7 @@ std::string funcStmtAST::actual_code(){
 
 
 
-
+/** helper function for generating code for bop AST, the parameter supplied will be used for generation of code in the order they are passed **/
 void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 	loadkaru = true;
 	first->actual_code();
@@ -694,15 +692,6 @@ void bopGenCodeHelper(abstractAST* first, abstractAST* second){
 //					avail_regs[first->reg] = true;
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 
